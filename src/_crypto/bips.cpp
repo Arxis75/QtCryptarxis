@@ -1,5 +1,15 @@
+#include <data/Common.h>
+
 #include <crypto/bips.h>
 #include <crypto/bip39_dictionnary.h>
+
+#include <openssl/hmac.h>
+#include <openssl/rand.h>
+
+#include <ethash/keccak.hpp>
+
+using ethash::keccak256;
+using ethash::hash256;
 
 using namespace BIP39;
 
@@ -522,7 +532,8 @@ DerivationPath::DerivationPath(string path)
             }
             else
             {
-                uint32_t v = stoi(index.c_str());
+                //uint32_t v = stoi(index.c_str());
+                Givaro::Integer v = stoi(index.c_str());
                 assert(v < 0x80000000);
                 value += v;
             }

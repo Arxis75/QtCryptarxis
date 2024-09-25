@@ -1,6 +1,8 @@
 #include <data/ByteSet.h>
 
-#include <crypto/System.h>  //To improve: ByteSet should provide operator as input for external Hashing functions
+#include <ethash/keccak.hpp>
+#include <openssl/sha.h>
+#include <openssl/rand.h>
 
 ByteSet::ByteSet(const Integer& value, uint64_t size)
 {
@@ -127,6 +129,13 @@ const ByteSet ByteSet::keccak256() const
 {
     ethash::hash256 h = ethash::keccak256(*this, byteSize());
     ByteSet digest(h.bytes, 32);
+    return digest;
+}
+
+const ByteSet ByteSet::address() const
+{
+    ethash::hash256 h = ethash::keccak256(*this, byteSize());
+    ByteSet digest(&h.bytes[32-20], 20);
     return digest;
 }
 

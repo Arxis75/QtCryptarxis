@@ -1,7 +1,7 @@
 #pragma once
 
-#include <data/System.h>
-#include <data/Tools.h>     //To improve (migrate some Tools functions into ByteSet class)
+#include <data/Common.h>
+#include <data/tools.h>
 
 class ByteSet
 {
@@ -33,6 +33,7 @@ class ByteSet
 
         const ByteSet sha256() const;
         const ByteSet keccak256() const;
+        const ByteSet address() const;
 
         friend ostream& operator<<(ostream &out, const ByteSet &v);
 

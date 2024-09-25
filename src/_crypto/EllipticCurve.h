@@ -1,7 +1,12 @@
 #pragma once
 
-#include <crypto/System.h>
 #include <data/ByteSet.h>
+
+using Givaro::Modular;
+using Givaro::Integer;
+
+typedef Modular<Integer> ZP;
+typedef ZP::Element Element;
 
 class Point
 {
@@ -82,7 +87,7 @@ class Secp256k1: public EllipticCurve
 {   
     public:
         static Secp256k1& GetInstance();
-        explicit Secp256k1(const Secp256k1& obj) = delete;
+        Secp256k1(const Secp256k1& obj) = delete;
 
     private:
         //private constructor

@@ -1,4 +1,7 @@
+
 #include <crypto/EllipticCurve.h>
+
+#include <openssl/hmac.h>
 
 Point::Point(const Point& p)
 	: m_isIdentity(p.isIdentity())

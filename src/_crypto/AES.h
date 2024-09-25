@@ -1,6 +1,9 @@
 #pragma once
 
-#include <crypto/System.h>
+#include <openssl/evp.h>
+#include <openssl/aes.h>
+#include <openssl/modes.h>
+#include <openssl/kdf.h>
 
 void handleErrors(void);
 

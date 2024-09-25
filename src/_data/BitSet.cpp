@@ -1,7 +1,7 @@
 #include <data/BitSet.h>
 
-#include <data/Tools.h>     //To improve
-#include <crypto/System.h>  //To improve: BiSet should provide operator as input for external Hashing functions
+#include <ethash/keccak.hpp>
+#include <openssl/sha.h>
 
 BitSet::BitSet()
     : end_boffset(0)

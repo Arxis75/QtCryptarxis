@@ -1,40 +1,40 @@
 #pragma once
 
-#include <data/System.h>
-#include <crypto/System.h>
-#include <crypto/EllipticCurve.h>
 #include <data/BitSet.h>
+#include <data/ByteSet.h>
+#include <crypto/EllipticCurve.h>
 
 namespace BIP39 {
-    class Mnemonic
-    {
-        public:
-            Mnemonic(const size_t entropy_bitsize, const vector<string> *dictionnary = 0);
 
-            void clear();
-            bool add_word(const string& word);
-            bool add_entropy(const string& entropy, const uint32_t bitsize, const uint8_t in_base);
-            bool set_full_word_list(const string& list);
-            const uint16_t getEntropySize() const { return m_ent; }
+class Mnemonic
+{
+    public:
+        Mnemonic(const size_t entropy_bitsize, const vector<string> *dictionnary = 0);
 
-            bool is_valid() const;
-            bool list_possible_last_word(vector<string>& list) const;
-            const string get_word_list() const;
-            const string get_last_word() const;
-            const ByteSet get_seed(const string& pwd) const;
-            void setPassword(const string& pwd);
-            const ByteSet get_seed() const;
-            void print(bool as_index_list = false) const;
+        void clear();
+        bool add_word(const string& word);
+        bool add_entropy(const string& entropy, const uint32_t bitsize, const uint8_t in_base);
+        bool set_full_word_list(const string& list);
+        const uint16_t getEntropySize() const { return m_ent; }
 
-    private:
-            BitSet m_entropy;
-            const vector<string> *m_dic;
-            uint8_t m_went;
-            uint16_t m_ent;
-            uint8_t m_ms;
-            uint8_t m_cs;
-            string m_pwd;
-    };
+        bool is_valid() const;
+        bool list_possible_last_word(vector<string>& list) const;
+        const string get_word_list() const;
+        const string get_last_word() const;
+        const ByteSet get_seed(const string& pwd) const;
+        void setPassword(const string& pwd);
+        const ByteSet get_seed() const;
+        void print(bool as_index_list = false) const;
+
+private:
+        BitSet m_entropy;
+        const vector<string> *m_dic;
+        uint8_t m_went;
+        uint16_t m_ent;
+        uint8_t m_ms;
+        uint8_t m_cs;
+        string m_pwd;
+};
 }
 
 class Pubkey

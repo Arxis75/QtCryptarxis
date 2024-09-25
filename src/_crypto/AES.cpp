@@ -1,5 +1,11 @@
 # include <crypto/AES.h>
 
+#include <openssl/core_names.h>
+#include <openssl/params.h>
+#include <openssl/err.h>
+
+#include <string.h>
+
 void handleErrors(void)
 {
     ERR_print_errors_fp(stderr);

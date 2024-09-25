@@ -1,6 +1,10 @@
 #pragma once
 
-#include <data/System.h>
+#include <vector>
+#include <string>
+
+using std::string;
+using std::vector;
 
 namespace BIP39 { 
     namespace Dictionary {
