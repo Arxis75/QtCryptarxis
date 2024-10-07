@@ -182,6 +182,7 @@ const uint64_t ByteSet::as_uint64() const
 }
 
 ostream& operator<< (ostream& out, const ByteSet &v) {
-    out << hex << Integer(v);
+    //out << hex << Integer(v);
+    out << Integer(v);
     return out;
 }

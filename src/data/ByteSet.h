@@ -7,7 +7,7 @@ class ByteSet
 {
     public:       
         ByteSet() { vvalue.reserve(32); };
-        ByteSet(const uint64_t value) { vvalue.reserve(8); push_back(value, sizeInBytes64(value)); }
+        ByteSet(const uint64_t value) { vvalue.reserve(8); push_back(value, sizeInBytes64(value)); }    //Triming here!
         ByteSet(const vector<uint8_t> &v) { vvalue = v; }
         ByteSet(const ByteSet &b) { vvalue = b.vvalue; }
         ByteSet(const char* str) { vvalue.reserve(strlen(str)); push_back_ptr(reinterpret_cast<const uint8_t*>(str), strlen(str)); }

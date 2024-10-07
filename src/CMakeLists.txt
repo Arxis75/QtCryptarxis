@@ -55,4 +55,5 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/UI)
 
 add_subdirectory(data)
 add_subdirectory(crypto)
+add_subdirectory(eth)
 add_subdirectory(UI)

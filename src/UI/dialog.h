@@ -21,19 +21,17 @@ public:
 
 public slots:
     void updateWallet();
+    void updateReadTx();
 
 private slots:
     void on_plainTextEdit_mnc_textChanged() { updateWallet(); }
-
     void on_radioButton_12_words_clicked() { updateWallet(); }
-
     void on_radioButton_24_words_clicked() { updateWallet(); }
-
     void on_lineEdit_derivation_path_textChanged(const QString &arg1) { updateWallet(); }
-
     void on_lineEdit_derivation_path_index_textChanged(const QString &arg1) { updateWallet(); }
-
     void on_lineEdit_bip39_pwd_textChanged(const QString &arg1) { updateWallet(); }
+
+    void on_plainTextEdit_raw_tx_textChanged() { updateReadTx(); }
 
 private:
     Ui::Dialog *ui;
