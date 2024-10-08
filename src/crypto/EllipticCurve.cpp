@@ -373,33 +373,36 @@ bool EllipticCurve::recover( Point& Q_candidate,
                 			 const ByteSet &msg_hash, const Integer& r, const Integer& s, const bool y_imparity,
 							 const bool recover_alternate ) const
 {
-	assert(m_GOrder > 0);
+	assert(getGeneratorOrder() > 0);
     assert(msg_hash.byteSize() == 32);
-    assert(r < m_GOrder);
-    assert(s < m_GOrder);
+    assert(r < getGeneratorOrder());
+    assert(s < getGeneratorOrder());
 
     bool ret = false;
 
-    Integer r_candidate = r + (recover_alternate ? m_GOrder : Integer::zero);
-    if( r_candidate < m_FField.size() )
+	// small r can come from large R satisfying n < Rx < p : in such a case, r = Rx % n (i.e. Rx = r + n)
+	// see: https://bitcoin.stackexchange.com/questions/38351/ecdsa-v-r-s-what-is-v/38909#38909
+    Integer Rx = r + (recover_alternate ? getGeneratorOrder() : Integer::zero);
+	//Integer Rx = r + getGeneratorOrder();
+    if( Rx < getFieldOrder() )
     {
-		Integer y_candidate;
-		if( sqrtmod(y_candidate, getY2(r_candidate), y_imparity) )
+		Integer Ry;
+		if( sqrtmod(Ry, getY2(Rx), y_imparity) )
 		{
-			Point R = Point(r_candidate, y_candidate);
+			Point R = Point(Rx, Ry);
 			if( verifyPoint(R) && verifyPointOrder(R) )
 			{
-				//cout << hex << "R_candidate = (0x" << R.getX() << ", 0x" << R.getY() << ")" << endl;
+				//cout << hex << "Rx = (0x" << R.getX() << ", 0x" << R.getY() << ")" << endl;
 				Point sR = p_scalar(R, s);
 				//cout << hex << "sR = (0x" << sR.getX() << ", 0x" << sR.getY() << ")" << endl;
-				Point hG =  p_scalar(m_G, msg_hash);
+				Point hG =  p_scalar(getGenerator(), msg_hash);
 				//cout << hex << "hG = (0x" << hG.getX() << ", 0x" << hG.getY() << ")" << endl;
 				Point invhG = p_inv(hG);
 				//cout << hex << "_hG = (0x" << invhG.getX() << ", 0x" << invhG.getY() << ")" << endl;
 				Point sR_hG = p_add(sR, invhG);
 				//cout << hex << "sR_hG = (0x" << sR_hG.getX() << ", 0x" << sR_hG.getY() << ")" << endl;
 				Integer r_1;
-				inv(r_1, r_candidate, m_GOrder);
+				inv(r_1, r, getGeneratorOrder());
 				//cout << hex << "r^(-1) = 0x" << r_1 << endl;
 				Q_candidate = p_scalar(sR_hG, r_1);
 				if( verifyPoint(Q_candidate) && verifyPointOrder(Q_candidate) )

@@ -34,9 +34,9 @@ class EllipticCurve
         EllipticCurve(const Integer& fieldOrder, const Integer& A, const Integer& B);
         EllipticCurve(const Integer& fieldOrder, const Integer& A, const Integer& B, const Point& G, const Integer& generatorOrder);
 
-        const Integer getFieldOrder() const { return m_FField.size(); }
-        const Point& getGenerator() const { return m_G; }
-        const Integer& getGeneratorOrder() const { return m_GOrder; }
+        inline const Integer getFieldOrder() const { return m_FField.size(); }
+        inline const Point& getGenerator() const { return m_G; }
+        inline const Integer& getGeneratorOrder() const { return m_GOrder; }
 
         Point p_scalar(const Point &P, const Integer& k) const;
 
@@ -68,6 +68,21 @@ class EllipticCurve
 
         bool sqrtmod(Integer& root, const Integer& value, const bool imparity) const;
 
+        /// @brief Allows fo public Key recovery from {Hash(payload), r, s, v}
+        ///        Formally, {r,s} allows up to 4 different Public Keys recovery
+        ///        {rx, ry}, {rx, -ry}, {rx+n, ry}, {rx+n, -ry}
+        ///        The 2 last solutions have extremly low probability of occurrence
+        ///        as they require very small r value (r < (FieldOrder - CurveOrder))
+        ///        Ethereum only considers {rx, ry}, {rx, -ry}, thus making v a 2-values field
+        ///        The signing function is responsible for excluding k values that would
+        ///        lead to R != R%n, by chosing an alternate k.
+        /// @param pubkeyPoint 
+        /// @param msg_hash 
+        /// @param r 
+        /// @param s 
+        /// @param y_imparity 
+        /// @param recover_alternate: bool forcing the recovery of {rx+n, ry}, {rx+n, -ry}, for testing purpose
+        /// @return 
         bool recover( Point& pubkeyPoint,
               	      const ByteSet &msg_hash, const Integer& r, const Integer& s, const bool y_imparity,
                       const bool recover_alternate = false ) const;

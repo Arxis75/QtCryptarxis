@@ -152,7 +152,7 @@ bool Signature::ecrecover(Pubkey &key, const ByteSet &h, const ByteSet &from_add
         else
         {
             key = key_candidate;
-            ret = true;
+            ret = (key_candidate.getAddress() == from_address || from_address.byteSize() == 0);
         }
     }
     return ret;
@@ -290,7 +290,11 @@ const Signature Privkey::sign(const ByteSet &h, const bool enforce_eip2) const
         //cout << "R.y imparity = " << (imparity ? "odd (0x01)" : "even (0x00)") << endl;
         r = R.getX();
         //cout << hex << "r = 0x" << r << endl;
-        if(r>0 && r<n) break;
+        if(!R.isIdentity() && r>0 && r<n) break;   
+        // ECDSA specifies r = Rx%n (Cf p184 "Guide to Elliptic Curve Cryptography")
+        // In case of n < Rx < p, Ethereum cannot recover the proper R from r (and consequently the proper PublicKey),
+        // as Rx != r (Rx = r + n). There is no information attached to v that might help discriminating this edge-case.
+        // => It is mandatory to iterate the nonce generation to find another k satisfying r = Rx.
         nonce_to_skip++;
     }
     Integer s = (k_1 * (Integer(h) + (r*m_secret))) % n;

@@ -4,7 +4,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QtCryptarxis
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        UI/dialog.cpp UI/dialog.h UI/dialog.ui
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QtCryptarxis APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -51,7 +50,8 @@ if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(QtCryptarxis)
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/UI)
+target_include_directories(QtCryptarxis PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/UI)
+target_include_directories(QtCryptarxis_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/UI)
 
 add_subdirectory(data)
 add_subdirectory(crypto)

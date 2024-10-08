@@ -1,4 +1,4 @@
 file(GLOB SOURCES "*.h" "*.cpp")
 
 target_sources(QtCryptarxis PUBLIC ${SOURCES})
-target_link_libraries(QtCryptarxis)
+target_sources(QtCryptarxis_test PUBLIC ${SOURCES})

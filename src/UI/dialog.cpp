@@ -74,11 +74,12 @@ void Dialog::updateReadTx() {
 
         stream.str(std::string());
         //stream << "0x" << std::hex << pstx->serialize();
-        stream << "0x" << std::hex << pstx->serialize().keccak256();
+        stream << "0x" << std::hex << ByteSet(raw_tx,sizeof(raw_tx),16).keccak256();
+        //stream << "0x" << std::hex << pstx->serialize().keccak256();
         ui->lineEdit_tx_hash->setText(QString::fromStdString(stream.str()));
 
         stream.str(std::string());
-        stream << std::dec << pstx->getPayload().getChainId();
+        if(pstx->getPayload().getChainId().as_uint64() > 0) stream << std::dec << pstx->getPayload().getChainId();
         ui->lineEdit_chainId->setText(QString::fromStdString(stream.str()));
 
         stream.str(std::string());

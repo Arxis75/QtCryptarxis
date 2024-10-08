@@ -166,22 +166,26 @@ const RLPByteSet SignedTransaction::serialize() const
 {
     RLPByteSet payload = m_payload.serialize();
     switch(m_payload.getFormat()) {
-    case TransactionPayload::Format::PRE_EIP_155:
+        case TransactionPayload::Format::PRE_EIP_155:
             payload.push_back(ByteSet((uint64_t)27 + (uint8_t)m_signature.get_imparity()));
-            payload.push_back(ByteSet(m_signature.get_r(), 32));
-            payload.push_back(ByteSet(m_signature.get_s(), 32));
             break;
         case TransactionPayload::Format::EIP_155:
             payload.push_back(ByteSet(35 + 2*Integer(m_payload.getChainId()) + m_signature.get_imparity()));
-            payload.push_back(ByteSet(m_signature.get_r(), 32));
-            payload.push_back(ByteSet(m_signature.get_s(), 32));
             break;
         default:
             payload.push_back(ByteSet(m_signature.get_imparity()));
-            payload.push_back(ByteSet(m_signature.get_r(), 32));
-            payload.push_back(ByteSet(m_signature.get_s(), 32));
-            payload.ByteSet::push_front((uint64_t)m_payload.getFormat(), 1);    // Put the 1-Byte Tx type in front
+            break;
     }
+    payload.push_back(ByteSet(m_signature.get_r(), 32));
+    payload.push_back(ByteSet(m_signature.get_s(), 32));
+    switch(m_payload.getFormat()) {
+        case TransactionPayload::Format::PRE_EIP_155:
+        case TransactionPayload::Format::EIP_155:
+            break;
+        default:
+            payload.ByteSet::push_front((uint64_t)m_payload.getFormat(), 1);    // Put the 1-Byte Tx type in front
+            break;
+        }
     return payload;
 }
 
