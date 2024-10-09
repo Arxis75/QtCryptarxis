@@ -50,8 +50,9 @@ if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(QtCryptarxis)
 endif()
 
+#Defines the root folder(s) for all targets
 target_include_directories(QtCryptarxis PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/UI)
-target_include_directories(QtCryptarxis_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/UI)
+target_include_directories(QtCryptarxis_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(data)
 add_subdirectory(crypto)
