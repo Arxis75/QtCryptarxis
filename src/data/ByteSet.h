@@ -7,17 +7,32 @@ class ByteSet
 {
     public:       
         ByteSet() { vvalue.reserve(32); };
-        ByteSet(const uint64_t value) { vvalue.reserve(8); push_back(value, sizeInBytes64(value)); }    //Triming here!
-        ByteSet(const vector<uint8_t> &v) { vvalue = v; }
+        /// Copy constructor
         ByteSet(const ByteSet &b) { vvalue = b.vvalue; }
-        ByteSet(const char* str) { vvalue.reserve(strlen(str)); push_back_ptr(reinterpret_cast<const uint8_t*>(str), strlen(str)); }
+
+        /// Array Constructor from array of bytes
         ByteSet(const uint8_t *p, uint64_t size) { vvalue.reserve(size); push_back_ptr(p, size); }
-        // For BigInt: BEWARE possible implicit conversion from const char* to Integer when calling the constructor
-        // For construction from an array of chars, the caller must use ByteSet(const char* str) signature.
-        // For construction from value=0, the caller must explicitely use Integer::zero or Integer(0), else, it could
-        // lead to ByteSet(const uint8_t *p, uint64_t size) being called.
+        /// Array Constructor from array of chars interpreted as bytes
+        ByteSet(const char* str) : ByteSet(reinterpret_cast<const uint8_t*>(str), strlen(str)) { }
+        /// Array Constructor from vector of bytes
+        explicit ByteSet(const vector<uint8_t> &v) { vvalue = v; }
+        
+        /// Value constructor from Integer
+        /// The output ByteSet size equals the "size" parameter
+        /// BEWARE: For construction from value=0, the caller must explicitely use Integer::zero or Integer(0), 
+        /// else, it could lead to ByteSet(const uint8_t *p, uint64_t size) being called.
         ByteSet(const Integer& value, uint64_t size);
-        // For string representing a number in base 2 or 16
+        /// Value constructor from Integer
+        /// The output ByteSet size is the minimal size containing the value
+        explicit ByteSet(const Integer& value) : ByteSet(value, sizeInBytes(value)) { }
+        /// Value constructor from uint64_t
+        /// The output ByteSet size is the minimal size containing the value, and NOT 8 bytes.
+        explicit ByteSet(const uint64_t value) { vvalue.reserve(8); push_back(value, sizeInBytes64(value)); }
+
+        /// For string representing a number in base 2 or 16
+        /// BEWARE: don't use 1-parameter (const string &str) constructor, as it might be implicitely converted to Integer
+        /// "fixed_size" is only used for adding 0x00 front padding if "fixed_size" exceeds the value size
+        /// A "fixed_size" smaller than the value size does not truncate the ByteSet
         ByteSet(const string& str_value, const uint64_t size, const uint8_t in_base) { vvalue.reserve(size); push_back(str_value, size, in_base); };
 
         void resize(const uint32_t size, const uint8_t value = 0) { vvalue.resize(size, value); }

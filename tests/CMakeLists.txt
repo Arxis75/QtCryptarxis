@@ -6,6 +6,8 @@ add_executable(QtCryptarxis_test main.cpp)
 
 target_link_libraries(QtCryptarxis_test PRIVATE GTest::gtest)
 
+enable_testing()
+
 add_subdirectory(unit_tests)
 
 include(GoogleTest)

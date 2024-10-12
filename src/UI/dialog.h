@@ -22,6 +22,7 @@ public:
 public slots:
     void updateWallet();
     void updateReadTx();
+    void updateForgeTx();
 
 private slots:
     void on_plainTextEdit_mnc_textChanged() { updateWallet(); }
@@ -33,8 +34,9 @@ private slots:
 
     void on_plainTextEdit_raw_tx_textChanged() { updateReadTx(); }
 
+    void on_valueInput_tab3_textChanged(const QString &) { updateForgeTx(); }
+
 private:
     Ui::Dialog *ui;
-    BIP39::Mnemonic* m_pmnc;
 };
 #endif // DIALOG_H

@@ -6,9 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1147</width>
+    <width>947</width>
     <height>753</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="cursor">
+   <cursorShape>ArrowCursor</cursorShape>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -31,12 +40,18 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1141</width>
+     <width>941</width>
      <height>711</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -47,7 +62,7 @@
       <rect>
        <x>240</x>
        <y>310</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -58,7 +73,7 @@
       </font>
      </property>
      <property name="text">
-      <string>0x3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</string>
+      <string>0</string>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -127,7 +142,7 @@
       <rect>
        <x>240</x>
        <y>260</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -145,7 +160,7 @@
       </font>
      </property>
      <property name="text">
-      <string/>
+      <string>0</string>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -156,7 +171,7 @@
       <rect>
        <x>240</x>
        <y>360</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -167,7 +182,7 @@
       </font>
      </property>
      <property name="text">
-      <string/>
+      <string>0</string>
      </property>
      <property name="readOnly">
       <bool>true</bool>
@@ -178,7 +193,7 @@
       <rect>
        <x>240</x>
        <y>180</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -232,7 +247,7 @@
       <rect>
        <x>240</x>
        <y>140</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -250,7 +265,7 @@
       <rect>
        <x>130</x>
        <y>10</y>
-       <width>1001</width>
+       <width>801</width>
        <height>81</height>
       </rect>
      </property>
@@ -287,7 +302,7 @@
       <rect>
        <x>240</x>
        <y>220</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -370,7 +385,7 @@
       <rect>
        <x>80</x>
        <y>10</y>
-       <width>1051</width>
+       <width>851</width>
        <height>81</height>
       </rect>
      </property>
@@ -425,7 +440,7 @@
       <rect>
        <x>240</x>
        <y>220</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -444,7 +459,7 @@
       <rect>
        <x>240</x>
        <y>250</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -481,7 +496,7 @@
       <rect>
        <x>240</x>
        <y>340</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -518,7 +533,7 @@
       <rect>
        <x>240</x>
        <y>370</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -555,7 +570,7 @@
       <rect>
        <x>240</x>
        <y>400</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -592,7 +607,7 @@
       <rect>
        <x>240</x>
        <y>430</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -629,7 +644,7 @@
       <rect>
        <x>240</x>
        <y>490</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -666,7 +681,7 @@
       <rect>
        <x>240</x>
        <y>520</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -703,7 +718,7 @@
       <rect>
        <x>240</x>
        <y>550</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -740,7 +755,7 @@
       <rect>
        <x>240</x>
        <y>140</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -780,7 +795,7 @@
       <rect>
        <x>240</x>
        <y>190</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -817,7 +832,7 @@
       <rect>
        <x>240</x>
        <y>280</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -854,7 +869,7 @@
       <rect>
        <x>240</x>
        <y>310</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -891,7 +906,7 @@
       <rect>
        <x>240</x>
        <y>460</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -946,9 +961,15 @@
       <rect>
        <x>240</x>
        <y>600</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="font">
       <font>
@@ -957,7 +978,7 @@
       </font>
      </property>
      <property name="text">
-      <string>0x3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</string>
+      <string>0</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_from_address">
@@ -965,7 +986,7 @@
       <rect>
        <x>240</x>
        <y>630</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1000,7 +1021,7 @@
     <widget class="QRadioButton" name="radioButton_pre_eip155">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>240</x>
        <y>100</y>
        <width>141</width>
        <height>26</height>
@@ -1016,7 +1037,7 @@
     <widget class="QRadioButton" name="radioButton_eip155">
      <property name="geometry">
       <rect>
-       <x>560</x>
+       <x>420</x>
        <y>100</y>
        <width>127</width>
        <height>26</height>
@@ -1032,7 +1053,7 @@
     <widget class="QRadioButton" name="radioButton_eip2930">
      <property name="geometry">
       <rect>
-       <x>800</x>
+       <x>600</x>
        <y>100</y>
        <width>127</width>
        <height>26</height>
@@ -1048,7 +1069,7 @@
     <widget class="QRadioButton" name="radioButton_eip1559">
      <property name="geometry">
       <rect>
-       <x>1010</x>
+       <x>800</x>
        <y>100</y>
        <width>127</width>
        <height>26</height>
@@ -1100,12 +1121,12 @@
       <string>s:</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_from_address_2">
+    <widget class="QLineEdit" name="lineEdit_from_address_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>640</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1119,12 +1140,12 @@
       <string>0</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_from_pubkey_2">
+    <widget class="QLineEdit" name="lineEdit_from_pubkey_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>610</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1135,7 +1156,7 @@
       </font>
      </property>
      <property name="text">
-      <string>0x3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</string>
+      <string>0</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_26">
@@ -1174,12 +1195,12 @@
       <string>PubKey(Ecrecover):</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_eth_2">
+    <widget class="QLineEdit" name="lineEdit_eth_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>250</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1229,10 +1250,10 @@
       <string>Gas Limit:</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_eip155_2">
+    <widget class="QRadioButton" name="radioButton_eip155_tab3">
      <property name="geometry">
       <rect>
-       <x>560</x>
+       <x>420</x>
        <y>10</y>
        <width>127</width>
        <height>26</height>
@@ -1245,12 +1266,12 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_max_priority_fee_per_gas_2">
+    <widget class="QLineEdit" name="lineEdit_max_priority_fee_per_gas_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>100</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1264,12 +1285,12 @@
       <string>0</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_max_fee_per_gas_2">
+    <widget class="QLineEdit" name="lineEdit_max_fee_per_gas_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>130</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1301,12 +1322,12 @@
       <string>Gas Price:</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_v_2">
+    <widget class="QLineEdit" name="lineEdit_v_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>340</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1338,10 +1359,10 @@
       <string>v:</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_pre_eip155_2">
+    <widget class="QRadioButton" name="radioButton_pre_eip155_tab3">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>240</x>
        <y>10</y>
        <width>141</width>
        <height>26</height>
@@ -1372,12 +1393,12 @@
       <string>ChainId:</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_access_list_2">
+    <widget class="QLineEdit" name="lineEdit_access_list_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>310</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1388,7 +1409,7 @@
       </font>
      </property>
      <property name="text">
-      <string>0</string>
+      <string>0x</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_34">
@@ -1409,12 +1430,12 @@
       <string>Address(Ecrecover):</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_nonce_2">
+    <widget class="QLineEdit" name="lineEdit_nonce_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>70</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1428,12 +1449,12 @@
       <string>0</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_r_2">
+    <widget class="QLineEdit" name="lineEdit_r_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>370</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1447,12 +1468,12 @@
       <string>0</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_data_2">
+    <widget class="QLineEdit" name="lineEdit_data_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>280</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1466,34 +1487,12 @@
       <string>0</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_chainId_2">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>240</x>
-       <y>40</y>
-       <width>890</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Liberation Mono</family>
-       <pointsize>13</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>0</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_gaslimit_2">
+    <widget class="QLineEdit" name="lineEdit_gaslimit_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>190</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1525,10 +1524,10 @@
       <string>AccessList:</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_eip2930_2">
+    <widget class="QRadioButton" name="radioButton_eip2930_tab3">
      <property name="geometry">
       <rect>
-       <x>800</x>
+       <x>600</x>
        <y>10</y>
        <width>127</width>
        <height>26</height>
@@ -1572,12 +1571,12 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_to_2">
+    <widget class="QLineEdit" name="lineEdit_to_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>220</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1663,12 +1662,12 @@
       <string>r:</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_s_2">
+    <widget class="QLineEdit" name="lineEdit_s_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>400</y>
-       <width>891</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1682,12 +1681,12 @@
       <string>0</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_gasprice_2">
+    <widget class="QLineEdit" name="lineEdit_gasprice_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>160</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1701,10 +1700,10 @@
       <string>0</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioButton_eip1559_2">
+    <widget class="QRadioButton" name="radioButton_eip1559_tab3">
      <property name="geometry">
       <rect>
-       <x>1010</x>
+       <x>800</x>
        <y>10</y>
        <width>127</width>
        <height>26</height>
@@ -1735,12 +1734,12 @@
       <string>Tx Hash:</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_tx_hash_2">
+    <widget class="QLineEdit" name="lineEdit_tx_hash_tab3">
      <property name="geometry">
       <rect>
        <x>240</x>
        <y>580</y>
-       <width>890</width>
+       <width>690</width>
        <height>27</height>
       </rect>
      </property>
@@ -1772,12 +1771,12 @@
       <string>Raw Tx:</string>
      </property>
     </widget>
-    <widget class="QPlainTextEdit" name="plainTextEdit_raw_tx_2">
+    <widget class="QPlainTextEdit" name="plainTextEdit_raw_tx_tab3">
      <property name="geometry">
       <rect>
        <x>80</x>
        <y>470</y>
-       <width>1051</width>
+       <width>851</width>
        <height>101</height>
       </rect>
      </property>
@@ -1788,7 +1787,17 @@
       </font>
      </property>
      <property name="plainText">
-      <string>0x02f9039b012a84773594008511d7b2acc28303c6fa94881d40237659c251811cec9c364ef91dc08d300c880429d069189e0000b903255f575529000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000429d069189e000000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000c307846656544796e616d6963000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b62132e35a6c13ee1ee0f84dc5d40bad8d81520600000000000000000000000000000000000000000000000004207cfca814f00000000000000000000000000000000000000000000000001a0f92f4fa9cf0296800000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000009536c7089100000000000000000000000000011ededebf63bef0ea2d2d071bdf88f71543ec6fb000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001083598d8ab000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000001a0f92f4fa9cf029680000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002bc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000bb8b62132e35a6c13ee1ee0f84dc5d40bad8d815206000000000000000000000000000000000000000000869584cd00000000000000000000000011ededebf63bef0ea2d2d071bdf88f71543ec6fb0000000000000000000000000000000000000000000000aa4c4df4236127823300000000000000000000000000000000000000000000000057c080a046a422719cb8728913ecc0a94f1035ee6c12393cc56d537c0b3bcccbcd063d79a05e45509bfbd8548625a94724ea5091c142cbe9051d9cddf7974a7af88a4de543</string>
+      <string/>
+     </property>
+    </widget>
+    <widget class="MyLineEditValueInput" name="valueInput_tab3" native="true">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>35</y>
+       <width>801</width>
+       <height>41</height>
+      </rect>
      </property>
     </widget>
    </widget>
@@ -1797,15 +1806,30 @@
      <string>Sign Tx</string>
     </attribute>
    </widget>
+   <widget class="QWidget" name="tab_5">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+   </widget>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
    <class>MyComboBox</class>
    <extends>QComboBox</extends>
-   <header>mycombobox.h</header>
+   <header location="global">mycombobox.h</header>
    <slots>
     <slot>slot1()</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>MyLineEditValueInput</class>
+   <extends>QWidget</extends>
+   <header location="global">myLineEditValueInput.h</header>
+   <container>1</container>
+   <slots>
+    <signal>textChanged(QString)</signal>
+    <slot>handleTextChanged(QString)</slot>
    </slots>
   </customwidget>
  </customwidgets>

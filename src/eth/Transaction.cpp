@@ -9,7 +9,7 @@ TransactionPayload::TransactionPayload(
     const ByteSet& data
     )
     : m_format(Format::PRE_EIP_155)
-    , m_chainId(Integer::zero)
+    , m_chainId()
     , m_nonce(nonce)
     , m_gasPrice(gasPrice)
     , m_max_priority_fee_per_gas(ByteSet())
@@ -170,7 +170,7 @@ const RLPByteSet SignedTransaction::serialize() const
             payload.push_back(ByteSet((uint64_t)27 + (uint8_t)m_signature.get_imparity()));
             break;
         case TransactionPayload::Format::EIP_155:
-            payload.push_back(ByteSet(35 + 2*Integer(m_payload.getChainId()) + m_signature.get_imparity()));
+            payload.push_back(ByteSet(35 + 2*m_payload.getChainId().as_Integer() + m_signature.get_imparity()));
             break;
         default:
             payload.push_back(ByteSet(m_signature.get_imparity()));
@@ -236,7 +236,7 @@ SignedTransaction* SignedTransaction::parse(const string& str_raw_tx)
         v = (v+1)%2;                                        //converts v to {0,1}
     }
     else if(v >= 37) {
-        chainId = (uint64_t)(v-35)/2;                       //Cf EIP 155
+        chainId = ByteSet((v-35) >> 1);                       //Cf EIP 155
         tx_type =  TransactionPayload::Format::EIP_155;
         v = (v+1)%2;                                        //converts v to {0,1}
     }

@@ -6,7 +6,6 @@
 Dialog::Dialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Dialog)
-    , m_pmnc(nullptr)
 {
     ui->setupUi(this);
 
@@ -20,43 +19,47 @@ Dialog::~Dialog()
 }
 
 void Dialog::updateWallet() {
+    BIP39::Mnemonic* pmnc = nullptr;
+
     if( ui->radioButton_12_words->isChecked() )
-        m_pmnc = new BIP39::Mnemonic(128);
+        pmnc = new BIP39::Mnemonic(128);
     else
-        m_pmnc = new BIP39::Mnemonic(256);
+        pmnc = new BIP39::Mnemonic(256);
 
-    m_pmnc->setPassword(ui->lineEdit_bip39_pwd->text().toStdString());
+    if(pmnc) {
+        pmnc->setPassword(ui->lineEdit_bip39_pwd->text().toStdString());
 
-    m_pmnc->set_full_word_list(ui->plainTextEdit_mnc->toPlainText().toStdString());
+        pmnc->set_full_word_list(ui->plainTextEdit_mnc->toPlainText().toStdString());
 
-    Privkey k = Privkey( *m_pmnc,
-                         ui->lineEdit_derivation_path->text().toStdString().c_str(),
-                         ui->lineEdit_derivation_path_index->text().toInt() );
+        Privkey k = Privkey( *pmnc,
+                             ui->lineEdit_derivation_path->text().toStdString().c_str(),
+                             ui->lineEdit_derivation_path_index->text().toInt() );
 
-    stringstream stream;
+        stringstream stream;
 
-    stream.str(std::string());
-    if( m_pmnc->is_valid() )
-        stream << "0x" << std::hex << k.getSecret();
-    else
-        stream << "N/A";
-    ui->lineEdit_k->setText( QString::fromStdString(stream.str()) );
+        stream.str(std::string());
+        if( pmnc->is_valid() )
+            stream << "0x" << std::hex << k.getSecret();
+        else
+            stream << "N/A";
+        ui->lineEdit_k->setText( QString::fromStdString(stream.str()) );
 
-    stream.str(std::string());
-    if( m_pmnc->is_valid() )
-        stream << "0x" << std::hex << k.getPubKey().getKey(Pubkey::Format::PREFIXED_X);
-    else
-        stream << "N/A";
-    ui->lineEdit_pub_c->setText( QString::fromStdString(stream.str()) );
+        stream.str(std::string());
+        if( pmnc->is_valid() )
+            stream << "0x" << std::hex << k.getPubKey().getKey(Pubkey::Format::PREFIXED_X);
+        else
+            stream << "N/A";
+        ui->lineEdit_pub_c->setText( QString::fromStdString(stream.str()) );
 
-    stream.str(std::string());
-    if( m_pmnc->is_valid() )
-        stream << "0x" << std::hex << k.getPubKey().getAddress();
-    else
-        stream << "N/A";
-    ui->lineEdit_address->setText( QString::fromStdString(stream.str()) );
+        stream.str(std::string());
+        if( pmnc->is_valid() )
+            stream << "0x" << std::hex << k.getPubKey().getAddress();
+        else
+            stream << "N/A";
+        ui->lineEdit_address->setText( QString::fromStdString(stream.str()) );
 
-    delete m_pmnc;
+        delete pmnc;
+    }
 }
 
 void Dialog::updateReadTx() {
@@ -74,7 +77,7 @@ void Dialog::updateReadTx() {
 
         stream.str(std::string());
         //stream << "0x" << std::hex << pstx->serialize();
-        stream << "0x" << std::hex << ByteSet(raw_tx,sizeof(raw_tx),16).keccak256();
+        stream << "0x" << std::hex << ByteSet(raw_tx,raw_tx.length(),16).keccak256();
         //stream << "0x" << std::hex << pstx->serialize().keccak256();
         ui->lineEdit_tx_hash->setText(QString::fromStdString(stream.str()));
 
@@ -177,4 +180,106 @@ void Dialog::updateReadTx() {
         ui->lineEdit_from_address->setText(QString::fromStdString(stream.str()));
     }
 }
+
+void Dialog::updateForgeTx() {
+
+    TransactionPayload::Format tx_type;
+    if( ui->radioButton_pre_eip155_tab3->isChecked() )
+        tx_type = TransactionPayload::Format::PRE_EIP_155;
+    else if( ui->radioButton_eip155_tab3->isChecked() )
+        tx_type = TransactionPayload::Format::EIP_155;
+    else if( ui->radioButton_eip2930_tab3->isChecked() )
+        tx_type = TransactionPayload::Format::EIP_2930;
+    else
+        tx_type = TransactionPayload::Format::EIP_1559;
+/*
+    const Integer chainId(ui->lineEdit_chainId_tab3->text().toStdString());
+    const Integer nonce(ui->lineEdit_nonce_tab3->text().toStdString());
+    const Integer max_priority_fee_per_gas(ui->lineEdit_max_priority_fee_per_gas_tab3->text().toStdString());
+    const Integer max_fee_per_gas(ui->lineEdit_max_fee_per_gas_tab3->text().toStdString());
+    const Integer gasprice(ui->lineEdit_gasprice_tab3->text().toStdString());
+    const Integer gaslimit(ui->lineEdit_gaslimit_tab3->text().toStdString());
+    const ByteSet to(ui->lineEdit_to_tab3->text().toStdString(), ui->lineEdit_to_tab3->text().length()-2, 16);
+    const Integer eth(ui->lineEdit_eth_tab3->text().toStdString());
+    const ByteSet data(ui->lineEdit_data_tab3->text().toStdString(), ui->lineEdit_data_tab3->text().length()-2,  16);
+    const ByteSet access_list(ui->lineEdit_access_list_tab3->text().toStdString(), ui->lineEdit_access_list_tab3->text().length()-2, 16);
+    const bool v(ui->lineEdit_v_tab3->text() == "1" ? true : false);
+    const ByteSet r(ui->lineEdit_r_tab3->text().toStdString(), ui->lineEdit_r_tab3->text().length()-2, 16);
+    const ByteSet s(ui->lineEdit_s_tab3->text().toStdString(), ui->lineEdit_s_tab3->text().length()-2, 16);
+*/
+    Integer nonce;
+    std::stringstream ss;
+    ss << std::hex << ui->lineEdit_nonce_tab3->text().toStdString().c_str();
+    ss >> nonce;
+/*
+    TransactionPayload* ptxp = nullptr;
+    switch( tx_type )
+    {
+        case TransactionPayload::Format::PRE_EIP_155:
+            ptxp = new TransactionPayload( ByteSet(nonce, nonce.length(), 16),
+                                           ByteSet(gasprice, gasprice.length(), 16),
+                                           ByteSet(gaslimit, gaslimit.length(), 16),
+                                           to,
+                                           ByteSet(eth, eth.length(), 16),
+                                           data );
+            break;
+        case TransactionPayload::Format::EIP_155:
+            break;
+        case TransactionPayload::Format::EIP_2930:
+            break;
+        default:
+            break;
+    }
+
+    if(ptxp) {
+        Signature sig = Signature(ByteSet(r, r.length(), 16), ByteSet(s, s.length(), 16), ByteSet(v, v.length(), 16).as_bool());
+
+        SignedTransaction* pstx = new SignedTransaction(*ptxp, sig);
+        if(pstx) {
+            stringstream stream;
+
+            stream.str(std::string());
+            stream << "0x" << std::hex << pstx->serialize();
+            ui->plainTextEdit_raw_tx_tab3->setPlainText(QString::fromStdString(stream.str()));
+
+            stream.str(std::string());
+            stream << "0x" << std::hex << pstx->serialize().keccak256();
+            ui->lineEdit_tx_hash_tab3->setText(QString::fromStdString(stream.str()));
+
+            Pubkey pubkey;
+            if( pstx->getSignature().ecrecover(pubkey, pstx->getPayload().serializeAsSigningPayload().keccak256()) )
+            {
+                stream.str(std::string());
+                stream << "0x" << std::hex << pubkey.getKey(Pubkey::Format::PREFIXED_X);
+                ui->lineEdit_from_pubkey_tab3->setText(QString::fromStdString(stream.str()));
+
+                stream.str(std::string());
+                stream << "0x" << std::hex << pubkey.getAddress();
+                ui->lineEdit_from_address_tab3->setText(QString::fromStdString(stream.str()));
+            }
+            delete pstx;
+        }
+        else {
+            stringstream stream;
+            stream.str(std::string());
+            stream << "N/A";
+
+            ui->plainTextEdit_raw_tx_tab3->setPlainText(QString::fromStdString(stream.str()));
+            ui->lineEdit_tx_hash_tab3->setText(QString::fromStdString(stream.str()));
+            ui->lineEdit_from_pubkey_tab3->setText(QString::fromStdString(stream.str()));
+            ui->lineEdit_from_address_tab3->setText(QString::fromStdString(stream.str()));
+        }
+        delete ptxp;
+    }
+*/
+}
+
+
+/*void Dialog::on_valueInput_tab3_textChanged(const QString& txt)
+{
+    ByteSet B1 = ui->valueInput1->toByteSet();
+    ByteSet B2 = ui->valueInput1->toByteSet(32);
+    Integer i = ui->valueInput1->toByteSet().as_Integer();
+    bool b = ui->valueInput1->toByteSet().as_bool();
+}*/
 
