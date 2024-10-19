@@ -1,5 +1,6 @@
 #include <crypto/bips.h>
 #include <crypto/bip39_dictionnary.h>
+#include <data/RawStrByteSet.h>
 
 using namespace BIP39;
 
@@ -262,9 +263,9 @@ Privkey::Privkey(const ByteSet &seed, const char *path, const int32_t account_i,
 
 const Signature Privkey::signWithPrefix(const char* msg, const bool enforce_eip2) const
 {
-    ByteSet t_raw("\u0019Ethereum Signed Message:\n");
-    t_raw.push_back(std::to_string(strlen(msg)).c_str());
-    t_raw.push_back(msg);
+    RawStrByteSet t_raw("\u0019Ethereum Signed Message:\n");
+    t_raw.push_back((RawStrByteSet)to_string(strlen(msg)));
+    t_raw.push_back((RawStrByteSet)msg);
 
     return sign(t_raw.keccak256(), enforce_eip2);
 }

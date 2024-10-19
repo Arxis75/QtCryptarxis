@@ -2,8 +2,71 @@
 
 #include <QApplication>
 
+#include <data/StrByteSet.h>
+#include <data/IntByteSet.h>
+
 int main(int argc, char *argv[])
 {
+    IntByteSet i("81985529216486895", 17);
+
+    cout << hex << i << endl;
+
+    StrByteSet f("0x0");
+
+    StrByteSet x("0x00123456789ABCDEF", 17);
+    //ByteSet x("0x10000000000000009", 17, 16);
+    StrByteSet y(x);
+
+    /*string yy = y.toHex();
+    yy = y.toDec();
+    yy = y.toBin();
+
+    yy = y.toFixedHex(32);
+    yy = y.toFixedBin(32);*/
+
+/*    //dec string => hex string
+    stringstream ss;
+    ss << std::hex << Integer("65535");
+    string out = ss.str();
+
+    out = addZeroPadding("0x0000F", 16, 3);
+
+    //hex string => dec string
+    out = toHex("zzzzz", 10);
+    out = toHex("0x12AB", 10);
+    out = toHex("12AB", 10); 
+    out = toHex("0x12ab", 10);
+    out = toHex("12ab", 10);
+    out = toDec("zzzzz", 2);
+    out = toHex("0x12AB", 2);
+    out = toHex("12AB", 2);
+    out = toHex("0x12ab", 2);
+    out = toHex("12ab", 2);
+    out = toHex("65536", 2);
+
+    out = toDec("zzzzz", 16);
+    out = toDec("zzzzz", 2);
+    out = toDec("0x12AB", 2);
+    out = toDec("12AB", 2);
+    out = toDec("0x12ab", 2);
+    out = toDec("12ab", 2);
+    out = toDec("65536", 2);
+
+    out = toBin("zzzzz", 16);
+    out = toBin("zzzzz", 10);
+    out = toBin("0x12AB", 10);
+    out = toBin("12AB", 10);
+    out = toBin("0x12ab", 10);
+    out = toBin("12ab", 10);
+
+    //hex string => dec string
+    out = toDec(removeBaseHeader("0b111"), 2);
+    out = toDec(removeBaseHeader("0b11111"), 2);
+    out = toDec(removeBaseHeader("0x12AB"), 16);
+    out = toDec("12AB", 16);
+    out = toDec(removeBaseHeader("0x12ab"), 16);
+    out = toDec("12ab", 16);*/
+
     QApplication a(argc, argv);
     Dialog d;
     d.show();

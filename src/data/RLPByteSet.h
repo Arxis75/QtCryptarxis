@@ -1,16 +1,16 @@
 #pragma once
 
-#include <data/ByteSet.h>
+#include <data/HexStrByteSet.h>
 
-class RLPByteSet: public ByteSet
+class RLPByteSet: public HexStrByteSet
 {
     public:
         // Non-encoding constructors:
-        RLPByteSet() { vvalue.reserve(1+32); }
-        RLPByteSet(const vector<uint8_t> &v) : ByteSet(v.data(), v.size()) { }
-        RLPByteSet(const RLPByteSet &b) : ByteSet(b) {}
-        RLPByteSet(const uint8_t *p, uint64_t size) : ByteSet(p, size) { }
-        RLPByteSet(const char *str) : ByteSet(str, strlen(str)>1, 16) { } //for raw RLP init from hex string only
+        RLPByteSet() : HexStrByteSet("", 0) { }
+        //RLPByteSet(const vector<uint8_t> &v) : ByteSet(v.data(), v.size()) { }
+        RLPByteSet(const RLPByteSet &b) : HexStrByteSet(b) {}
+        //RLPByteSet(const uint8_t *p, uint64_t size) : ByteSet(p, size) { }
+        RLPByteSet(const char *str) : HexStrByteSet(str) { } //for raw RLP init from hex string only
         
         // Encoding constructor:
         // "as_list" is used to:

@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 #include <crypto/bips.h>
+#include <data/RawStrByteSet.h>
+#include <data/StrByteSet.h>
 
 TEST(RFC6979Tests, RFC6979_NIST_P256)
 {
@@ -15,7 +17,7 @@ TEST(RFC6979Tests, RFC6979_NIST_P256)
     ASSERT_EQ(actual, expected);
 
     const char *message = "sample";
-    ByteSet t_raw(message);
+    RawStrByteSet t_raw(message);
     ByteSet t_h(t_raw.sha256());
 
     expected = ByteSet("A6E3C57DD01ABE90086538398355DD4C3B17AA873382B0F24D6129493D8AAD60", 32, 16);
@@ -38,7 +40,7 @@ TEST(RFC6979Tests, RFC6979_NIST_P256)
     ASSERT_EQ(actual, expected);
 
     message = const_cast<const char*>("test");
-    t_raw = ByteSet(message);
+    t_raw = RawStrByteSet(message);
     t_h = ByteSet(t_raw.sha256());
 
     expected = ByteSet("D16B6AE827F17175E040871A1C7EC3500192C4C92677336EC2537ACAEE0008E0", 32, 16);
@@ -74,7 +76,7 @@ TEST(RFC6979Tests, test_boundaries)
     Pubkey Q = x.getPubKey();
 
     const char *msg = "hello";
-    ByteSet msg_raw(msg);
+    RawStrByteSet msg_raw(msg);
     ByteSet msg_h(msg_raw.keccak256());
     
     Signature expected_sig(188, 44, true, ecc);
@@ -106,7 +108,7 @@ TEST(RFC6979Tests, test_boundaries)
 TEST(RFC6979Tests, Micah_sign_vectors)
 {
     const char *message = "hello";
-    ByteSet t_raw(message);
+    RawStrByteSet t_raw(message);
     ByteSet t_h(t_raw.keccak256());
 
     Privkey x(ByteSet("1", 32, 16));

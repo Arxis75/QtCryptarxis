@@ -14,7 +14,6 @@
 
 #include <ethash/keccak.hpp>
 
-using ethash::keccak256;
 using ethash::hash256;
 
 using Givaro::Modular;

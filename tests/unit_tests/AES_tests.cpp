@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <crypto/bips.h>
 #include <crypto/AES.h>
+#include <data/RawStrByteSet.h>
+#include <data/StrByteSet.h>
 
 TEST(AES_tests, CTR_DiscV5_vectors)
 {
@@ -22,22 +24,22 @@ TEST(AES_tests, CTR_DiscV5_vectors)
                 header);
 
     //protocol-id
-    ByteSet expected = ByteSet("discv5");
+    ByteSet expected((RawStrByteSet)"discv5");
     ByteSet actual = header.pop_front(6);
     ASSERT_EQ(actual, expected);
 
     //version
-    expected = ByteSet(0x0001, 2);
+    expected = StrByteSet("0x0001");
     actual = header.pop_front(2);
     ASSERT_EQ(actual, expected);
 
     //flag
-    expected = ByteSet(1);
+    expected = StrByteSet("0x01");
     actual = header.pop_front(1);
     ASSERT_EQ(actual, expected);
 
     //nonce
-    expected = ByteSet("0x0102030405060708090a0b0c", 12, 16);
+    expected = StrByteSet("0x0102030405060708090a0b0c");
     actual = header.pop_front(12);
     ASSERT_EQ(actual, expected);
 
@@ -47,7 +49,7 @@ TEST(AES_tests, CTR_DiscV5_vectors)
     ASSERT_EQ(actual, expected);
 
     //id-nonce
-    expected = ByteSet("0x0102030405060708090a0b0c0d0e0f10", 16, 16);
+    expected = StrByteSet("0x0102030405060708090a0b0c0d0e0f10");
     actual = header.pop_front(16);
     ASSERT_EQ(actual, expected);
 
@@ -83,22 +85,22 @@ TEST(AES_tests, GCM_DiscV5_vectors)
                 nonce, nonce.byteSize(),
                 pt);
 
-    bool expected = ByteSet("0x01c6840000000102", 8, 16);
+    bool expected = StrByteSet("0x01c6840000000102");
     bool actual = pt;
     ASSERT_EQ(actual, expected);
 
-    ciphertext = ByteSet("0x00", ciphertext.byteSize(), 16);
-    tag = ByteSet("0x00", 16, 16);
+    ciphertext = StrByteSet("0x00", ciphertext.byteSize());
+    tag = StrByteSet("0x00", 16);
 
     gcm_encrypt(pt, pt.byteSize(),
                 aad, aad.byteSize(),
                 session_key, nonce, nonce.byteSize(),
                 ciphertext, tag);
 
-    expected = ByteSet("0xb84102ed931f66d1", 8, 16);
+    expected = StrByteSet("0xb84102ed931f66d1");
     actual = ciphertext;
     ASSERT_EQ(actual, expected);
-    expected = ByteSet("0x492acb308fa1c6715b9d139b81acbdcc", 16, 16);
+    expected = StrByteSet("0x492acb308fa1c6715b9d139b81acbdcc");
     actual = tag;
     ASSERT_EQ(actual, expected);
 }
@@ -109,19 +111,19 @@ TEST(AES_tests, HKDF_DiscV5_vectors)
 
     ByteSet challenge_data("0x000000000000000000000000000000006469736376350001010102030405060708090a0b0c00180102030405060708090a0b0c0d0e0f100000000000000000", 63, 16);
 
-    Privkey node_a_secret(ByteSet("0xeef77acb6c6a6eebc5b363a475ac583ec7eccdb42b6481424c60f59aa326547f", 32, 16));
-    Privkey node_b_secret(ByteSet("0x66fb62bfbd66b9177a138c1e5cddbe4f7c30c343e94e68df8769459cb1cde628", 32, 16));
+    Privkey node_a_secret(StrByteSet("0xeef77acb6c6a6eebc5b363a475ac583ec7eccdb42b6481424c60f59aa326547f"));
+    Privkey node_b_secret(StrByteSet("0x66fb62bfbd66b9177a138c1e5cddbe4f7c30c343e94e68df8769459cb1cde628"));
     Pubkey node_b_pub_key(node_b_secret.getPubKey());
     
     ByteSet node_id_a(node_a_secret.getPubKey().getID());
     ByteSet node_id_b(node_b_secret.getPubKey().getID());
     
-    Privkey ephemeral_secret(ByteSet("0xfb757dc581730490a1d7a00deea65e9b1936924caaea8f44d476014856b68736", 32, 16));
+    Privkey ephemeral_secret(StrByteSet("0xfb757dc581730490a1d7a00deea65e9b1936924caaea8f44d476014856b68736"));
 
     Pubkey ecdh(Secp256k1::GetInstance().p_scalar(node_b_pub_key.getPoint(), ephemeral_secret.getSecret()));
     ByteSet shared_secret = ecdh.getKey(Pubkey::Format::PREFIXED_X);
     
-    ByteSet kdf_info("discovery v5 key agreement");
+    ByteSet kdf_info((RawStrByteSet)"discovery v5 key agreement");
     kdf_info.push_back(node_id_a);
     kdf_info.push_back(node_id_b);
 
@@ -134,11 +136,11 @@ TEST(AES_tests, HKDF_DiscV5_vectors)
     ByteSet initiator_key(&new_key[0], 16);
     ByteSet recipient_key(&new_key[16], 16);
 
-    ByteSet expected = ByteSet("0xdccc82d81bd610f4f76d3ebe97a40571", 16, 16);
+    ByteSet expected = StrByteSet("0xdccc82d81bd610f4f76d3ebe97a40571");
     ByteSet actual = initiator_key;
     ASSERT_EQ(actual, expected);  
 
-    expected = ByteSet("0xac74bb8773749920b0d3a8881c173ec5", 16, 16);
+    expected = StrByteSet("0xac74bb8773749920b0d3a8881c173ec5");
     actual = recipient_key;
     ASSERT_EQ(actual, expected);
 }

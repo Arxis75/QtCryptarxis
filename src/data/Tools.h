@@ -7,26 +7,13 @@
  *      Map of the hexa chars, providing iterator capability
  */
 struct cmp_str { bool operator()(char const *a, char const *b) const { return strcmp(a, b) < 0; } };
+
 static const map<const char*, const uint8_t, cmp_str> map_hexa_chars = { {"0", 0}, {"1", 1}, {"2", 2}, {"3", 3},
                                                             {"4", 4}, {"5", 5}, {"6", 6}, {"7", 7},
                                                             {"8", 8}, {"9", 9}, {"a", 10}, {"A", 10},
                                                             {"b", 11}, {"B", 11}, {"c", 12}, {"C", 12},
                                                             {"d", 13}, {"D", 13}, {"e", 14}, {"E", 14},
                                                             {"f", 15}, {"F", 15} };
-static const map<const char*, const uint8_t, cmp_str> map_binary_chars = { {"0000", 0}, {"0001", 1}, {"0010", 2}, {"0011", 3},
-                                                            {"0100", 4}, {"0101", 5}, {"0110", 6}, {"0111", 7},
-                                                            {"1000", 8}, {"1001", 9}, {"1010", 10}, {"1011", 11},
-                                                            {"1100", 12}, {"1101", 13}, {"1110", 14}, {"1111", 15} };
-
-static const vector<const char*> vector_hexa_chars = { "0", "1", "2", "3", "4", "5",
-                                                       "6", "7", "8", "9", "a", "b",
-                                                       "c", "d", "e", "f",
-                                                       "0", "1", "2", "3", "4", "5",
-                                                       "6", "7", "8", "9", "A", "B",
-                                                       "C", "D", "E", "F" };
-static const vector<const char*> vector_binary_chars = { "0000", "0001", "0010", "0011", "0100", "0101",
-                                                         "0110", "0111", "1000", "1001", "1010", "1011",
-                                                         "1100", "1101", "1110", "1111" };
 
 static uint64_t getUnixTimeStamp(const time_t* t = nullptr)
 {
@@ -95,9 +82,3 @@ static inline uint64_t sizeInBytes(const Integer& value)
 vector<string> split(const string& list, const string& separator);
 
 bool isPrimeNumber(const Integer& n);
-
-string toGwei(const string& str_wei);
-
-string changeBase(const string& str_in, uint8_t to_base, uint64_t to_size = 0, uint8_t from_base = 10);
-
-vector<uint8_t> strToArray(const string& str_in, uint64_t to_size = 0);

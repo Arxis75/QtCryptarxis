@@ -3,6 +3,8 @@
 
 #include <eth/Transaction.h>
 
+#include <QGridLayout>
+
 Dialog::Dialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Dialog)
@@ -11,6 +13,65 @@ Dialog::Dialog(QWidget *parent)
 
     updateWallet();
     updateReadTx();
+    updateForgeTx();
+
+    QVBoxLayout *layout = new QVBoxLayout(ui->tab_4);
+
+    MyLineEditValueInput *m_forge_chain_id = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_nonce = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_max_priority_fee = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_max_fee = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_gas_price = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_gas_limit = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_to = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_eth = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_data = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_access_list = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_v = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_r = new MyLineEditValueInput(ui->tab_4);
+    MyLineEditValueInput *m_forge_s = new MyLineEditValueInput(ui->tab_4);
+
+    m_forge_chain_id->setTitle(tr("Chain Id:"));
+    m_forge_nonce->setTitle(tr("Nonce:"));
+    m_forge_max_priority_fee->setTitle(tr("Max Priority Fee Per Gas:"));
+    m_forge_max_fee->setTitle(tr("Max Fee Per Gas:"));
+    m_forge_gas_price->setTitle(tr("Gas Price:"));
+    m_forge_gas_limit->setTitle(tr("Gas Limit:"));
+    m_forge_to->setTitle(tr("To:"));
+    m_forge_eth->setTitle(tr("Eth:"));
+    m_forge_data->setTitle(tr("Data:"));
+    m_forge_access_list->setTitle(tr("Access List:"));
+    m_forge_v->setTitle(tr("v:"));
+    m_forge_r->setTitle(tr("r:"));
+    m_forge_s->setTitle(tr("s:"));
+
+    layout->addWidget(m_forge_chain_id);
+    layout->addWidget(m_forge_nonce);
+    layout->addWidget(m_forge_max_priority_fee);
+    layout->addWidget(m_forge_max_fee);
+    layout->addWidget(m_forge_gas_price);
+    layout->addWidget(m_forge_gas_limit);
+    layout->addWidget(m_forge_to);
+    layout->addWidget(m_forge_eth);
+    layout->addWidget(m_forge_data);
+    layout->addWidget(m_forge_access_list);
+    layout->addWidget(m_forge_v);
+    layout->addWidget(m_forge_r);
+    layout->addWidget(m_forge_s);
+
+    connect(m_forge_chain_id, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_nonce, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_max_priority_fee, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_max_fee, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_gas_price, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_gas_limit, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_to, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_eth, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_data, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_access_list, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_v, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_r, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_s, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
 }
 
 Dialog::~Dialog()
@@ -273,13 +334,4 @@ void Dialog::updateForgeTx() {
     }
 */
 }
-
-
-/*void Dialog::on_valueInput_tab3_textChanged(const QString& txt)
-{
-    ByteSet B1 = ui->valueInput1->toByteSet();
-    ByteSet B2 = ui->valueInput1->toByteSet(32);
-    Integer i = ui->valueInput1->toByteSet().as_Integer();
-    bool b = ui->valueInput1->toByteSet().as_bool();
-}*/
 
