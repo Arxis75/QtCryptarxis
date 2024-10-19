@@ -19,8 +19,8 @@ class HexStrByteSet : public IntByteSet
         /// The dec/Gwei strings being not aligned, their size is not relevant here
         operator string() const;
 
-        inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(HexStrByteSet(val, aligned_size)); }
-        inline void push_back(const string &val, uint64_t aligned_size = 0) { ByteSet::push_back(HexStrByteSet(val, aligned_size)); }
+        //inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(HexStrByteSet(val, aligned_size)); }
+        //inline void push_back(const string &val, uint64_t aligned_size = 0) { ByteSet::push_back(HexStrByteSet(val, aligned_size)); }
 
     private:
         string removeBaseHeader(const string &val);

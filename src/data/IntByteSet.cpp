@@ -15,7 +15,7 @@ IntByteSet::IntByteSet(const Integer &val, uint64_t aligned_size)
 
 Integer IntByteSet::right(uint64_t size) const
 {
-    uint8_t ret_value = 0;
+    Integer ret_value = 0;
     for(int i=0;i<min((uint64_t)size, byteSize());i++)
         ret_value += (vvalue[byteSize()-1-i] << (i<<4));
     return ret_value;     
