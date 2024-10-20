@@ -21,10 +21,10 @@ class HexStrByteSet : public IntByteSet
         //operator string() const;
 
         inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(HexStrByteSet(val, aligned_size)); }
-        inline HexStrByteSet pop_front(uint64_t nb_element) { HexStrByteSet(ByteSet::pop_front(nb_element)); }
+        inline HexStrByteSet pop_front(uint64_t nb_element) { return HexStrByteSet(ByteSet::pop_front(nb_element)); }
 
         inline void push_back(const string &val, uint64_t aligned_size = 0) { ByteSet::push_back(HexStrByteSet(val, aligned_size)); }
-        inline HexStrByteSet pop_back(uint64_t nb_element) { HexStrByteSet(ByteSet::pop_back(nb_element)); }
+        inline HexStrByteSet pop_back(uint64_t nb_element) { return HexStrByteSet(ByteSet::pop_back(nb_element)); }
 
     private:
         string removeBaseHeader(const string &val);

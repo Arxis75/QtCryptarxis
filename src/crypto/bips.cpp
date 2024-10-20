@@ -235,7 +235,7 @@ Privkey::Privkey(const ByteSet &seed, const char *path, const int32_t account_i,
     // Cf https://www.openssl.org/docs/manmaster/man3/HMAC.html
     // Cf https://www.openssl.org/docs/manmaster/man3/EVP_sha512.html
 
-    IntByteSet digest(0, 64);
+    ArrayByteSet digest(64);
     uint32_t dilen;
 
     unsigned char *res = HMAC( EVP_sha512(),

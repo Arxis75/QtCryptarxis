@@ -43,7 +43,7 @@ void RLPByteSet::push_back(const RLPByteSet &rlp, const bool at_top_level)
         if( !at_top_level && front_header >= 0xC0 )
         {
             //Drops the previous list header
-            ByteSet::pop_front(1);
+            ByteSet::pop_front();
             if( front_header > 0xF7 )
             {
                 list_size_size = front_header - 0xF7;
@@ -76,7 +76,7 @@ void RLPByteSet::push_front(const RLPByteSet &rlp, const bool at_top_level)
         if( !at_top_level && front_header >= 0xC0 )
         {
             //Drops the previous list header
-            ByteSet::pop_front(1);
+            ByteSet::pop_front();
             if( front_header > 0xF7 )
             {
                 list_size_size = front_header - 0xF7;
@@ -112,7 +112,7 @@ RLPByteSet RLPByteSet::pop_front(bool &is_list)
         if( front_header >= 0xC0 )
         {
             //Drops the previous list header
-            ByteSet::pop_front(1);
+            ByteSet::pop_front();
             if( front_header >= 0xF7 )
             {
                 uint8_t list_size_size = front_header - 0xF7;

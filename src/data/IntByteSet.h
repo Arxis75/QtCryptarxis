@@ -17,11 +17,21 @@ class IntByteSet : public ArrayByteSet
         inline operator Integer() const { return right(byteSize()); }
 
         inline void push_front(const Integer &val, uint64_t aligned_size = 0) { ByteSet::push_front(IntByteSet(val, aligned_size)); }
-        inline IntByteSet pop_front(uint64_t nb_element) { IntByteSet(ByteSet::pop_front(nb_element)); }
+        inline IntByteSet pop_front(uint64_t nb_element) { return IntByteSet(ByteSet::pop_front(nb_element)); }
 
         inline void push_back(const Integer &val, uint64_t aligned_size = 0) { ByteSet::push_back(IntByteSet(val, aligned_size)); }
-        inline IntByteSet pop_back(uint64_t nb_element) { IntByteSet(ByteSet::pop_back(nb_element)); }
+        inline IntByteSet pop_back(uint64_t nb_element) { return IntByteSet(ByteSet::pop_back(nb_element)); }
 
+        inline bool operator>=(const IntByteSet &b) const { return Integer(*this) >= Integer(b); };
+        inline bool operator>(const IntByteSet &b) const { return Integer(*this) > Integer(b); };
+        inline bool operator<=(const IntByteSet &b) const { return Integer(*this) <= Integer(b); };
+        inline bool operator<(const IntByteSet &b) const { return Integer(*this) < Integer(b); };
+        
+        /*inline Integer operator+(const Integer &b) const { return Integer(*this) + b; };
+        inline Integer operator*(const Integer &b) const { return Integer(*this) * b;};
+        inline Integer operator%(const Integer &b) const { return Integer(*this) % b;};
+        inline Integer operator>>(const uint64_t &b) const { return Integer(*this) >> b;};
+        inline Integer operator<<(const uint64_t &b) const { return Integer(*this) << b;};*/
 
         friend ostream& operator<<(ostream &out, const IntByteSet &val);
 private:

@@ -3,6 +3,7 @@
 #include <givaro/modular-integer.h>
 
 #include <chrono>
+#include <deque>
 #include <string>
 #include <vector>
 #include <map>
@@ -17,6 +18,7 @@ using std::shared_ptr;
 
 using std::time_t;
 
+using std::deque;
 using std::string;
 using std::vector;
 using std::map;

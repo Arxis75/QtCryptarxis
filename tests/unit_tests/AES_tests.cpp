@@ -12,7 +12,7 @@ TEST(AES_tests, CTR_DiscV5_vectors)
     
     ArrayByteSet masking_iv(packet, 16);
     ArrayByteSet masked_header(&packet[16], packet.byteSize() - 16);
-    IntByteSet header(0, masked_header.byteSize());
+    ArrayByteSet header(masked_header.byteSize());
 
     HexStrByteSet dest_node_id("0xbbbb9d047f0488c0b5a93c1c3f2d8bafc7c8ff337024a55434a0d0555de64db9", 32);
     ArrayByteSet masking_key(&dest_node_id[0], 16);
@@ -126,11 +126,11 @@ TEST(AES_tests, HKDF_DiscV5_vectors)
     kdf_info.ByteSet::push_back(node_id_a);
     kdf_info.ByteSet::push_back(node_id_b);
 
-    IntByteSet new_key(0, 32);
+    ArrayByteSet new_key(32);
     int retval = hkdf_derive( shared_secret, shared_secret.byteSize(),
                               (ArrayByteSet)challenge_data, challenge_data.byteSize(),
                               (ArrayByteSet)kdf_info, kdf_info.byteSize(),
-                              (ArrayByteSet)new_key );
+                              new_key );
 
     ArrayByteSet initiator_key(&new_key[0], 16);
     ArrayByteSet recipient_key(&new_key[16], 16);

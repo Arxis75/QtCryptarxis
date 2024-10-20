@@ -2,28 +2,26 @@
 #include <crypto/System.h>  //To improve: ByteSet should provide operator as input for external Hashing functions
 
 ByteSet ByteSet::pop_front(uint64_t nb_element) {
-    vector<uint8_t> ret_v;
-    if(byteSize() && nb_element) {
-        ret_v = vector<uint8_t>(vvalue.begin(), vvalue.begin() + min(byteSize(), nb_element));
-        vvalue = vector<uint8_t>(vvalue.begin() + min(byteSize(), nb_element), vvalue.end());
-    }
-    return ByteSet(ret_v);
+    assert(byteSize()>=nb_element);
+    ByteSet ret_value;
+    for(uint64_t i=0;i<nb_element;i++)
+        ret_value.push_back(pop_front());
+    return ret_value;
 }
 
 ByteSet ByteSet::pop_back(uint64_t nb_element) {
-    vector<uint8_t> ret_v;
-    if(byteSize() && nb_element) {
-        ret_v = vector<uint8_t>(vvalue.begin() + min(byteSize(), nb_element), vvalue.end());
-        vvalue = vector<uint8_t>(vvalue.begin(), vvalue.begin() + min(byteSize(), nb_element));
-    }
-    return ByteSet(ret_v);
+    assert(byteSize()>=nb_element);
+    ByteSet ret_value;
+    for(uint64_t i=0;i<nb_element;i++)
+        ret_value.push_front(pop_back());
+    return ret_value;
 }
 
 uint8_t ByteSet::pop_front()
 {
     assert(byteSize());
     uint8_t ret_value = vvalue[0];
-    vvalue.erase(vec.begin());
+    vvalue.erase(vvalue.begin());
     return ret_value;
 }
 

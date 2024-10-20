@@ -12,7 +12,7 @@ TEST(RLPTests, TestRLP_nonEncodingConstructors)
     ASSERT_EQ(actual, expected_rlp);
 
     uint8_t array[3] = {0x01, 0x02, 0x03};
-    expected = ByteSet(array, sizeof(array));
+    expected = ArrayByteSet(array, sizeof(array));
     actual = RLPByteSet(array, sizeof(array));
     ASSERT_EQ(actual, expected);
 

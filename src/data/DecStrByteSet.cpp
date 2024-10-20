@@ -12,7 +12,7 @@ DecStrByteSet::DecStrByteSet(const string &val, uint64_t aligned_size)
     {
         //Constructing the ByteSet representations
         Integer val_dec(val.c_str());
-        vvalue = (vector<uint8_t>)IntByteSet(val_dec, aligned_size);
+        *this = (DecStrByteSet)IntByteSet(val_dec, aligned_size);
     }
 }
 
