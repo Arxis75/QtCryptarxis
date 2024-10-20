@@ -9,7 +9,7 @@ class RLPByteSet: public HexStrByteSet
         RLPByteSet() : HexStrByteSet("", 0) { }
         //RLPByteSet(const vector<uint8_t> &v) : ByteSet(v.data(), v.size()) { }
         RLPByteSet(const RLPByteSet &b) : HexStrByteSet(b) {}
-        //RLPByteSet(const uint8_t *p, uint64_t size) : ByteSet(p, size) { }
+        RLPByteSet(const uint8_t *p, uint64_t size) : HexStrByteSet(ArrayByteSet(p, size)) { }
         RLPByteSet(const char *str) : HexStrByteSet(str) { } //for raw RLP init from hex string only
         
         // Encoding constructor:

@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     out = toDec("12ab", 16);*/
 
     QApplication a(argc, argv);
-    //Dialog d;
-    //d.show();
+    Dialog d;
+    d.show();
     return a.exec();
 }
