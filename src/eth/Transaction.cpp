@@ -1,19 +1,19 @@
 #include <eth/Transaction.h>
 
 TransactionPayload::TransactionPayload(
-    const ByteSet& nonce,
-    const ByteSet& gasPrice,
-    const ByteSet& gasLimit,
-    const ByteSet& to,
-    const ByteSet& value,
-    const ByteSet& data
+    const HexStrByteSet& nonce,
+    const HexStrByteSet& gasPrice,
+    const HexStrByteSet& gasLimit,
+    const HexStrByteSet& to,
+    const HexStrByteSet& value,
+    const HexStrByteSet& data
     )
     : m_format(Format::PRE_EIP_155)
     , m_chainId()
     , m_nonce(nonce)
     , m_gasPrice(gasPrice)
-    , m_max_priority_fee_per_gas(ByteSet())
-    , m_max_fee_per_gas(ByteSet())
+    , m_max_priority_fee_per_gas(HexStrByteSet())
+    , m_max_fee_per_gas(HexStrByteSet())
     , m_gasLimit(gasLimit)
     , m_to(to)
     , m_value(value)
@@ -22,20 +22,20 @@ TransactionPayload::TransactionPayload(
     { }
 
 TransactionPayload::TransactionPayload(
-    const ByteSet& chainId,
-    const ByteSet& nonce,
-    const ByteSet& gasPrice,
-    const ByteSet& gasLimit,
-    const ByteSet& to,
-    const ByteSet& value,
-    const ByteSet& data
+    const HexStrByteSet& chainId,
+    const HexStrByteSet& nonce,
+    const HexStrByteSet& gasPrice,
+    const HexStrByteSet& gasLimit,
+    const HexStrByteSet& to,
+    const HexStrByteSet& value,
+    const HexStrByteSet& data
     )
     : m_format(Format::EIP_155)
     , m_chainId(chainId)
     , m_nonce(nonce)
     , m_gasPrice(gasPrice)
-    , m_max_priority_fee_per_gas(ByteSet())
-    , m_max_fee_per_gas(ByteSet())
+    , m_max_priority_fee_per_gas(HexStrByteSet())
+    , m_max_fee_per_gas(HexStrByteSet())
     , m_gasLimit(gasLimit)
     , m_to(to)
     , m_value(value)
@@ -48,21 +48,21 @@ TransactionPayload::TransactionPayload(
 /// 
 ///
 TransactionPayload::TransactionPayload(
-    const ByteSet& chainId,
-    const ByteSet& nonce,
-    const ByteSet& gasPrice,
-    const ByteSet& gasLimit,
-    const ByteSet& to,
-    const ByteSet& value,
-    const ByteSet& data,
+    const HexStrByteSet& chainId,
+    const HexStrByteSet& nonce,
+    const HexStrByteSet& gasPrice,
+    const HexStrByteSet& gasLimit,
+    const HexStrByteSet& to,
+    const HexStrByteSet& value,
+    const HexStrByteSet& data,
     const AccessList& accessList
     )
     : m_format(Format::EIP_2930)
     , m_chainId(chainId)
     , m_nonce(nonce)
     , m_gasPrice(gasPrice)
-    , m_max_priority_fee_per_gas(ByteSet())
-    , m_max_fee_per_gas(ByteSet())
+    , m_max_priority_fee_per_gas(HexStrByteSet())
+    , m_max_fee_per_gas(HexStrByteSet())
     , m_gasLimit(gasLimit)
     , m_to(to)
     , m_value(value)
@@ -74,20 +74,20 @@ TransactionPayload::TransactionPayload(
 /// 
 ///
 TransactionPayload::TransactionPayload(
-    const ByteSet& chainId,
-    const ByteSet& nonce,
-    const ByteSet& max_priority_fee_per_gas,
-    const ByteSet& max_fee_per_gas,
-    const ByteSet& gasLimit,
-    const ByteSet& to,
-    const ByteSet& value,
-    const ByteSet& data,
+    const HexStrByteSet& chainId,
+    const HexStrByteSet& nonce,
+    const HexStrByteSet& max_priority_fee_per_gas,
+    const HexStrByteSet& max_fee_per_gas,
+    const HexStrByteSet& gasLimit,
+    const HexStrByteSet& to,
+    const HexStrByteSet& value,
+    const HexStrByteSet& data,
     const AccessList& accessList
     )
     : m_format(Format::EIP_1559)
     , m_chainId(chainId)
     , m_nonce(nonce)
-    , m_gasPrice(ByteSet())
+    , m_gasPrice(HexStrByteSet())
     , m_max_priority_fee_per_gas(max_priority_fee_per_gas)
     , m_max_fee_per_gas(max_fee_per_gas)
     , m_gasLimit(gasLimit)
@@ -140,11 +140,11 @@ const RLPByteSet TransactionPayload::serializeAsSigningPayload() const
             break;
         case Format::EIP_155:
             payload.push_back(m_chainId);
-            payload.push_back(ByteSet(), 0);
-            payload.push_back(ByteSet(), 0);
+            payload.push_back(ByteSet());
+            payload.push_back(ByteSet());
             break;
         default:
-            payload.ByteSet::push_front((uint64_t)m_format, 1);    // Put the 1-Byte Tx type in front (Cf eip-2718)
+            payload.push_front(IntByteSet((uint8_t)m_format, 1));    // Put the 1-Byte Tx type in front (Cf eip-2718)
             break;
     }
     return payload;
@@ -167,23 +167,23 @@ const RLPByteSet SignedTransaction::serialize() const
     RLPByteSet payload = m_payload.serialize();
     switch(m_payload.getFormat()) {
         case TransactionPayload::Format::PRE_EIP_155:
-            payload.push_back(ByteSet((uint64_t)27 + (uint8_t)m_signature.get_imparity()));
+            payload.push_back(IntByteSet(27 + m_signature.get_imparity()));
             break;
         case TransactionPayload::Format::EIP_155:
-            payload.push_back(ByteSet(35 + 2*m_payload.getChainId().as_Integer() + m_signature.get_imparity()));
+            payload.push_back(IntByteSet(35 + 2*(uint64_t)m_payload.getChainId() + m_signature.get_imparity()));
             break;
         default:
-            payload.push_back(ByteSet(m_signature.get_imparity()));
+            payload.push_back(IntByteSet(m_signature.get_imparity()));
             break;
     }
-    payload.push_back(ByteSet(m_signature.get_r(), 32));
-    payload.push_back(ByteSet(m_signature.get_s(), 32));
+    payload.push_back(IntByteSet(m_signature.get_r(), 32));
+    payload.push_back(HexStrByteSet(m_signature.get_s(), 32));
     switch(m_payload.getFormat()) {
         case TransactionPayload::Format::PRE_EIP_155:
         case TransactionPayload::Format::EIP_155:
             break;
         default:
-            payload.ByteSet::push_front((uint64_t)m_payload.getFormat(), 1);    // Put the 1-Byte Tx type in front
+            payload.IntByteSet::push_front((uint8_t)m_payload.getFormat(), 1);    // Put the 1-Byte Tx type in front
             break;
         }
     return payload;
@@ -194,14 +194,14 @@ SignedTransaction* SignedTransaction::parse(const string& str_raw_tx)
     SignedTransaction* pstx = nullptr;
     AccessList access_list = AccessList(RLPByteSet());
     bool is_list = false;
-    ByteSet chainId, nonce, gasPrice, max_priority_fee_per_gas, max_fee_per_gas, gasLimit, to, value, data, r, s;
+    HexStrByteSet chainId, nonce, gasPrice, max_priority_fee_per_gas, max_fee_per_gas, gasLimit, to, value, data, r, s;
     Integer v;
     RLPByteSet rlp_to_parse(str_raw_tx.c_str());
 
     // Makes the assumption that the first byte is the tx type (among {0x01, 0x02}).
     // In case of old tx formats (pre EIP155 & EIP155), this is incorrect, but those old tx usually start
     // with RLP list prefix 0xf.., so we should be fine...
-    TransactionPayload::Format tx_type = (TransactionPayload::Format)rlp_to_parse.ByteSet::as_uint8();
+    TransactionPayload::Format tx_type = (TransactionPayload::Format)(uint8_t)rlp_to_parse;
 
     switch(tx_type) {
         case TransactionPayload::Format::EIP_2930:
@@ -236,7 +236,7 @@ SignedTransaction* SignedTransaction::parse(const string& str_raw_tx)
         v = (v+1)%2;                                        //converts v to {0,1}
     }
     else if(v >= 37) {
-        chainId = ByteSet((v-35) >> 1);                       //Cf EIP 155
+        chainId = HexStrByteSet(IntByteSet((v-35) >> 1));                       //Cf EIP 155
         tx_type =  TransactionPayload::Format::EIP_155;
         v = (v+1)%2;                                        //converts v to {0,1}
     }

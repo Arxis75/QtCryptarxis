@@ -80,7 +80,7 @@ Dialog::~Dialog()
 }
 
 void Dialog::updateWallet() {
-    BIP39::Mnemonic* pmnc = nullptr;
+/*    BIP39::Mnemonic* pmnc = nullptr;
 
     if( ui->radioButton_12_words->isChecked() )
         pmnc = new BIP39::Mnemonic(128);
@@ -120,10 +120,10 @@ void Dialog::updateWallet() {
         ui->lineEdit_address->setText( QString::fromStdString(stream.str()) );
 
         delete pmnc;
-    }
+    }*/
 }
 
-void Dialog::updateReadTx() {
+void Dialog::updateReadTx() {/*
     const string raw_tx(ui->plainTextEdit_raw_tx->toPlainText().toStdString());
 
     SignedTransaction* pstx = SignedTransaction::parse(raw_tx);
@@ -239,7 +239,7 @@ void Dialog::updateReadTx() {
         ui->lineEdit_s->setText(QString::fromStdString(stream.str()));
         ui->lineEdit_from_pubkey->setText(QString::fromStdString(stream.str()));
         ui->lineEdit_from_address->setText(QString::fromStdString(stream.str()));
-    }
+    }*/
 }
 
 void Dialog::updateForgeTx() {

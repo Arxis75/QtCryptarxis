@@ -20,10 +20,12 @@ class ByteSet
         inline void push_back(const ByteSet &b) { vvalue.insert(vvalue.end(), b.vvalue.begin(), b.vvalue.end()); }
         inline void push_back(uint8_t val) { vvalue.push_back(val); }
         uint8_t pop_back();
-        ByteSet pop_back(uint64_t nb_element);     
+        ByteSet pop_back(uint64_t nb_element);
     
+        inline bool operator==(const ByteSet &b) const { return vvalue == b.vvalue; };
+        inline bool operator!=(const ByteSet &b) const { return !(vvalue == b.vvalue); };
         inline operator vector<uint8_t>() const { return vvalue; }
-        uint8_t operator[](uint64_t index) const;
+        const uint8_t& operator[](uint64_t index) const { return vvalue[index]; };
 
         inline ByteSet at(const uint64_t offset, const uint64_t nb_element) const { return (ByteSet)vector<uint8_t>(vvalue.begin() + offset, vvalue.begin() + offset + nb_element); }
 

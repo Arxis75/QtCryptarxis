@@ -4,7 +4,7 @@
 #include <data/Tools.h>
 
 DecStrByteSet::DecStrByteSet(const string &val, uint64_t aligned_size)
-    : IntByteSet(Integer::zero, aligned_size)
+    : IntByteSet()
 {
     regex rgx_dec("^[0-9]+");
 

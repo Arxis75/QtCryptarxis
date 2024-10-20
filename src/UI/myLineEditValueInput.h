@@ -19,7 +19,7 @@ public:
     void setTitle(const QString &title) const { m_label->setText(title); }
 
     //Value accessors
-    inline ByteSet toByteSet(uint64_t size = 0) const { return ByteSet(m_le_input->text().toStdString(), size, m_rb_dec->isChecked() ? 10 : 16); }
+    //inline ByteSet toByteSet(uint64_t size = 0) const { return ByteSet(m_le_input->text().toStdString(), size, m_rb_dec->isChecked() ? 10 : 16); }
     inline const string toStdString() const { return m_le_input->text().toStdString(); }
 
 signals:

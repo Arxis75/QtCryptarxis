@@ -3,7 +3,7 @@
 #include <data/Tools.h>
 
 IntByteSet::IntByteSet(const Integer &val, uint64_t aligned_size)
-    : ArrayByteSet("")
+    : ArrayByteSet()
 {
     uint64_t value_size = val.size_in_base(256);
     uint64_t extra_size = (aligned_size > value_size ? aligned_size - value_size : 0);
@@ -16,8 +16,8 @@ IntByteSet::IntByteSet(const Integer &val, uint64_t aligned_size)
 Integer IntByteSet::right(uint64_t size) const
 {
     Integer ret_value = 0;
-    for(int i=0;i<min((uint64_t)size, byteSize());i++)
-        ret_value += (vvalue[byteSize()-1-i] << (i<<4));
+    for(uint64_t i=0;i<min((uint64_t)size, byteSize());i++)
+        ret_value += (Integer(vvalue[byteSize()-1-i]) << (i<<3));
     return ret_value;     
 }
 

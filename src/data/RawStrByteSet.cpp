@@ -4,7 +4,6 @@
 
 RawStrByteSet::RawStrByteSet(const string &val)
     : ByteSet()
-    , m_str(val)
 {
     //Constructing the parent ByteSet
     string tmp_str(val);
@@ -15,10 +14,11 @@ RawStrByteSet::RawStrByteSet(const string &val)
     }
 }
 
-RawStrByteSet::RawStrByteSet(const ByteSet &val)
-    : ByteSet(val)
+/*RawStrByteSet::operator string() const
 {
+    string str;
     for(uint64_t i=0;i< byteSize();i++)
         // Treat each underlying byte as a raw Char
-        m_str += char(vvalue[i]);
-}
+        str += char(vvalue[i]);
+    return str;
+}*/

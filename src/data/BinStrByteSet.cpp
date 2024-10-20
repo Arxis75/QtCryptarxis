@@ -3,7 +3,7 @@
 #include <data/Tools.h>
 
 BinStrByteSet::BinStrByteSet(const string &val, uint64_t aligned_size)
-    : IntByteSet(Integer::zero, aligned_size)
+    : IntByteSet()
 {
     regex rgx_bin("^(0b)?[0-1]+");
 

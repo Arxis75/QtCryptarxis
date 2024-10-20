@@ -3,7 +3,7 @@
 #include <data/Tools.h>
 
 HexStrByteSet::HexStrByteSet(const string &val, uint64_t aligned_size)
-    : IntByteSet(Integer::zero, aligned_size)
+    : IntByteSet()
 {
     regex rgx_hex("^(0x)?[0-9a-fA-F]+");
 
@@ -24,7 +24,7 @@ HexStrByteSet::HexStrByteSet(const string &val, uint64_t aligned_size)
     }
 }
 
-HexStrByteSet::operator string() const
+/*HexStrByteSet::operator string() const
 {
     string str;
     for(uint64_t i=0;i<byteSize();i++) {
@@ -32,7 +32,7 @@ HexStrByteSet::operator string() const
         str += nibbleToChar( vvalue[i] & 0x0F);
     }
     return "0x" + str;
-}
+}*/
 
 //TODO: move to parent abstract class
 string HexStrByteSet::removeBaseHeader(const string &val) {

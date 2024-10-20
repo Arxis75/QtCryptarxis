@@ -5,6 +5,7 @@
 class BinStrByteSet : public IntByteSet
 {
     public:
+        BinStrByteSet() : IntByteSet() {}
         /// @brief Constructor from a presumably Binary string value
         /// @param val Hex string
         /// @param aligned_size either a total byte-size required for 0-padding
@@ -18,9 +19,6 @@ class BinStrByteSet : public IntByteSet
         /// @return Size in Bytes of the value represented by the hex/bin strings, 0-padding included.
         /// The dec/Gwei strings being not aligned, their size is not relevant here
         operator string() const;
-
-        //inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(BinStrByteSet(val, aligned_size)); }
-        //inline void push_back(const string &val, uint64_t aligned_size = 0) { ByteSet::push_back(BinStrByteSet(val, aligned_size)); }
 
     private:
         string removeBaseHeader(const string &val);

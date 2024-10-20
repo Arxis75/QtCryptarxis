@@ -5,6 +5,7 @@
 class HexStrByteSet : public IntByteSet
 {
     public:
+        HexStrByteSet() : IntByteSet() {}
         /// @brief Constructor from a presumably Hex string value
         /// @param val Hex string
         /// @param aligned_size either a total byte-size required for 0-padding
@@ -17,10 +18,13 @@ class HexStrByteSet : public IntByteSet
         /// @brief string operator returning the default representation
         /// @return Size in Bytes of the value represented by the hex/bin strings, 0-padding included.
         /// The dec/Gwei strings being not aligned, their size is not relevant here
-        operator string() const;
+        //operator string() const;
 
-        //inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(HexStrByteSet(val, aligned_size)); }
-        //inline void push_back(const string &val, uint64_t aligned_size = 0) { ByteSet::push_back(HexStrByteSet(val, aligned_size)); }
+        inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(HexStrByteSet(val, aligned_size)); }
+        inline HexStrByteSet pop_front(uint64_t nb_element) { HexStrByteSet(ByteSet::pop_front(nb_element)); }
+
+        inline void push_back(const string &val, uint64_t aligned_size = 0) { ByteSet::push_back(HexStrByteSet(val, aligned_size)); }
+        inline HexStrByteSet pop_back(uint64_t nb_element) { HexStrByteSet(ByteSet::pop_back(nb_element)); }
 
     private:
         string removeBaseHeader(const string &val);

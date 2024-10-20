@@ -2,20 +2,21 @@
 
 #include <QApplication>
 
-#include <data/StrByteSet.h>
-#include <data/IntByteSet.h>
+#include <data/HexStrByteSet.h>
 
 int main(int argc, char *argv[])
 {
-    IntByteSet i("81985529216486895", 17);
+    HexStrByteSet i("81985529216486895", 17);
 
     cout << hex << i << endl;
 
-    StrByteSet f("0x0");
+    HexStrByteSet f("0x0");
 
-    StrByteSet x("0x00123456789ABCDEF", 17);
+    HexStrByteSet x("0x00123456789ABCDEF", 17);
+    cout << hex << x << endl;
     //ByteSet x("0x10000000000000009", 17, 16);
-    StrByteSet y(x);
+    HexStrByteSet y(x);
+    cout << hex << y << endl;
 
     /*string yy = y.toHex();
     yy = y.toDec();
