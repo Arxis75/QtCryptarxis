@@ -3,86 +3,46 @@
 #include <data/Tools.h>
 
 HexStrByteSet::HexStrByteSet(const string &val, uint64_t aligned_size)
-    : IntByteSet()
+    : StrByteSet(val, "0x", "^(0x)?[0-9a-fA-F]+", true, 2, aligned_size)
+{ }
+
+BinStrByteSet::BinStrByteSet(const string &val, uint64_t aligned_size)
+    : StrByteSet(val, "0b", "^(0b)?[0-1]+", true, 8, aligned_size)
+{ }
+
+DecStrByteSet::DecStrByteSet(const string &val, uint64_t aligned_size)
+    : StrByteSet(val, "", "^[0-9]+", false, 0, aligned_size)
+{ }
+
+void DecStrByteSet::construct(const string &val, uint64_t aligned_size)
 {
-    regex rgx_hex("^(0x)?[0-9a-fA-F]+");
-
-    if( regex_match(val, rgx_hex) )
-    {
-        //Constructing the ByteSet representations
-        string str = alignToByte(removeBaseHeader(val), aligned_size);
-
-        //Constructing the parent ByteSet itself
-        uint8_t i_byte;
-        while(str.size()) {
-            // Treating each nibble pair
-            i_byte = (charToNibble(str[0]) << 4);
-            i_byte += charToNibble(str[1]);
-            vvalue.push_back(i_byte);
-            str = str.substr(2, str.size() - 2);
-        }
-    }
+    //Constructing the ByteSet representations
+    Integer val_dec(val.c_str());
+    *this = (DecStrByteSet)IntByteSet(val_dec, aligned_size);
 }
 
-/*HexStrByteSet::operator string() const
+DecStrByteSet::operator string() const
 {
-    string str;
-    for(uint64_t i=0;i<byteSize();i++) {
-        str += nibbleToChar((vvalue[i] & 0xF0) >> 4);
-        str += nibbleToChar( vvalue[i] & 0x0F);
-    }
-    return "0x" + str;
-}*/
-
-//TODO: move to parent abstract class
-string HexStrByteSet::removeBaseHeader(const string &val) {
-    string str_out = val;
-    //Removes the 0x or 0b header if necessary
-    if(val.size() >= 2 && val.substr(0, 2) ==  "0x")
-        str_out = val.substr(2, val.size() - 2);
-    return str_out;
+    stringstream ss;
+    ss << dec << *this;
+    return ss.str(); 
 }
 
-string HexStrByteSet::alignToByte(const string &val, uint64_t aligned_size) const
+GWeiStrByteSet::GWeiStrByteSet(const string &val, uint64_t aligned_size)
+    : StrByteSet(val, "", "^[0-9]+.[0-9]{9}", false, 0, aligned_size)
+{ }
+
+void GWeiStrByteSet::construct(const string &val, uint64_t aligned_size)
 {
-    string str_out = val;
-    int8_t chars_per_byte = 2;
-    uint8_t unaligned_size = str_out.size()%chars_per_byte;
-    string str_unaligned = str_out.substr(0, unaligned_size);
-    if( unaligned_size ) {
-        if( str_out.size() > unaligned_size &&   // don't remove the 0s if there is nothing else!
-            str_unaligned == string(unaligned_size, '0') )
-            //removes extra 0s
-            str_out = str_out.substr(unaligned_size, str_out.size() - unaligned_size);
-        else
-            while(str_out.size()%chars_per_byte)
-                //adds extra 0s
-                str_out = "0" + str_out;
-    }
-    while(str_out.size() < aligned_size * chars_per_byte)
-        //adds padding 0s if necessary
-        str_out = string(chars_per_byte, '0') + str_out;
-    return str_out;
+    //Constructing the ByteSet representations
+    Integer val_dec(removeCharsFromString(val.c_str(), ".").c_str());
+    *this = (GWeiStrByteSet)IntByteSet(val_dec, aligned_size);
 }
 
-uint8_t HexStrByteSet::charToNibble(const char &c) const
+GWeiStrByteSet::operator string() const
 {
-    uint8_t retval = 0;
-    if (c >= '0' && c <= '9')
-        retval = c - 48;
-    else if (c >= 'A' && c <= 'F')
-        retval = c - 55;
-    else if (c >= 'a' && c <= 'f')
-        retval = c - 87;
-    return retval;
-}
-
-char HexStrByteSet::nibbleToChar(const uint8_t &nibble) const
-{
-    char c;
-    if (nibble >= 0 && nibble <= 9)
-        c = 48 + nibble;
-    else if (nibble >= 0xA && nibble <= 0xF)
-        c = 87 + nibble;
-    return c;
+    string str_wei(DecStrByteSet(*this));
+    while(str_wei.size() < 10)
+        str_wei = "0" + str_wei;
+    return str_wei.substr(0, str_wei.size() - 9) + "." + str_wei.substr(str_wei.size() - 9, 9);
 }

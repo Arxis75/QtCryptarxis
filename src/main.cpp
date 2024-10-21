@@ -6,9 +6,10 @@
 
 int main(int argc, char *argv[])
 {
-    HexStrByteSet i("81985529216486895", 17);
-
-    cout << hex << i << endl;
+    GWeiStrByteSet i("8.050351573");
+    
+    string str_i = i;
+    cout << str_i << endl;
 
     HexStrByteSet f("0x0");
 

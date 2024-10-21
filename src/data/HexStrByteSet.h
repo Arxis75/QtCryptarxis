@@ -1,34 +1,41 @@
 #pragma once
 
-#include <data/IntByteSet.h>
+#include <data/StrByteSet.h>
 
-class HexStrByteSet : public IntByteSet
-{
+class HexStrByteSet : public StrByteSet {
     public:
-        HexStrByteSet() : IntByteSet() {}
-        /// @brief Constructor from a presumably Hex string value
-        /// @param val Hex string
-        /// @param aligned_size either a total byte-size required for 0-padding
-        /// or 0 let the constructor apply a simple byte-padding and guess the underlying value size.
+        HexStrByteSet() : StrByteSet() {}
         explicit HexStrByteSet(const string &val, uint64_t aligned_size = 0);
-        /// @brief Constructor from the underlying ByteSet
-        /// @param val 
-        explicit HexStrByteSet(const ByteSet &val) : IntByteSet(val) { }
+        explicit HexStrByteSet(const ByteSet &val) : StrByteSet(val) { }
+};
 
-        /// @brief string operator returning the default representation
-        /// @return Size in Bytes of the value represented by the hex/bin strings, 0-padding included.
-        /// The dec/Gwei strings being not aligned, their size is not relevant here
-        //operator string() const;
+class BinStrByteSet : public StrByteSet {
+    public:
+        BinStrByteSet() : StrByteSet() {}
+        explicit BinStrByteSet(const string &val, uint64_t aligned_size = 0);
+        explicit BinStrByteSet(const ByteSet &val) : StrByteSet(val) { }
+};
 
-        inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(HexStrByteSet(val, aligned_size)); }
-        inline HexStrByteSet pop_front(uint64_t nb_element) { return HexStrByteSet(ByteSet::pop_front(nb_element)); }
+class DecStrByteSet : public StrByteSet {
+    public:
+        DecStrByteSet() : StrByteSet() {}
+        explicit DecStrByteSet(const string &val, uint64_t aligned_size = 0);
+        explicit DecStrByteSet(const ByteSet &val) : StrByteSet(val) { }
 
-        inline void push_back(const string &val, uint64_t aligned_size = 0) { ByteSet::push_back(HexStrByteSet(val, aligned_size)); }
-        inline HexStrByteSet pop_back(uint64_t nb_element) { return HexStrByteSet(ByteSet::pop_back(nb_element)); }
+        operator string() const override;
 
     private:
-        string removeBaseHeader(const string &val);
-        string alignToByte(const string &val, uint64_t aligned_size) const;
-        uint8_t charToNibble(const char &c) const;
-        char nibbleToChar(const uint8_t &nibble) const;
+        void construct(const string &val, uint64_t aligned_size) override;
+};
+
+class GWeiStrByteSet : public StrByteSet {
+    public:
+        GWeiStrByteSet() : StrByteSet() {}
+        explicit GWeiStrByteSet(const string &val, uint64_t aligned_size = 0);
+        explicit GWeiStrByteSet(const ByteSet &val) : StrByteSet(val) { }
+
+        operator string() const override;
+
+    private:
+        void construct(const string &val, uint64_t aligned_size) override;
 };
