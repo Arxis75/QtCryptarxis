@@ -40,7 +40,7 @@ class ByteSet
     
     protected:
         //Choice of a protected vector:
-        // - protected for ArrayByteSet to be able to access the data as a pointer
+        // - protected so RLPByteSet, ArrayByteSet etc... are able to access the data as a pointer
         // - vector and not deque because only vector ensures underlying data contiguous
         vector<uint8_t> vvalue;
 };
