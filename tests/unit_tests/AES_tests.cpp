@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <crypto/bips.h>
 #include <crypto/AES.h>
-#include <data/HexStrByteSet.h>
+#include <data/StrByteSet.h>
 
 TEST(AES_tests, CTR_DiscV5_vectors)
 {

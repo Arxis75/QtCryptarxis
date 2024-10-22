@@ -2,10 +2,25 @@
 
 #include <QApplication>
 
-#include <data/HexStrByteSet.h>
+#include <data/StrByteSet.h>
 
 int main(int argc, char *argv[])
 {
+    BitStrByteSet j("11111111111111111111111111111111"
+                    "11111111111111111111111111111111"
+                    "11111111111111111111111111111111"
+                    "11111111111111111111111111111111"
+                    "11111111111111111111111111111111"
+                    "11111111111111111111111111111111");
+    j.push_front("11111111111111111111111111111111");
+    j.push_back("11111111111111111111111111111111");
+    string str_j = j;
+    cout << str_j << endl;
+    
+    BinStrByteSet bj = j.toBinStrByteSet();
+    string str_bj = bj;
+    cout << str_bj << endl;
+
     GWeiStrByteSet i("8.050351573");
     
     string str_i = i;

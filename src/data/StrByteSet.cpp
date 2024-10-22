@@ -8,29 +8,28 @@ StrByteSet::StrByteSet(const string &val, const string &header, const string &st
     , m_regex(str_regex)
     , m_is_aligned(is_aligned)
     , m_chars_per_byte(chars_per_byte)
-{
-    if( regex_match(val, regex(m_regex)) )
-        construct(val, aligned_size);
-}
+{ }
 
 void StrByteSet::construct(const string &val, uint64_t aligned_size)
 {
-    //Constructing the ByteSet representations
-    string str = alignToByte(removeBaseHeader(val), aligned_size);
+    if( regex_match(val, regex(m_regex)) ) {
+        //Constructing the ByteSet representations
+        string str = alignToByte(removeBaseHeader(val), aligned_size);
 
-    if(m_is_aligned) {
-        //Constructing the parent ByteSet itself
-        uint8_t i_byte;
-        while(str.size()) {
-            i_byte = 0;
-            // Treating each byte
-            for(uint8_t i=0;i<m_chars_per_byte;i++) {
-                uint64_t index = m_chars_per_byte - 1 - i;
-                uint64_t shift = (i*8/m_chars_per_byte);
-                i_byte += (charToNibble(str[index]) << shift);
+        if(m_is_aligned) {
+            //Constructing the parent ByteSet itself
+            uint8_t i_byte;
+            while(str.size()) {
+                i_byte = 0;
+                // Treating each byte
+                for(uint8_t i=0;i<m_chars_per_byte;i++) {
+                    uint64_t index = m_chars_per_byte - 1 - i;
+                    uint64_t shift = (i*8/m_chars_per_byte);
+                    i_byte += (charToNibble(str[index]) << shift);
+                }
+                vvalue.push_back(i_byte);
+                str = str.substr(m_chars_per_byte, str.size() - m_chars_per_byte);
             }
-            vvalue.push_back(i_byte);
-            str = str.substr(m_chars_per_byte, str.size() - m_chars_per_byte);
         }
     }
 }
@@ -108,4 +107,77 @@ string StrByteSet::removeCharsFromString(const string &val, const char* charsToR
         str_out.erase( remove(str_out.begin(), str_out.end(), charsToRemove[i]), str_out.end() );
     }
     return str_out;
+}
+
+/**************************************************************************************************** */
+
+HexStrByteSet::HexStrByteSet(const string &val, uint64_t aligned_size)
+    : StrByteSet(val, "0x", "^(0x)?[0-9a-fA-F]+", true, 2, aligned_size)
+{
+    construct(val, aligned_size);
+}
+
+BinStrByteSet::BinStrByteSet(const string &val, uint64_t aligned_size)
+    : StrByteSet(val, "0b", "^(0b)?[0-1]+", true, 8, aligned_size)
+{
+    construct(val, aligned_size);
+}
+
+BitStrByteSet::BitStrByteSet(const string &val, uint64_t nb_bits)
+    : StrByteSet(val, "", "^[0-1]+", true, 1, nb_bits)
+{
+    construct(val, nb_bits);
+}
+
+BinStrByteSet BitStrByteSet::toBinStrByteSet() const
+{
+    Integer i = 0;
+    for(uint64_t i=0;i<byteSize();i++)
+        i += ((*this[i]) << (byteSize()-1-i));
+    return BinStrByteSet(IntByteSet(i));
+}
+
+DecStrByteSet::DecStrByteSet(const string &val, uint64_t aligned_size)
+    : StrByteSet(val, "", "^[0-9]+", false, 0, aligned_size)
+{
+    construct(val, aligned_size);
+}
+
+void DecStrByteSet::construct(const string &val, uint64_t aligned_size)
+{
+    if( regex_match(val, regex(getRegex())) ) {
+        //Constructing the ByteSet representations
+        Integer val_dec(val.c_str());
+        *this = (DecStrByteSet)IntByteSet(val_dec, aligned_size);
+    }
+}
+
+DecStrByteSet::operator string() const
+{
+    stringstream ss;
+    ss << dec << Integer(*this);
+    return ss.str(); 
+}
+
+GWeiStrByteSet::GWeiStrByteSet(const string &val, uint64_t aligned_size)
+    : StrByteSet(val, "", "^[0-9]+.[0-9]{9}", false, 0, aligned_size)
+{
+    construct(val, aligned_size);
+}
+
+void GWeiStrByteSet::construct(const string &val, uint64_t aligned_size)
+{
+    if( regex_match(val, regex(getRegex())) ) {
+        //Constructing the ByteSet representations
+        Integer val_dec(removeCharsFromString(val.c_str(), ".").c_str());
+        *this = (GWeiStrByteSet)IntByteSet(val_dec, aligned_size);
+    }
+}
+
+GWeiStrByteSet::operator string() const
+{
+    string str_wei(DecStrByteSet(*this));
+    while(str_wei.size() < 10)
+        str_wei = "0" + str_wei;
+    return str_wei.substr(0, str_wei.size() - 9) + "." + str_wei.substr(str_wei.size() - 9, 9);
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <data/HexStrByteSet.h>
+#include <data/StrByteSet.h>
 
 class RLPByteSet: public HexStrByteSet
 {

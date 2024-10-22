@@ -2,7 +2,7 @@
 
 #include <crypto/bips.h>
 #include <data/RLPByteSet.h>
-#include <data/HexStrByteSet.h>
+#include <data/StrByteSet.h>
 
 class AccessList
 {

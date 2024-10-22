@@ -1,5 +1,5 @@
 #include <crypto/EllipticCurve.h>
-#include <data/HexStrByteSet.h>
+#include <data/StrByteSet.h>
 
 Point::Point(const Point& p)
 	: m_isIdentity(p.isIdentity())

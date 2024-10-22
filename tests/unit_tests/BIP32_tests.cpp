@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <crypto/bips.h>
-#include <data/HexStrByteSet.h>
+#include <data/StrByteSet.h>
 
 TEST(BIP32Tests, TestBIP32_vector1)
 {

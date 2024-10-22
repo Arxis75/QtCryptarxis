@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <data/RLPByteSet.h>
-#include <data/HexStrByteSet.h>
+#include <data/StrByteSet.h>
 
 TEST(RLPTests, TestRLP_nonEncodingConstructors)
 {

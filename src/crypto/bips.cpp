@@ -1,6 +1,6 @@
 #include <crypto/bips.h>
 #include <crypto/bip39_dictionnary.h>
-#include <data/HexStrByteSet.h>
+#include <data/StrByteSet.h>
 
 using namespace BIP39;
 

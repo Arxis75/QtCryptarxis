@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <crypto/bips.h>
-#include <data/HexStrByteSet.h>
+#include <data/StrByteSet.h>
 
 TEST(RFC6979Tests, RFC6979_NIST_P256)
 {
