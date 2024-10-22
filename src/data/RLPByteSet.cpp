@@ -1,4 +1,5 @@
 #include <data/RLPByteSet.h>
+#include <data/Tools.h>
 
 RLPByteSet::RLPByteSet(const ByteSet &to_rlp_encode, const bool as_list)
     : HexStrByteSet("", 0)

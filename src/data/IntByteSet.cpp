@@ -1,5 +1,4 @@
-#include "IntByteSet.h"
-
+#include <data/IntByteSet.h>
 #include <data/Tools.h>
 
 IntByteSet::IntByteSet(const Integer &val, uint64_t aligned_size)
@@ -21,7 +20,14 @@ Integer IntByteSet::right(uint64_t size) const
     return ret_value;     
 }
 
-ostream& operator<< (ostream& out, const IntByteSet &val) {
-    out << hex << Integer(val);
-    return out;
+IntByteSet::operator string() const {
+    stringstream ss;
+    Integer val = Integer(*this);
+    ss << "0x";
+    if(val.size_in_base(16)%2)
+        ss << "0";
+    for(uint64_t i=val.size_in_base(256);i<byteSize();i++)
+        ss << "00";
+    ss << hex << val;
+    return ss.str();     
 }

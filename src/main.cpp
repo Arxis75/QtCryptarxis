@@ -29,11 +29,12 @@ int main(int argc, char *argv[])
     HexStrByteSet f("0x0");
 
     HexStrByteSet x("0x00123456789ABCDEF", 17);
-    cout << hex << x << endl;
+    cout << string(x) << endl;
     //ByteSet x("0x10000000000000009", 17, 16);
-    HexStrByteSet y(x);
-    cout << hex << y << endl;
-
+    DecStrByteSet y(x);
+    cout << string(y) << endl;
+    IntByteSet z(y);
+    cout << string(z) << endl;
     /*string yy = y.toHex();
     yy = y.toDec();
     yy = y.toBin();

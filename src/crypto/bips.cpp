@@ -1,6 +1,7 @@
 #include <crypto/bips.h>
 #include <crypto/bip39_dictionnary.h>
 #include <data/StrByteSet.h>
+#include <data/Tools.h>
 
 using namespace BIP39;
 

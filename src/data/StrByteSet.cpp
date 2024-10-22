@@ -2,6 +2,22 @@
 
 #include <data/Tools.h>
 
+StrByteSet::StrByteSet(const string &header, const string &str_regex, bool is_aligned, uint8_t chars_per_byte)
+    : IntByteSet()
+    , m_header(header)
+    , m_regex(str_regex)
+    , m_is_aligned(is_aligned)
+    , m_chars_per_byte(chars_per_byte)
+{ }
+
+StrByteSet::StrByteSet(const ByteSet &val, const string &header, const string &str_regex, bool is_aligned, uint8_t chars_per_byte)
+    : IntByteSet(val)
+    , m_header(header)
+    , m_regex(str_regex)
+    , m_is_aligned(is_aligned)
+    , m_chars_per_byte(chars_per_byte)
+{ }
+
 StrByteSet::StrByteSet(const string &val, const string &header, const string &str_regex, bool is_aligned, uint8_t chars_per_byte, uint64_t aligned_size)
     : IntByteSet()
     , m_header(header)
@@ -23,8 +39,8 @@ void StrByteSet::construct(const string &val, uint64_t aligned_size)
                 i_byte = 0;
                 // Treating each byte
                 for(uint8_t i=0;i<m_chars_per_byte;i++) {
-                    uint64_t index = m_chars_per_byte - 1 - i;
-                    uint64_t shift = (i*8/m_chars_per_byte);
+                    uint8_t index = m_chars_per_byte - 1 - i;
+                    uint8_t shift = (i*8/m_chars_per_byte);
                     i_byte += (charToNibble(str[index]) << shift);
                 }
                 vvalue.push_back(i_byte);
@@ -38,11 +54,11 @@ StrByteSet::operator string() const
 {
     string str;
     if(m_is_aligned) {
-        uint8_t mask = (0xFF >> (8*(m_chars_per_byte-1)/m_chars_per_byte));
+        uint8_t byte_mask = (0xFF >> (8*(m_chars_per_byte-1)/m_chars_per_byte));
         for(uint64_t i=0;i<byteSize();i++)
             for(int8_t j=m_chars_per_byte-1;j>=0;j--) {
-                uint64_t shift = (j*8/m_chars_per_byte);
-                str += nibbleToChar((vvalue[i] & (mask << shift)) >> shift);            
+                uint8_t shift = (j*8/m_chars_per_byte);
+                str += nibbleToChar((vvalue[i] & (byte_mask << shift)) >> shift);            
             }
         str = m_header + str;
     }
@@ -111,17 +127,41 @@ string StrByteSet::removeCharsFromString(const string &val, const char* charsToR
 
 /**************************************************************************************************** */
 
+HexStrByteSet::HexStrByteSet()
+    : StrByteSet("0x", "^(0x)?[0-9a-fA-F]+", true, 2)
+{ }
+
+HexStrByteSet::HexStrByteSet(const ByteSet &val)
+    : StrByteSet(val, "0x", "^(0x)?[0-9a-fA-F]+", true, 2)
+{ }
+
 HexStrByteSet::HexStrByteSet(const string &val, uint64_t aligned_size)
     : StrByteSet(val, "0x", "^(0x)?[0-9a-fA-F]+", true, 2, aligned_size)
 {
     construct(val, aligned_size);
 }
 
+BinStrByteSet::BinStrByteSet()
+    : StrByteSet("0b", "^(0b)?[0-1]+", true, 8)
+{ }
+
+BinStrByteSet::BinStrByteSet(const ByteSet &val)
+    : StrByteSet(val, "0b", "^(0b)?[0-1]+", true, 8)
+{ }
+
 BinStrByteSet::BinStrByteSet(const string &val, uint64_t aligned_size)
     : StrByteSet(val, "0b", "^(0b)?[0-1]+", true, 8, aligned_size)
 {
     construct(val, aligned_size);
 }
+
+BitStrByteSet::BitStrByteSet()
+    : StrByteSet("", "^[0-1]+", true, 1)
+{ }
+
+BitStrByteSet::BitStrByteSet(const ByteSet &val)
+    : StrByteSet(val, "", "^[0-1]+", true, 1)
+{ }
 
 BitStrByteSet::BitStrByteSet(const string &val, uint64_t nb_bits)
     : StrByteSet(val, "", "^[0-1]+", true, 1, nb_bits)
@@ -131,11 +171,19 @@ BitStrByteSet::BitStrByteSet(const string &val, uint64_t nb_bits)
 
 BinStrByteSet BitStrByteSet::toBinStrByteSet() const
 {
-    Integer i = 0;
+    Integer value = 0;
     for(uint64_t i=0;i<byteSize();i++)
-        i += ((*this[i]) << (byteSize()-1-i));
-    return BinStrByteSet(IntByteSet(i));
+        value += (Integer(vvalue[i]) << (byteSize()-1-i));
+    return BinStrByteSet(IntByteSet(value));
 }
+
+DecStrByteSet::DecStrByteSet()
+    : StrByteSet("", "^[0-9]+", false, 0)
+{ }
+
+DecStrByteSet::DecStrByteSet(const ByteSet &val)
+    : StrByteSet(val, "", "^[0-9]+", false, 0)
+{ }
 
 DecStrByteSet::DecStrByteSet(const string &val, uint64_t aligned_size)
     : StrByteSet(val, "", "^[0-9]+", false, 0, aligned_size)
@@ -148,7 +196,7 @@ void DecStrByteSet::construct(const string &val, uint64_t aligned_size)
     if( regex_match(val, regex(getRegex())) ) {
         //Constructing the ByteSet representations
         Integer val_dec(val.c_str());
-        *this = (DecStrByteSet)IntByteSet(val_dec, aligned_size);
+        vvalue = (ByteSet)IntByteSet(val_dec, aligned_size);
     }
 }
 
@@ -158,6 +206,14 @@ DecStrByteSet::operator string() const
     ss << dec << Integer(*this);
     return ss.str(); 
 }
+
+GWeiStrByteSet::GWeiStrByteSet()
+    : StrByteSet("", "^[0-9]+.[0-9]{9}", false, 0)
+{ }
+
+GWeiStrByteSet::GWeiStrByteSet(const ByteSet &val)
+    : StrByteSet(val, "", "^[0-9]+.[0-9]{9}", false, 0)
+{ }
 
 GWeiStrByteSet::GWeiStrByteSet(const string &val, uint64_t aligned_size)
     : StrByteSet(val, "", "^[0-9]+.[0-9]{9}", false, 0, aligned_size)
@@ -170,7 +226,7 @@ void GWeiStrByteSet::construct(const string &val, uint64_t aligned_size)
     if( regex_match(val, regex(getRegex())) ) {
         //Constructing the ByteSet representations
         Integer val_dec(removeCharsFromString(val.c_str(), ".").c_str());
-        *this = (GWeiStrByteSet)IntByteSet(val_dec, aligned_size);
+        vvalue = (ByteSet)IntByteSet(val_dec, aligned_size);
     }
 }
 

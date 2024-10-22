@@ -16,9 +16,9 @@ class StrByteSet : public IntByteSet
         inline const bool& getIsAligned() const { return m_is_aligned; }
 
     protected:
-        StrByteSet() : IntByteSet() {}
+        StrByteSet(const string& header, const string& str_regex, bool is_aligned, uint8_t chars_per_byte);
         StrByteSet(const string &val, const string& header, const string& str_regex, bool is_aligned, uint8_t chars_per_byte, uint64_t aligned_size = 0);
-        explicit StrByteSet(const ByteSet &val) : IntByteSet(val) {}
+        StrByteSet(const ByteSet &val, const string& header, const string& str_regex, bool is_aligned, uint8_t chars_per_byte);
 
         virtual void construct(const string &val, uint64_t aligned_size);
 
@@ -37,9 +37,9 @@ class StrByteSet : public IntByteSet
 
 class HexStrByteSet : public StrByteSet {
     public:
-        HexStrByteSet() : StrByteSet() {}
+        HexStrByteSet();
         explicit HexStrByteSet(const string &val, uint64_t aligned_size = 0);
-        explicit HexStrByteSet(const ByteSet &val) : StrByteSet(val) { }
+        explicit HexStrByteSet(const ByteSet &val);
 
         inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(HexStrByteSet(val, aligned_size)); }
         inline HexStrByteSet pop_front(uint64_t nb_element) { return HexStrByteSet(ByteSet::pop_front(nb_element)); }
@@ -49,9 +49,9 @@ class HexStrByteSet : public StrByteSet {
 
 class BinStrByteSet : public StrByteSet {
     public:
-        BinStrByteSet() : StrByteSet() {}
+        BinStrByteSet();
         explicit BinStrByteSet(const string &val, uint64_t aligned_size = 0);
-        explicit BinStrByteSet(const ByteSet &val) : StrByteSet(val) { }
+        explicit BinStrByteSet(const ByteSet &val);
 
         inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(BinStrByteSet(val, aligned_size)); }
         inline BinStrByteSet pop_front(uint64_t nb_element) { return BinStrByteSet(ByteSet::pop_front(nb_element)); }
@@ -61,9 +61,9 @@ class BinStrByteSet : public StrByteSet {
 
 class BitStrByteSet : public StrByteSet {
     public:
-        BitStrByteSet() : StrByteSet() {}
+        BitStrByteSet();
         explicit BitStrByteSet(const string &val, uint64_t nb_bits = 0);
-        explicit BitStrByteSet(const ByteSet &val) : StrByteSet(val) { }
+        explicit BitStrByteSet(const ByteSet &val);
 
         inline void push_front(const string &val, uint64_t nb_bits = 0) { ByteSet::push_front(BitStrByteSet(val, nb_bits)); }
         inline BitStrByteSet pop_front(uint64_t nb_element) { return BitStrByteSet(ByteSet::pop_front(nb_element)); }
@@ -71,13 +71,16 @@ class BitStrByteSet : public StrByteSet {
         inline BitStrByteSet pop_back(uint64_t nb_element) { return BitStrByteSet(ByteSet::pop_back(nb_element)); }
 
         BinStrByteSet toBinStrByteSet() const;
+
+        virtual ByteSet sha256() const { assert(byteSize() == 256); return toBinStrByteSet().sha256(); }
+        virtual ByteSet keccak256() const { assert(byteSize() == 256); return toBinStrByteSet().keccak256(); }
 };
 
 class DecStrByteSet : public StrByteSet {
     public:
-        DecStrByteSet() : StrByteSet() {}
+        DecStrByteSet();
         explicit DecStrByteSet(const string &val, uint64_t aligned_size = 0);
-        explicit DecStrByteSet(const ByteSet &val) : StrByteSet(val) { }
+        explicit DecStrByteSet(const ByteSet &val);
 
         inline void push_front(const string &val, uint64_t aligned_size = 0) { ByteSet::push_front(DecStrByteSet(val, aligned_size)); }
         inline DecStrByteSet pop_front(uint64_t nb_element) { return DecStrByteSet(ByteSet::pop_front(nb_element)); }
@@ -92,9 +95,9 @@ class DecStrByteSet : public StrByteSet {
 
 class GWeiStrByteSet : public StrByteSet {
     public:
-        GWeiStrByteSet() : StrByteSet() {}
+        GWeiStrByteSet();
         explicit GWeiStrByteSet(const string &val, uint64_t aligned_size = 0);
-        explicit GWeiStrByteSet(const ByteSet &val) : StrByteSet(val) { }
+        explicit GWeiStrByteSet(const ByteSet &val);
 
         virtual operator string() const;
 

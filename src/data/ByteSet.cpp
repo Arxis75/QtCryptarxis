@@ -1,5 +1,5 @@
 #include <data/ByteSet.h>
-#include <crypto/System.h>  //To improve: ByteSet should provide operator as input for external Hashing functions
+#include <crypto/System.h> 
 
 ByteSet ByteSet::pop_front(uint64_t nb_element) {
     ByteSet ret_value;

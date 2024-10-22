@@ -1,7 +1,6 @@
 #pragma once
 
 #include <data/System.h>
-#include <data/Tools.h>     //To improve (migrate some Tools functions into ByteSet class)
 
 class ByteSet
 {
@@ -30,8 +29,8 @@ class ByteSet
         inline uint64_t byteSize() const { return vvalue.size(); }
         inline void clear() { vvalue.clear(); }
 
-        ByteSet sha256() const;
-        ByteSet keccak256() const;
+        virtual ByteSet sha256() const;
+        virtual ByteSet keccak256() const;
 
         static ByteSet generateRandom(uint32_t size);
 

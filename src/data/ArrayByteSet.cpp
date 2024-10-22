@@ -1,6 +1,4 @@
-#include "ArrayByteSet.h"
-
-#include <crypto/System.h>
+#include <data/ArrayByteSet.h>
 
 ArrayByteSet::ArrayByteSet(const uint8_t *p, uint64_t aligned_size)
     : RawStrByteSet()
