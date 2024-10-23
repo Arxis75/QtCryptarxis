@@ -19,15 +19,3 @@ Integer IntByteSet::right(uint64_t size) const
         ret_value += (Integer(vvalue[byteSize()-1-i]) << (i<<3));
     return ret_value;     
 }
-
-IntByteSet::operator string() const {
-    stringstream ss;
-    Integer val = Integer(*this);
-    ss << "0x";
-    if(val.size_in_base(16)%2)
-        ss << "0";
-    for(uint64_t i=val.size_in_base(256);i<byteSize();i++)
-        ss << "00";
-    ss << hex << val;
-    return ss.str();     
-}

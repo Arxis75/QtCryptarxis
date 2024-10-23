@@ -13,7 +13,7 @@ class RawStrByteSet : public ByteSet
         /// @param val undelying ByteSet
         explicit RawStrByteSet(const ByteSet &val) : ByteSet(val) {}
 
-        //operator string() const;
+        virtual operator string() const;
 
         inline void push_front(const string &val) { ByteSet::push_front(RawStrByteSet(val)); }
         inline RawStrByteSet pop_front(uint64_t nb_element) { return RawStrByteSet(ByteSet::pop_front(nb_element)); }

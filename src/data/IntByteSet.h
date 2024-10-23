@@ -27,8 +27,6 @@ class IntByteSet : public ArrayByteSet
         inline bool operator<=(const IntByteSet &b) const { return Integer(*this) <= Integer(b); };
         inline bool operator<(const IntByteSet &b) const { return Integer(*this) < Integer(b); };
 
-        virtual operator string() const;
-
 private:
         Integer right(uint64_t size) const;
 };

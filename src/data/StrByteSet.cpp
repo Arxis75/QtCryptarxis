@@ -155,25 +155,37 @@ BinStrByteSet::BinStrByteSet(const string &val, uint64_t aligned_size)
     construct(val, aligned_size);
 }
 
-BitStrByteSet::BitStrByteSet()
-    : StrByteSet("", "^[0-1]+", true, 1)
+BinStrBitSet::BinStrBitSet()
+    : StrByteSet("0b", "^(0b)?[0-1]+", true, 1)
 { }
 
-BitStrByteSet::BitStrByteSet(const ByteSet &val)
-    : StrByteSet(val, "", "^[0-1]+", true, 1)
+BinStrBitSet::BinStrBitSet(const BitSet &val)
+    : StrByteSet(val, "0b", "^(0b)?[0-1]+", true, 1)
 { }
 
-BitStrByteSet::BitStrByteSet(const string &val, uint64_t nb_bits)
-    : StrByteSet(val, "", "^[0-1]+", true, 1, nb_bits)
+BinStrBitSet::BinStrBitSet(const string &val, uint64_t nb_bits)
+    : StrByteSet(val, "0b", "^(0b)?[0-1]+", true, 1, nb_bits)
 {
     construct(val, nb_bits);
 }
 
-BinStrByteSet BitStrByteSet::toBinStrByteSet() const
+BinStrBitSet::BinStrBitSet(const ByteSet &val)
+    : StrByteSet(val, "0b", "^[0-1]+", true, 1)
+{ }
+
+BinStrBitSet::operator BitSet() const
+{
+    BitSet ret;
+    for(uint64_t i=0;i<bitSize();i++)
+        ret.ByteSet::push_back(vvalue[i]);
+    return ret; 
+}
+
+BinStrByteSet BinStrBitSet::toBinStrByteSet() const
 {
     Integer value = 0;
-    for(uint64_t i=0;i<byteSize();i++)
-        value += (Integer(vvalue[i]) << (byteSize()-1-i));
+    for(uint64_t i=0;i<bitSize();i++)
+        value += (Integer(vvalue[i]) << (bitSize()-1-i));
     return BinStrByteSet(IntByteSet(value));
 }
 

@@ -13,11 +13,11 @@ RawStrByteSet::RawStrByteSet(const string &val)
     }
 }
 
-/*RawStrByteSet::operator string() const
+RawStrByteSet::operator string() const
 {
     string str;
-    for(uint64_t i=0;i< byteSize();i++)
+    for(uint64_t i=0;i<byteSize();i++)
         // Treat each underlying byte as a raw Char
         str += char(vvalue[i]);
     return str;
-}*/
+}

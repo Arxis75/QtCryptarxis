@@ -59,21 +59,29 @@ class BinStrByteSet : public StrByteSet {
         inline BinStrByteSet pop_back(uint64_t nb_element) { return BinStrByteSet(ByteSet::pop_back(nb_element)); }
 };
 
-class BitStrByteSet : public StrByteSet {
+class BinStrBitSet : public StrByteSet {
     public:
-        BitStrByteSet();
-        explicit BitStrByteSet(const string &val, uint64_t nb_bits = 0);
-        explicit BitStrByteSet(const ByteSet &val);
+        BinStrBitSet();
+        explicit BinStrBitSet(const string &val, uint64_t nb_bits = 0);
+        explicit BinStrBitSet(const BitSet &val);
 
-        inline void push_front(const string &val, uint64_t nb_bits = 0) { ByteSet::push_front(BitStrByteSet(val, nb_bits)); }
-        inline BitStrByteSet pop_front(uint64_t nb_element) { return BitStrByteSet(ByteSet::pop_front(nb_element)); }
-        inline void push_back(const string &val, uint64_t nb_bits = 0) { ByteSet::push_back(BitStrByteSet(val, nb_bits)); }
-        inline BitStrByteSet pop_back(uint64_t nb_element) { return BitStrByteSet(ByteSet::pop_back(nb_element)); }
+        inline void push_front(const string &val, uint64_t nb_bits = 0) { ByteSet::push_front(BinStrBitSet(val, nb_bits)); }
+        inline BinStrBitSet pop_front(uint64_t nb_element) { return BinStrBitSet(ByteSet::pop_front(nb_element)); }
+        inline void push_back(const string &val, uint64_t nb_bits = 0) { ByteSet::push_back(BinStrBitSet(val, nb_bits)); }
+        inline BinStrBitSet pop_back(uint64_t nb_element) { return BinStrBitSet(ByteSet::pop_back(nb_element)); }
 
+        // Non-aligned BitSet => aligned binary ByteSet
         BinStrByteSet toBinStrByteSet() const;
 
-        virtual ByteSet sha256() const { assert(byteSize() == 256); return toBinStrByteSet().sha256(); }
-        virtual ByteSet keccak256() const { assert(byteSize() == 256); return toBinStrByteSet().keccak256(); }
+        operator BitSet() const;
+
+        inline uint64_t bitSize() const { return byteSize(); }
+
+        virtual ByteSet sha256() const { return BitSet(*this).sha256(); }
+        virtual ByteSet keccak256() const { return BitSet(*this).keccak256(); }
+
+    private:
+        explicit BinStrBitSet(const ByteSet &val);
 };
 
 class DecStrByteSet : public StrByteSet {

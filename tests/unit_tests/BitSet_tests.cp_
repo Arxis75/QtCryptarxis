@@ -8,7 +8,7 @@ TEST(BitSet_tests, BitSet_Constructors)
     Integer actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 0;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -18,7 +18,7 @@ TEST(BitSet_tests, BitSet_Constructors)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 3;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -28,7 +28,7 @@ TEST(BitSet_tests, BitSet_Constructors)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 7;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -38,7 +38,7 @@ TEST(BitSet_tests, BitSet_Constructors)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 8;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -48,7 +48,7 @@ TEST(BitSet_tests, BitSet_Constructors)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 9;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -58,7 +58,7 @@ TEST(BitSet_tests, BitSet_Constructors)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 512;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 }
 
@@ -71,7 +71,7 @@ TEST(BitSet_tests, BitSet_pushBackInteger)
     Integer actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 5;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -83,7 +83,7 @@ TEST(BitSet_tests, BitSet_pushBackInteger)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 8;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -95,7 +95,7 @@ TEST(BitSet_tests, BitSet_pushBackInteger)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 10;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -107,7 +107,7 @@ TEST(BitSet_tests, BitSet_pushBackInteger)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 24;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -119,7 +119,7 @@ TEST(BitSet_tests, BitSet_pushBackInteger)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 24;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     //3-bytes with back 0-padding
@@ -129,7 +129,7 @@ TEST(BitSet_tests, BitSet_pushBackInteger)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 24;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 }
 
@@ -141,7 +141,7 @@ TEST(BitSet_tests, BitSet_pushBackString)
     Integer actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 2;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -151,7 +151,7 @@ TEST(BitSet_tests, BitSet_pushBackString)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 2;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -161,7 +161,7 @@ TEST(BitSet_tests, BitSet_pushBackString)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 5;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -171,7 +171,7 @@ TEST(BitSet_tests, BitSet_pushBackString)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 5;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -181,7 +181,7 @@ TEST(BitSet_tests, BitSet_pushBackString)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 8;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -191,7 +191,7 @@ TEST(BitSet_tests, BitSet_pushBackString)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 13;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 
     b.clear();
@@ -201,6 +201,6 @@ TEST(BitSet_tests, BitSet_pushBackString)
     actual = Integer(b);
     ASSERT_EQ(actual, expected);
     expected = 512;
-    actual = b.bitsize();
+    actual = b.bitSize();
     ASSERT_EQ(actual, expected);
 }

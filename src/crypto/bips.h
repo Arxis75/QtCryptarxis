@@ -3,7 +3,7 @@
 #include <data/System.h>
 #include <crypto/System.h>
 #include <crypto/EllipticCurve.h>
-#include <data/BitSet.h>
+#include <data/StrByteSet.h>
 
 namespace BIP39 {
     class Mnemonic
@@ -27,7 +27,7 @@ namespace BIP39 {
             void print(bool as_index_list = false) const;
 
     private:
-            BitSet m_entropy;
+            BinStrBitSet m_entropy;
             const vector<string> *m_dic;
             uint8_t m_went;
             uint16_t m_ent;

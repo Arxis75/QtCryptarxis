@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <regex>
+#include <iomanip>
 
 using Givaro::Integer;
 
@@ -26,6 +27,8 @@ using std::map;
 using std::stoi;
 using std::to_string;
 using std::regex;
+using std::setfill;
+using std::setw;
 
 using std::uppercase;
 using std::nouppercase;

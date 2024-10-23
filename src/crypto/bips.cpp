@@ -350,9 +350,9 @@ Mnemonic::Mnemonic(const size_t entropy_bitsize, const vector<string> *dictionna
 bool Mnemonic::add_entropy(const string& entropy, const uint32_t bitsize, const uint8_t in_base)
 {
     bool ret = false;
-    if( m_entropy.bitsize() + bitsize <= m_ent)
+    if( m_entropy.bitSize() + bitsize <= m_ent)
     {
-        m_entropy.push_back(entropy, bitsize, in_base);
+        m_entropy.push_back(entropy, bitsize);
         ret = true;
     }
     return ret;
@@ -365,9 +365,9 @@ bool Mnemonic::add_word(const string &word)
     std::transform(data.begin(), data.end(), data.begin(), ::tolower);
     vector<string>::const_iterator dic_it;
     dic_it = find(m_dic->begin(), m_dic->end(), data);
-    if (dic_it != m_dic->end() && m_entropy.bitsize() < m_ent)
+    if (dic_it != m_dic->end() && m_entropy.bitSize() < m_ent)
     {
-        bool is_last_word = (m_entropy.bitsize() + m_went > m_ent);
+        bool is_last_word = (m_entropy.bitSize() + m_went > m_ent);
         uint32_t controlled_went = m_went;
         if (is_last_word)
             controlled_went -= m_cs;
@@ -410,7 +410,7 @@ void Mnemonic::setPassword(const string& pwd)
 
 bool Mnemonic::is_valid() const
 {
-    return (m_entropy.bitsize() == m_ent);
+    return (m_entropy.bitSize() == m_ent);
 }
 
 void Mnemonic::clear()
@@ -422,7 +422,7 @@ const string Mnemonic::get_word_list() const
 {
     string ret("");
     uint32_t nth_word;
-    div_t d = div(m_entropy.bitsize(), m_went);
+    div_t d = div(m_entropy.bitSize(), m_went);
     for (int i = 0; i < d.quot; i++)
     {
         if(ret.size() > 0)
@@ -437,7 +437,7 @@ const string Mnemonic::get_word_list() const
 bool Mnemonic::list_possible_last_word(vector<string> &list) const
 {
     bool res = false;
-    if (m_entropy.bitsize() == m_went * (m_ms - 1))
+    if (m_entropy.bitSize() == m_went * (m_ms - 1))
     {
         list.clear();
         for (int i = 0; i < (1 << (m_went - m_cs)); i++)
@@ -456,7 +456,7 @@ const string Mnemonic::get_last_word() const
     string ret("");
     if (is_valid())
     {
-        Integer index = (m_entropy.at((m_ms - 1)*m_went, m_went-m_cs).as_uint8() << m_cs) + m_entropy.sha256().at(0,m_cs).as_uint8();
+        Integer index = (m_entropy[(m_ms - 1)*m_went, m_went-m_cs] << m_cs) + m_entropy.sha256().at(0, m_cs);
         ret = m_dic->at(index);
     }
     return ret;

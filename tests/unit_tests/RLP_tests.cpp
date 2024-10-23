@@ -483,7 +483,7 @@ TEST(RLPTests, TestRLP_BadRLPs)
     ASSERT_EQ(is_list, false);
 
     //First element F9 is invalid because it should be followed by at least 2 bytes of size
-    bad_rlp = "0xF801F9";
+    bad_rlp = RLPByteSet("0xF801F9");
     expected = RLPByteSet("0xF9");
     actual = bad_rlp.pop_front(is_list);
     ASSERT_EQ(actual, expected);

@@ -6,15 +6,26 @@
 
 int main(int argc, char *argv[])
 {
-    BitStrByteSet j("11111111111111111111111111111111"
-                    "11111111111111111111111111111111"
-                    "11111111111111111111111111111111"
-                    "11111111111111111111111111111111"
-                    "11111111111111111111111111111111"
-                    "11111111111111111111111111111111");
-    j.push_front("11111111111111111111111111111111");
-    j.push_back("11111111111111111111111111111111");
-    string str_j = j;
+    BinStrBitSet i("0b111111111");
+    i.push_back("0b1");
+    i.push_front("0b1");
+    cout << (string)i << endl;
+
+    BitByteSet j((BinStrBitSet)"0b11111111111");
+    cout << (string)j << endl;
+
+    BinStrByteSet k((BinStrByteSet)"0b11111111111");
+    cout << (string)k << endl;
+
+    BinStrBitSet l((string)k);
+    cout << (string)l << endl;
+
+    cout << i.keccak256() << endl;
+    cout << j.keccak256() << endl;
+    cout << k.keccak256() << endl;
+    cout << l.keccak256() << endl;
+
+    /*string str_j = j;
     cout << str_j << endl;
     
     BinStrByteSet bj = j.toBinStrByteSet();
@@ -34,7 +45,7 @@ int main(int argc, char *argv[])
     DecStrByteSet y(x);
     cout << string(y) << endl;
     IntByteSet z(y);
-    cout << string(z) << endl;
+    cout << string(z) << endl;*/
     /*string yy = y.toHex();
     yy = y.toDec();
     yy = y.toBin();
