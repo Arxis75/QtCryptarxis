@@ -27,6 +27,8 @@ class IntByteSet : public ArrayByteSet
         inline bool operator<=(const IntByteSet &b) const { return Integer(*this) <= Integer(b); };
         inline bool operator<(const IntByteSet &b) const { return Integer(*this) < Integer(b); };
 
-private:
+        inline IntByteSet at(const uint64_t offset, const uint64_t nb_element) const { return (IntByteSet)(ByteSet)vector<uint8_t>(vvalue.begin() + offset, vvalue.begin() + offset + nb_element); }
+
+private:  
         Integer right(uint64_t size) const;
 };

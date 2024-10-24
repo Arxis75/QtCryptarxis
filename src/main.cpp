@@ -97,8 +97,25 @@ class strBitSet : public bitSet
     mpz_import(z, 11, 1, sizeof(bb[0]), 0, 0, bb);
     cout << hex << zz << endl;*/
 
+template<class T>
+class A {
+public:
+    T* Hello() {
+        return static_cast<T*>(this);
+    }
+};
+
+template<class T>
+class B : public A<T> {
+};
+
+template<class T>
+class C : public B<C> {
+};
+
 int main(int argc, char *argv[])
 {
+
     /*BinStrBitSet i("0b111111111");
     i.push_back("0b1");
     i.push_front("0b1");
