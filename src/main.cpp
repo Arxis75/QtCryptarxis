@@ -4,9 +4,102 @@
 
 #include <data/StrByteSet.h>
 
+/*template <class T=uint8_t>
+class Container
+{
+    static_assert(   std::is_same<T, uint8_t>::value
+                  || std::is_same<T, char>::value 
+                  || std::is_same<T, bool>::value );
+    public:
+        Container<T>() {}
+        Container<T>(const T[]) {}
+    
+        inline void push_front(T elem) { push_front((Container<T>)vector<T>({elem})); }
+        inline void push_back(T elem) { m_vector.push_back(elem); }
+        T pop_front();
+        T pop_back();
+
+        inline void push_front(const Container<T> &c) { m_vector.insert(m_vector.begin(), c.m_vector.begin(), c.m_vector.end()); }
+        inline void push_back(const Container<T> &c) { m_vector.insert(m_vector.end(), c.m_vector.begin(), c.m_vector.end()); }
+        Container<T> pop_front(uint64_t nb_element);
+        Container<T> pop_back(uint64_t nb_element);
+    
+        inline T operator[](uint64_t index) const { return m_vector[index]; }
+
+        virtual operator string() const;
+        friend ostream& operator<<(ostream& out, const ByteSet& v);
+
+        Container<T> at(const uint64_t offset, const uint64_t nb_element) const { return (Container<T>)vector<T>(m_vector.begin() + offset, m_vector.begin() + offset + nb_element); }
+
+        virtual inline uint64_t elemSize() const { return m_vector.size(); }
+        inline void clear() { m_vector.clear(); }
+        static ByteSet generateRandom(uint32_t nb_elem);
+
+    private:
+        vector<T> m_vector;
+};
+
+class bitSet : public Container<bool>
+{
+    public:
+        bitSet() : Container<bool>() {}
+};
+
+template <class T = uint8_t>
+class byteSet : public Container<T>
+{
+    static_assert(   std::is_same<T, uint8_t>::value
+                  || std::is_same<T, char>::value );
+    public:
+        byteSet<T>() : Container<T>() {}
+};
+
+struct StrHex {
+    string header = "0x";
+    uint8_t chars_per_byte_of_value = 2;
+};
+struct StrDec {
+    string header = "";
+    uint8_t chars_per_byte_of_value = 0;
+};
+struct StrBin {
+    string header = "0b";
+    uint8_t chars_per_byte_of_value = 8;
+};
+
+template <class T = uint8_t, typename U = StrHex >
+class strByteSet : public byteSet<T>
+{
+    static_assert( (  std::is_same<T, uint8_t>::value
+                   || std::is_same<T, char>::value)
+                && (  std::is_same<U, StrHex>::value
+                   || std::is_same<U, StrDec>::value 
+                   || std::is_same<U, StrBin>::value) );
+    public:
+        strByteSet<T, U>() : byteSet<T>() {}
+};
+
+template <typename U = StrBin >
+class strBitSet : public bitSet
+{
+    static_assert(   std::is_same<U, StrHex>::value
+                  || std::is_same<U, StrDec>::value 
+                  || std::is_same<U, StrBin>::value );
+    public:
+        strBitSet<U>() : bitSet() {}
+};*/
+
+    /*Integer zz; // = 0x123456789ABCDEF;
+    mpz_ptr z = zz.get_mpz();
+    uint8_t aa[10] = {0x00, 0x00, 0x1, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+    mpz_import (z, 20, 1, sizeof(aa[0]), 0, 0, aa);
+    bool bb[14] = {0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    mpz_import(z, 11, 1, sizeof(bb[0]), 0, 0, bb);
+    cout << hex << zz << endl;*/
+
 int main(int argc, char *argv[])
 {
-    BinStrBitSet i("0b111111111");
+    /*BinStrBitSet i("0b111111111");
     i.push_back("0b1");
     i.push_front("0b1");
     cout << (string)i << endl;
@@ -23,7 +116,7 @@ int main(int argc, char *argv[])
     cout << i.keccak256() << endl;
     cout << j.keccak256() << endl;
     cout << k.keccak256() << endl;
-    cout << l.keccak256() << endl;
+    cout << l.keccak256() << endl;*/
 
     /*string str_j = j;
     cout << str_j << endl;

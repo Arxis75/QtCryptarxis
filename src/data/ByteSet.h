@@ -65,6 +65,8 @@ class BitSet : public ByteSet
 
         virtual operator string() const;
 
+        BitSet at(const uint64_t bitoffset, const uint64_t bitsize) const;
+
         inline uint64_t bitSize() const { return vvalue.size(); }
 
         inline virtual ByteSet sha256() const { return toByteSet().sha256(); }

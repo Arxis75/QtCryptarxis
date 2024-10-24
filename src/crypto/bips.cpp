@@ -372,11 +372,11 @@ bool Mnemonic::add_word(const string &word)
         if (is_last_word)
             controlled_went -= m_cs;
         uint32_t index = distance(m_dic->begin(), dic_it);
-        BitSet e(m_entropy);
+        IntByteSet e(m_entropy);
         e.push_back(index >> (m_went - controlled_went), controlled_went);
-        if (!is_last_word || e.sha256().at(0,m_cs).as_uint8() == (index & (0xFF >> (8 - m_cs))))
+        if (!is_last_word || (IntByteSet)e.sha256().at(0,m_cs) == (index & (0xFF >> (8 - m_cs))))
         {
-            m_entropy = e;
+            m_entropy = BinStrBitSet((string)e);
             res = true;
         }
     }
@@ -427,7 +427,7 @@ const string Mnemonic::get_word_list() const
     {
         if(ret.size() > 0)
             ret += " ";
-        ret += m_dic->at(m_entropy.at(i*m_went,m_went).as_uint16());
+        ret += m_dic->at((IntByteSet)m_entropy.at(i*m_went,m_went));
     }
     if (d.rem && is_valid())
         ret += " " + get_last_word();
@@ -442,9 +442,9 @@ bool Mnemonic::list_possible_last_word(vector<string> &list) const
         list.clear();
         for (int i = 0; i < (1 << (m_went - m_cs)); i++)
         {
-            BitSet tmp(m_entropy);
+            IntByteSet tmp(m_entropy);
             tmp.push_back(i, m_went - m_cs);
-            list.push_back(m_dic->at((i << m_cs) + tmp.sha256().at(0,m_cs).as_uint8()));
+            list.push_back(m_dic->at((i << m_cs) + (IntByteSet)tmp.sha256().at(0,m_cs)));
         }
         res = true;
     }
@@ -456,7 +456,7 @@ const string Mnemonic::get_last_word() const
     string ret("");
     if (is_valid())
     {
-        Integer index = (m_entropy[(m_ms - 1)*m_went, m_went-m_cs] << m_cs) + m_entropy.sha256().at(0, m_cs);
+        Integer index = (m_entropy[(m_ms - 1)*m_went, m_went-m_cs] << m_cs) + (IntByteSet)m_entropy.sha256().at(0, m_cs);
         ret = m_dic->at(index);
     }
     return ret;

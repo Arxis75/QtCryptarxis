@@ -2,13 +2,13 @@
 
 #include <data/StrByteSet.h>
 
-class RLPByteSet: public IntByteSet
+class RLPByteSet: public HexStrByteSet
 {
     public:
         // Non-encoding constructors:
-        RLPByteSet() : IntByteSet() { }
-        //RLPByteSet(const uint8_t *p, uint64_t size) : IntByteSet(ArrayByteSet(p, size)) { }
-        //explicit RLPByteSet(const char *str) : IntByteSet(HexStrByteSet(str)) { } //for raw RLP init from hex string only
+        RLPByteSet() : HexStrByteSet() { }
+        RLPByteSet(const uint8_t *p, uint64_t size) : HexStrByteSet(ArrayByteSet(p, size)) { }
+        explicit RLPByteSet(const char *str) : HexStrByteSet(HexStrByteSet(str)) { } //for raw RLP init from hex string only
         
         // Encoding constructor:
         // "as_list" is used to:

@@ -15,5 +15,5 @@ target_link_libraries(QtCryptarxis PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 add_subdirectory(data)
 add_subdirectory(crypto)
-add_subdirectory(eth)
+#add_subdirectory(eth)
 add_subdirectory(UI)

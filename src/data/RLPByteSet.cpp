@@ -2,7 +2,7 @@
 #include <data/Tools.h>
 
 RLPByteSet::RLPByteSet(const ByteSet &to_rlp_encode, const bool as_list)
-    : IntByteSet("", 0)
+    : HexStrByteSet("", 0)
 {
     //MAIN RLP ENCODING METHOD
     if( to_rlp_encode.byteSize() )

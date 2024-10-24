@@ -108,6 +108,16 @@ BitSet::operator string() const {
     return ss.str();     
 }
 
+BitSet BitSet::at(uint64_t bitoffset, uint64_t bitsize) const       // not aligned
+{
+    assert(bitoffset+bitsize <= bitSize());
+    BitSet tmp(*this);
+    tmp.pop_front(bitoffset);
+    tmp.pop_back(tmp.bitSize()-bitsize);
+    return tmp;
+}
+
+
 ByteSet BitSet::toByteSet() const
 {
     BitSet from = *this;
