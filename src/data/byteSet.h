@@ -19,11 +19,15 @@ class ValueVector
         Derived pop_front(uint64_t nb_element);
         Derived pop_back(uint64_t nb_element);
 
-        inline uint64_t elemSize() const { return vvalue.size(); }
+        uint8_t elemValueBitSize() const;
 
-        uint8_t getElemBitSize() const;
+        inline uint64_t nbElements() const { return vvalue.size(); }
+        inline uint64_t valueBitSize() const { return nbElements()*elemValueBitSize(); }
 
         T getElem(uint64_t ofs) const { return vvalue[ofs]; }
+
+        inline T left(uint64_t nb_element) const { T ret_v(T(*this)); return ret_v.pop_front(nb_element); }
+        inline T right(uint64_t nb_element) const { T ret_v(T(*this)); return ret_v.pop_back(nb_element); }
 
     protected:
         vector<T> vvalue;
@@ -46,26 +50,64 @@ class byteSet : public ValueVector<byteSet<T>, T>
 {
         explicit byteSet(const string& val, uint64_t aligned_size = 0) = delete;
     public:
-        byteSet() : ValueVector<byteSet<T>, T>() {}
-        explicit byteSet(const Integer &val, uint64_t aligned_size = 0) : ValueVector<byteSet<T>, T>() {}
-        explicit byteSet(uint64_t val, uint64_t aligned_size = 0) : ValueVector<byteSet<T>, T>() {}
-        byteSet(const ValueVector<byteSet<T>, T> &val) : ValueVector<byteSet<T>, T>(val) {}
-    
-        inline operator uint64_t() const { return right(); }
-        inline operator Integer() const { return right(elemSize()); }
-    
-    private:
-        Integer right(uint64_t byte_size) const;
+        byteSet() : ValueVector<T>() {}
+        explicit byteSet(const Integer &val, uint64_t aligned_size = 0) : ValueVector<T>() {}
+        explicit byteSet(uint64_t val, uint64_t aligned_size = 0) : ValueVector<T>() {}
+        byteSet(const ValueVector<T> &val) : ValueVector<T>(val) {}
+
+        inline operator uint64_t() const { return toInteger(64); }
+        inline operator Integer() const { return toInteger(ValueVector<T>::valueBitSize()); }
+
+private:
+        Integer toInteger(uint64_t nb_right_bits) const;
 };
 
 template <typename T = uint8_t> 
 class byteSetView : public byteSet<T>
 {
+    struct ByteSetViewFormat {
+        string Header;
+        uint8_t BitsPerChar;
+        regex Regex; };
     public:
-        byteSetView() : byteSet<T>() {}
-        explicit byteSetView(const string& val, uint64_t aligned_size = 0) : byteSet<T>() {}
-        explicit byteSetView(uint64_t val, uint64_t aligned_size = 0) : byteSet<T>(val, aligned_size) {}
-        explicit byteSetView(const byteSet<T> &val) : byteSet<T>(val) {}
+        byteSetView() : byteSet<T>(), m_format(Hex) {}
+        explicit byteSetView(const ByteSetViewFormat& format, const string& val, uint64_t aligned_size = 0) : byteSet<T>(), m_format(format) {}
+        explicit byteSetView(uint64_t val, uint64_t aligned_size = 0) : byteSet<T>(val, aligned_size), m_format(Hex) {}
+        explicit byteSetView(const byteSet<T> &val) : byteSet<T>(val), m_format(Hex) {}
 
-        operator string() const {}
+        operator string() const { return toString(m_format); }
+    
+    private:
+        string toString(const ByteSetViewFormat& format) const;
+
+    private:
+        ByteSetViewFormat m_format;
+};
+
+template<class T>
+typename byteSetView<T>::ByteSetViewFormat Hex {
+    .Header = "0x",
+    .BitsPerChar = 8,
+    .Regex = regex("^(0x)?[0-9a-fA-F]+")
+};
+
+template<class T>
+typename byteSetView<T>::ByteSetViewFormat Dec {
+    .Header = "",
+    .BitsPerChar = 0,
+    .Regex = regex("^[0-9]+")
+};
+
+template<class T>
+typename byteSetView<T>::ByteSetViewFormat GWei {
+    .Header = "",
+    .BitsPerChar = 0,
+    .Regex = regex("^[0-9]+.[0-9]{9}")
+};
+
+template<class T>
+typename byteSetView<T>::ByteSetViewFormat Bin {
+    .Header = "0b",
+    .BitsPerChar = 1,
+    .Regex = regex("^(0b)?[0-1]+")
 };
