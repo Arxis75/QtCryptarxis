@@ -10,9 +10,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #Looks for Qt6.8.0
-list(APPEND CMAKE_PREFIX_PATH "~/Qt/6.8.0/gcc_64")
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-#find_package(QT NAMES Qt5 REQUIRED COMPONENTS Widgets)
+#list(APPEND CMAKE_PREFIX_PATH "~/Qt/6.8.0/gcc_64")
+#find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 
 # first we can indicate the documentation build as an option and set it to ON by default

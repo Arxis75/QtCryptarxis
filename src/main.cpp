@@ -101,7 +101,26 @@ class strBitSet : public bitSet
 
 int main(int argc, char *argv[])
 {
-    /*Integer large_int("115792089237316195423570985008687907853269984665640564039457584007908834671663");
+    byteSet<bool> b;
+    byteSet<uint8_t> i;
+    uint8_t s;
+    
+    s = b.elemValueBitSize();
+    s = i.elemValueBitSize();
+
+    b = byteSet<bool>(Integer::zero);
+    b = byteSet<bool>(Integer::zero, 32);
+
+    b = byteSet<bool>(0);
+    b = byteSet<bool>(0, 32);
+
+    i = byteSet<uint8_t>(0);
+    i = byteSet<uint8_t>(0, 32);
+
+    i = byteSet(0);
+    i = byteSet(0, 32);
+
+    Integer large_int("115792089237316195423570985008687907853269984665640564039457584007908834671663");
     uint8_t zz[3] = {0x00, 0x01, 0x02};
 
     ValueVector vv;
@@ -180,9 +199,9 @@ int main(int argc, char *argv[])
     bs = byteSet("0x123456789ABCDEF", 17);
 
     bs = byteSet(ArrayVector(zz, sizeof(zz)));                    //implicit not possible
-    bs = byteSet((byteSetView)"");
+    bs = byteSet(byteSetView(""));
     bs = byteSet(byteSetView("", 17));
-    bs = byteSet((byteSetView)"0x123456789ABCDEF");
+    bs = byteSet(byteSetView("0x123456789ABCDEF"));
     bs = byteSet(byteSetView("0x123456789ABCDEF", 17));
     
     byteSetView bsv;
@@ -202,11 +221,11 @@ int main(int argc, char *argv[])
     bsv = byteSetView("0x123456789ABCDEF", 17);
 
     bsv = byteSetView(ArrayVector(zz, sizeof(zz)));
-    bsv = byteSetView((byteSet)Integer::zero);          //implicit possible
+    bsv = byteSetView(byteSet(Integer::zero));          //implicit possible
     bsv = byteSetView(byteSet(Integer::zero, 17));      //implicit not possible
-    bsv = byteSetView((byteSet)large_int);          //implicit possible
+    bsv = byteSetView(byteSet(large_int));          //implicit possible
     bsv = byteSetView(byteSet(large_int, 17));      //implicit not possible
-*/
+
 
     /*BinStrBitSet i("0b111111111");
     i.push_back("0b1");
