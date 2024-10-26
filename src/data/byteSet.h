@@ -34,6 +34,9 @@ class ValueVector
 
         inline T getElem(uint64_t ofs) const { return vvalue[ofs]; }
 
+        inline virtual operator string() const;
+        friend inline ostream& operator<<(ostream& out, const ValueVector& v) { return out << (string)v; }
+
         //inline T left(uint64_t nb_element) const { T ret_v(T(*this)); return ret_v.pop_front(nb_element); }
         //inline T right(uint64_t nb_element) const { T ret_v(T(*this)); return ret_v.pop_back(nb_element); }
 
@@ -169,6 +172,15 @@ T ValueVector<Derived, T>::pop_back()
     T ret_val = vvalue[nbElements()-1];
     vvalue.pop_back();
     return ret_val;
+}
+
+template<class Derived, typename T>
+ValueVector<Derived, T>::operator string() const
+{
+    stringstream ss;
+    for(T i: vvalue)
+        ss << setfill('0') << setw(elementBitSize()>>2) << hex << Integer(i) << ' ';
+    return ss.str();
 }
 
 template<typename T>

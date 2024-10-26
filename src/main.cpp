@@ -143,11 +143,11 @@ int main(int argc, char *argv[])
     byteSetView<Hex, uint64_t>  bsv64 = byteSetView<Hex, uint64_t>("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
     cout << hex << (Integer)bsv64 << endl;
 
-    cout << (string)bsv1 << endl;
-    cout << (string)bsv8 << endl;
-    cout << (string)bsv16 << endl;    
-    cout << (string)bsv32 << endl;
-    cout << (string)bsv64 << endl;
+    cout << bsv1 << endl;
+    cout << (ValueVector<byteSet<>>)bsv8 << endl;
+    cout << bsv16 << endl;    
+    cout << bsv32 << endl;
+    cout << bsv64 << endl;
 
     byteSetView<Dec, bool>      bsv1d  = byteSetView<Dec, bool>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
     cout << hex << (Integer)bsv1d << endl;
@@ -160,11 +160,11 @@ int main(int argc, char *argv[])
     byteSetView<Dec, uint64_t>  bsv64d = byteSetView<Dec, uint64_t>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
     cout << hex << (Integer)bsv64d << endl;
 
-    cout << (string)bsv1d << endl;
-    cout << (string)bsv8d << endl;
-    cout << (string)bsv16d << endl;    
-    cout << (string)bsv32d << endl;
-    cout << (string)bsv64d << endl;
+    cout << bsv1d << endl;
+    cout << (ValueVector<byteSet<>>)bsv8d << endl;
+    cout << bsv16d << endl;    
+    cout << bsv32d << endl;
+    cout << bsv64d << endl;
 
     byteSetView<Bin, bool>      bsv1b  = byteSetView<Bin, bool>("11111111111");
     cout << hex << (Integer)bsv1b << endl;
@@ -177,11 +177,11 @@ int main(int argc, char *argv[])
     byteSetView<Bin, uint64_t>  bsv64b = byteSetView<Bin, uint64_t>("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111111110000101111");
     cout << hex << (Integer)bsv64b << endl;
 
-    cout << (string)bsv1b << endl;
-    cout << (string)bsv8b << endl;
-    cout << (string)bsv16b << endl;    
-    cout << (string)bsv32b << endl;
-    cout << (string)bsv64b << endl;
+    cout << bsv1b << endl;
+    cout << bsv8b << endl;
+    cout << bsv16b << endl;    
+    cout << bsv32b << endl;
+    cout << bsv64b << endl;
 
     bsv = byteSetView("0x0F", 17);
     bsv = byteSetView<Dec>("127", 17);
