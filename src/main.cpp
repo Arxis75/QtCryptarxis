@@ -123,21 +123,62 @@ int main(int argc, char *argv[])
     i = byteSet(0);
     i = byteSet(0, 32);*/
 
-    int x = 0b00010000;
-
-    Integer large_int("115792089237316195423570985008687907853269984665640564039457584007908834671663");
-    uint8_t zz[3] = {0x00, 0x01, 0x02};
-
     ValueVector<byteSet<>> vv;
     byteSet bs;
     byteSetView bsv;
-    
+    byteSetView<Bin, bool> bbsv;
+
     vv = ValueVector<byteSet<>>(32);
     bs = byteSet(ValueVector<byteSet<>>(32));
     bsv = byteSetView(ValueVector<byteSet<>>(32));
 
+    byteSetView<Hex, bool>      bsv1  = byteSetView<Hex, bool>("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
+    cout << hex << (Integer)bsv1 << endl;
+    byteSetView<Hex, uint8_t>   bsv8  = byteSetView<Hex, uint8_t>("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
+    cout << hex << (Integer)bsv8 << endl;
+    byteSetView<Hex, uint16_t>  bsv16 = byteSetView<Hex, uint16_t>("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
+    cout << hex << (Integer)bsv16 << endl;
+    byteSetView<Hex, uint32_t>  bsv32 = byteSetView<Hex, uint32_t>("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
+    cout << hex << (Integer)bsv32 << endl;
+    byteSetView<Hex, uint64_t>  bsv64 = byteSetView<Hex, uint64_t>("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
+    cout << hex << (Integer)bsv64 << endl;
+
+    byteSetView<Dec, bool>      bsv1d  = byteSetView<Dec, bool>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
+    cout << hex << (Integer)bsv1d << endl;
+    byteSetView<Dec, uint8_t>   bsv8d  = byteSetView<Dec, uint8_t>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
+    cout << hex << (Integer)bsv8d << endl;
+    byteSetView<Dec, uint16_t>  bsv16d = byteSetView<Dec, uint16_t>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
+    cout << hex << (Integer)bsv16d << endl;
+    byteSetView<Dec, uint32_t>  bsv32d = byteSetView<Dec, uint32_t>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
+    cout << hex << (Integer)bsv32d << endl;
+    byteSetView<Dec, uint64_t>  bsv64d = byteSetView<Dec, uint64_t>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
+    cout << hex << (Integer)bsv64d << endl;
+
+    byteSetView<Bin, bool>      bsv1b  = byteSetView<Bin, bool>("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111111110000101111");
+    cout << hex << (Integer)bsv1b << endl;
+    byteSetView<Bin, uint8_t>   bsv8b  = byteSetView<Bin, uint8_t>("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111111110000101111");
+    cout << hex << (Integer)bsv8b << endl;
+    byteSetView<Bin, uint16_t>  bsv16b = byteSetView<Bin, uint16_t>("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111111110000101111");
+    cout << hex << (Integer)bsv16b << endl;
+    byteSetView<Bin, uint32_t>  bsv32b = byteSetView<Bin, uint32_t>("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111111110000101111");
+    cout << hex << (Integer)bsv32b << endl;
+    byteSetView<Bin, uint64_t>  bsv64b = byteSetView<Bin, uint64_t>("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111111110000101111");
+    cout << hex << (Integer)bsv64b << endl;
+
+
+    bsv = byteSetView("0x0F", 17);
+    bsv = byteSetView<Dec>("127", 17);
+    bsv = byteSetView<Bin>("0b1111111", 17);
+    bbsv = byteSetView<Bin, bool>("0b1111111",17);
+
+    int x = 0b00010000;
+
+    Integer large_int("115792089237316195423570985008687907853269984665640564039457584007908834671663");
+    uint8_t zz[3] = {0x00, 0x01, 0x02};
+    
     vv = ValueVector<byteSet<>>(zz, sizeof(zz));     //implicit not possible
-    /*vv = ValueVector(0, 32);                         //implicit not possible
+    /*vv = ValueVector(0);                             //implicit possible
+    vv = ValueVector(0, 32);                         //implicit not possible
     vv = ValueVector(0x123456789ABCDEF);             //implicit possible
     vv = ValueVector(0x123456789ABCDEF, 17);         //implicit not possible
     vv = ValueVector(Integer::zero);             //implicit possible

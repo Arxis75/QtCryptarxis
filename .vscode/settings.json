@@ -4,6 +4,11 @@
         "functional": "cpp",
         "type_traits": "cpp",
         "sstream": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "gmp++_int_cstor.C": "cpp",
+        "cmath": "cpp",
+        "gmp++_int_misc.C": "cpp"
     }
 }
