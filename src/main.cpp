@@ -98,10 +98,13 @@ class strBitSet : public bitSet
     cout << hex << zz << endl;*/
 
 #include <data/byteSet.h>
+#include <data/Tools.h>
 
 int main(int argc, char *argv[])
 {
-    byteSet<bool> b;
+    //for(uint64_t i = 0;i<= 0x1000;i++)
+    //    cout << "log2(" << i << ") = " << ceil(logtwo(1+Integer(i))/8) << endl;
+    /*byteSet<bool> b;
     byteSet<uint8_t> i;
     uint8_t s;
     
@@ -109,7 +112,7 @@ int main(int argc, char *argv[])
     s = i.elemValueBitSize();
 
     b = byteSet<bool>(Integer::zero);
-    b = byteSet<bool>(Integer::zero, 32);
+    b = byteSet<bool>(Integer::zero, 7);
 
     b = byteSet<bool>(0);
     b = byteSet<bool>(0, 32);
@@ -118,16 +121,23 @@ int main(int argc, char *argv[])
     i = byteSet<uint8_t>(0, 32);
 
     i = byteSet(0);
-    i = byteSet(0, 32);
+    i = byteSet(0, 32);*/
+
+    int x = 0b00010000;
 
     Integer large_int("115792089237316195423570985008687907853269984665640564039457584007908834671663");
     uint8_t zz[3] = {0x00, 0x01, 0x02};
 
-    ValueVector vv;
+    ValueVector<byteSet<>> vv;
+    byteSet bs;
+    byteSetView bsv;
+    
+    vv = ValueVector<byteSet<>>(32);
+    bs = byteSet(ValueVector<byteSet<>>(32));
+    bsv = byteSetView(ValueVector<byteSet<>>(32));
 
-    vv = ValueVector(zz, sizeof(zz));                    //implicit not possible
-    vv = ValueVector(0);                             //implicit possible
-    vv = ValueVector(0, 32);                         //implicit not possible
+    vv = ValueVector<byteSet<>>(zz, sizeof(zz));     //implicit not possible
+    /*vv = ValueVector(0, 32);                         //implicit not possible
     vv = ValueVector(0x123456789ABCDEF);             //implicit possible
     vv = ValueVector(0x123456789ABCDEF, 17);         //implicit not possible
     vv = ValueVector(Integer::zero);             //implicit possible
@@ -137,54 +147,22 @@ int main(int argc, char *argv[])
     vv = ValueVector("");
     vv = ValueVector("", 17);
     vv = ValueVector("0x123456789ABCDEF");
-    vv = ValueVector("0x123456789ABCDEF", 17);
+    vv = ValueVector("0x123456789ABCDEF", 17);*/
 
-    vv = ValueVector(ArrayVector(zz, sizeof(zz)));                    //implicit not possible
-    vv = ValueVector((byteSet)0);                             //implicit possible
+    vv = ValueVector(byteSet(0));                             //implicit possible
     vv = ValueVector(byteSet(0, 32));                         //implicit not possible
-    vv = ValueVector((byteSet)0x123456789ABCDEF);             //implicit possible
+    vv = ValueVector(byteSet(0x123456789ABCDEF));             //implicit possible
     vv = ValueVector(byteSet(0x123456789ABCDEF, 17));         //implicit not possible
-    vv = ValueVector((byteSet)Integer::zero);             //implicit possible
+    vv = ValueVector(byteSet(Integer::zero));             //implicit possible
     vv = ValueVector(byteSet(Integer::zero, 17));         //implicit not possible
-    vv = ValueVector((byteSet)large_int);             //implicit possible
+    vv = ValueVector(byteSet(large_int));             //implicit possible
     vv = ValueVector(byteSet(large_int, 17));         //implicit not possible
-    vv = ValueVector((byteSetView)"");
+    vv = ValueVector(byteSetView(""));
     vv = ValueVector(byteSetView("", 17));
-    vv = ValueVector((byteSetView)"0x123456789ABCDEF");
+    vv = ValueVector(byteSetView("0x123456789ABCDEF"));
     vv = ValueVector(byteSetView("0x123456789ABCDEF", 17));
 
-    ArrayVector av;
-
-    av = ArrayVector(zz, sizeof(zz));                    //implicit not possible
-    av = ArrayVector(0);                             //implicit possible
-    av = ArrayVector(0, 32);                         //implicit not possible
-    av = ArrayVector(0x123456789ABCDEF);             //implicit possible
-    av = ArrayVector(0x123456789ABCDEF, 17);         //implicit not possible
-    av = ArrayVector(Integer::zero);             //implicit possible
-    av = ArrayVector(Integer::zero, 17);         //implicit not possible
-    av = ArrayVector(large_int);             //implicit possible
-    av = ArrayVector(large_int, 17);         //implicit not possible
-    av = ArrayVector("");
-    av = ArrayVector("", 17);
-    av = ArrayVector("0x123456789ABCDEF");
-    av = ArrayVector("0x123456789ABCDEF", 17);
-
-    av = ArrayVector((byteSet)0);                             //implicit possible
-    av = ArrayVector(byteSet(0, 32));                         //implicit not possible
-    av = ArrayVector((byteSet)0x123456789ABCDEF);             //implicit possible
-    av = ArrayVector(byteSet(0x123456789ABCDEF, 17));         //implicit not possible
-    av = ArrayVector((byteSet)Integer::zero);             //implicit possible
-    av = ArrayVector(byteSet(Integer::zero, 17));         //implicit not possible
-    av = ArrayVector((byteSet)large_int);             //implicit possible
-    av = ArrayVector(byteSet(large_int, 17));         //implicit not possible
-    av = ArrayVector((byteSetView)"");
-    av = ArrayVector(byteSetView("", 17));
-    av = ArrayVector((byteSetView)"0x123456789ABCDEF");
-    av = ArrayVector(byteSetView("0x123456789ABCDEF", 17));
-
-    byteSet bs;
-
-    bs = byteSet(zz, sizeof(zz));                    //implicit not possible
+    //bs = byteSet(zz, sizeof(zz));                    //implicit not possible
     bs = byteSet(0);                             //implicit possible
     bs = byteSet(0, 32);                         //implicit not possible
     bs = byteSet(0x123456789ABCDEF);             //implicit possible
@@ -193,39 +171,43 @@ int main(int argc, char *argv[])
     bs = byteSet(Integer::zero, 17);         //implicit not possible
     bs = byteSet(large_int);             //implicit possible
     bs = byteSet(large_int, 17);         //implicit not possible
-    bs = byteSet("");
+    /*bs = byteSet("");
     bs = byteSet("", 17);
     bs = byteSet("0x123456789ABCDEF");
-    bs = byteSet("0x123456789ABCDEF", 17);
+    bs = byteSet("0x123456789ABCDEF", 17);*/
 
-    bs = byteSet(ArrayVector(zz, sizeof(zz)));                    //implicit not possible
+    bs = byteSet(ValueVector<byteSet<>>(zz, sizeof(zz)));                    //implicit not possible
     bs = byteSet(byteSetView(""));
     bs = byteSet(byteSetView("", 17));
     bs = byteSet(byteSetView("0x123456789ABCDEF"));
     bs = byteSet(byteSetView("0x123456789ABCDEF", 17));
     
-    byteSetView bsv;
-
-    bsv = byteSetView(zz, sizeof(zz));
+    //bsv = byteSetView(zz, sizeof(zz));
     bsv = byteSetView(0);                          //implicit possible
     bsv = byteSetView(0, 32);                      //implicit not possible
     bsv = byteSetView(0x123456789ABCDEF);          //implicit possible
     bsv = byteSetView(0x123456789ABCDEF, 17);      //implicit not possible
-    bsv = byteSetView(Integer::zero);          //implicit possible
+    /*bsv = byteSetView(Integer::zero);          //implicit possible
     bsv = byteSetView(Integer::zero, 17);      //implicit not possible
     bsv = byteSetView(large_int);          //implicit possible
-    bsv = byteSetView(large_int, 17);      //implicit not possible
+    bsv = byteSetView(large_int, 17);      //implicit not possible*/
     bsv = byteSetView("");
     bsv = byteSetView("", 17);
     bsv = byteSetView("0x123456789ABCDEF");
     bsv = byteSetView("0x123456789ABCDEF", 17);
 
-    bsv = byteSetView(ArrayVector(zz, sizeof(zz)));
+    bsv = byteSetView(ValueVector<byteSet<>>(zz, sizeof(zz)));
     bsv = byteSetView(byteSet(Integer::zero));          //implicit possible
     bsv = byteSetView(byteSet(Integer::zero, 17));      //implicit not possible
     bsv = byteSetView(byteSet(large_int));          //implicit possible
     bsv = byteSetView(byteSet(large_int, 17));      //implicit not possible
 
+    vv = bs;
+    vv = bsv;
+    bs = vv;
+    bs = bsv;
+    bsv = vv;
+    bsv = bs;
 
     /*BinStrBitSet i("0b111111111");
     i.push_back("0b1");

@@ -47,7 +47,6 @@ class ByteSet
         vector<uint8_t> vvalue;
 };
 
-
 class BitSet : public ByteSet
 {
     public:

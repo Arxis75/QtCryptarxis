@@ -26,7 +26,7 @@ template<class Derived, typename T>
 T ValueVector<Derived, T>::pop_front()
 {
     assert(nbElements());
-    T ret_value = getElem(0);
+    T ret_value = vvalue[0];
     vvalue.erase(vvalue.begin());
     return ret_value;
 }
@@ -35,19 +35,9 @@ template<class Derived, typename T>
 T ValueVector<Derived, T>::pop_back()
 {
     assert(nbElements());
-    T ret_val = getElem(nbElements()-1);
+    T ret_val = vvalue[nbElements()-1];
     vvalue.pop_back();
     return ret_val;
-}
-
-/********************************************** ArrayVector ***********************************************/
-
-ArrayVector::ArrayVector(uint8_t* p, uint64_t aligned_size)
-    : ValueVector() 
-{
-    vvalue.resize(aligned_size);
-    for(uint64_t i=0;i<aligned_size;i++)
-        vvalue[i] = p[i]; 
 }
 
 /************************************************ byteSet ************************************************/
