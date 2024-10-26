@@ -67,7 +67,7 @@ class byteSet : public ValueVector<byteSet<T>, T>
 
 struct ByteSetViewFormat { string Header; uint8_t Base; uint8_t BitsPerChar; regex Regex; };
 
-static ByteSetViewFormat Hex  { .Header = "0x", .Base = 16, .BitsPerChar = 8, .Regex = regex("^(0x)?[0-9a-fA-F]+")};
+static ByteSetViewFormat Hex  { .Header = "0x", .Base = 16, .BitsPerChar = 4, .Regex = regex("^(0x)?[0-9a-fA-F]+")};
 static ByteSetViewFormat Dec  { .Header = "",   .Base = 10, .BitsPerChar = 0, .Regex = regex("^[0-9]+")};
 static ByteSetViewFormat Wei = Dec;
 static ByteSetViewFormat GWei { .Header = "",   .Base = 10, .BitsPerChar = 0, .Regex = regex("^[0-9]+.[0-9]{9}")};
@@ -75,7 +75,8 @@ static ByteSetViewFormat Bin  { .Header = "0b", .Base = 2,  .BitsPerChar = 1, .R
 
 template <ByteSetViewFormat const & f = Hex, typename T = uint8_t> 
 class byteSetView : public byteSet<T>
-{       //explicit byteSetView(const uint64_t val, uint64_t nb_elem = 0) = delete;
+{
+           //explicit byteSetView(const uint64_t val, uint64_t nb_elem = 0) = delete;
     public:
         byteSetView() : byteSet<T>() {}
         explicit byteSetView(const string& val, uint64_t aligned_size = 0);
@@ -87,11 +88,14 @@ class byteSetView : public byteSet<T>
 
         inline uint64_t getStringNbElem(string val) const { return val.size() * f.BitsPerChar / this->elemcontainerBitSize(); }
         
-        uint8_t charToValue(const char &c) const;
+        uint8_t charToDigit(const char &c) const;
         Integer strToInteger(const string& val) const;
 
+        char nibbleToChar(const uint8_t &n) const;
+        string integerToStr(const Integer& val) const;
+
     private:
-        string toString(const ByteSetViewFormat& format) const { return string(""); }
+        string toString(const ByteSetViewFormat& format) const { return integerToStr(Integer(*this)); }
 };
 
 /*********************************************** CONSTRUCTORS ***************************************************** */
@@ -113,10 +117,8 @@ byteSet<T>::byteSet(const Integer &val, uint64_t nb_elem)
     uint64_t nb_extra_elem = (nb_elem > nb_elem_for_val ? nb_elem - nb_elem_for_val : 0);
     for(uint64_t i=0;i<nb_extra_elem;i++)
         this->push_back(T(0x00));
-    for(uint64_t i=0;i<nb_elem_for_val;i++) {
-        T toto = T(val>>((nb_elem_for_val-1-i)*this->elementBitSize()));
+    for(uint64_t i=0;i<nb_elem_for_val;i++) 
         this->push_back(T(T_mask & val>>((nb_elem_for_val-1-i)*this->elementBitSize())));
-    }
 }
 
 template<ByteSetViewFormat const & f, typename T>
@@ -187,12 +189,37 @@ Integer byteSetView<f, T>::strToInteger(const string& val) const
     if(val.size() >= f.Header.size() && val.substr(0, f.Header.size()) == f.Header)
         i_start = f.Header.size();
     for(uint64_t i=i_start;i<val.size();i++)
-        retval += this->charToValue(val[i]) * Givaro::pow(f.Base, (val.size()-1-i));
+        retval += this->charToDigit(val[i]) * Givaro::pow(f.Base, (val.size()-1-i));
     return retval;
 }
 
 template<ByteSetViewFormat const & f, typename T>
-uint8_t byteSetView<f, T>::charToValue(const char &c) const
+string byteSetView<f, T>::integerToStr(const Integer& val) const
+{
+    stringstream ss;
+    if(f.Base == 16)
+        ss << setfill('0') << setw(this->containerBitSize()/f.BitsPerChar) << hex << val;
+    else if(f.Base == 10)
+        ss << dec << val;
+    else if(f.Base == 2) {
+        string str_val;
+        byteSet<T> bs_val(*this);
+        Integer val = Integer(bs_val);
+        Integer char_mask = Givaro::pow(Integer(2), f.BitsPerChar) - 1;
+        div_t d = div(bs_val.containerBitSize(), f.BitsPerChar);
+        for(uint64_t i=0;i<d.quot;i++) {
+            str_val = nibbleToChar(val & char_mask) + str_val;
+            val >>= f.BitsPerChar;
+        }
+        if(d.rem)
+            str_val = nibbleToChar(val & char_mask) + str_val;
+        ss << str_val;
+    }
+    return f.Header + ss.str();
+}
+
+template<ByteSetViewFormat const & f, typename T>
+uint8_t byteSetView<f, T>::charToDigit(const char &c) const
 {
     uint8_t retval = 0;
     if (c >= '0' && c <= '9')
@@ -202,4 +229,15 @@ uint8_t byteSetView<f, T>::charToValue(const char &c) const
     else if (c >= 'A' && c <= 'F')
         retval = c - 55;
     return retval;
+}
+
+template<ByteSetViewFormat const & f, typename T>
+char byteSetView<f, T>::nibbleToChar(const uint8_t &nibble) const
+{
+    char c;
+    if (nibble >= 0 && nibble <= 9)
+        c = 48 + nibble;
+    else if (nibble >= 0xA && nibble <= 0xF)
+        c = 87 + nibble;
+    return c;
 }
