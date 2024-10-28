@@ -2,126 +2,33 @@
 
 #include <QApplication>
 
-#include <data/StrByteSet.h>
-
-/*template <class T=uint8_t>
-class Container
-{
-    static_assert(   std::is_same<T, uint8_t>::value
-                  || std::is_same<T, char>::value 
-                  || std::is_same<T, bool>::value );
-    public:
-        Container<T>() {}
-        Container<T>(const T[]) {}
-    
-        inline void push_front(T elem) { push_front((Container<T>)vector<T>({elem})); }
-        inline void push_back(T elem) { m_vector.push_back(elem); }
-        T pop_front();
-        T pop_back();
-
-        inline void push_front(const Container<T> &c) { m_vector.insert(m_vector.begin(), c.m_vector.begin(), c.m_vector.end()); }
-        inline void push_back(const Container<T> &c) { m_vector.insert(m_vector.end(), c.m_vector.begin(), c.m_vector.end()); }
-        Container<T> pop_front(uint64_t nb_element);
-        Container<T> pop_back(uint64_t nb_element);
-    
-        inline T operator[](uint64_t index) const { return m_vector[index]; }
-
-        virtual operator string() const;
-        friend ostream& operator<<(ostream& out, const ByteSet& v);
-
-        Container<T> at(const uint64_t offset, const uint64_t nb_element) const { return (Container<T>)vector<T>(m_vector.begin() + offset, m_vector.begin() + offset + nb_element); }
-
-        virtual inline uint64_t elemSize() const { return m_vector.size(); }
-        inline void clear() { m_vector.clear(); }
-        static ByteSet generateRandom(uint32_t nb_elem);
-
-    private:
-        vector<T> m_vector;
-};
-
-class bitSet : public Container<bool>
-{
-    public:
-        bitSet() : Container<bool>() {}
-};
-
-template <class T = uint8_t>
-class byteSet : public Container<T>
-{
-    static_assert(   std::is_same<T, uint8_t>::value
-                  || std::is_same<T, char>::value );
-    public:
-        byteSet<T>() : Container<T>() {}
-};
-
-struct StrHex {
-    string header = "0x";
-    uint8_t chars_per_byte_of_value = 2;
-};
-struct StrDec {
-    string header = "";
-    uint8_t chars_per_byte_of_value = 0;
-};
-struct StrBin {
-    string header = "0b";
-    uint8_t chars_per_byte_of_value = 8;
-};
-
-template <class T = uint8_t, typename U = StrHex >
-class strByteSet : public byteSet<T>
-{
-    static_assert( (  std::is_same<T, uint8_t>::value
-                   || std::is_same<T, char>::value)
-                && (  std::is_same<U, StrHex>::value
-                   || std::is_same<U, StrDec>::value 
-                   || std::is_same<U, StrBin>::value) );
-    public:
-        strByteSet<T, U>() : byteSet<T>() {}
-};
-
-template <typename U = StrBin >
-class strBitSet : public bitSet
-{
-    static_assert(   std::is_same<U, StrHex>::value
-                  || std::is_same<U, StrDec>::value 
-                  || std::is_same<U, StrBin>::value );
-    public:
-        strBitSet<U>() : bitSet() {}
-};*/
-
-    /*Integer zz; // = 0x123456789ABCDEF;
-    mpz_ptr z = zz.get_mpz();
-    uint8_t aa[10] = {0x00, 0x00, 0x1, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
-    mpz_import (z, 20, 1, sizeof(aa[0]), 0, 0, aa);
-    bool bb[14] = {0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    mpz_import(z, 11, 1, sizeof(bb[0]), 0, 0, bb);
-    cout << hex << zz << endl;*/
-
 #include <data/byteSet.h>
 #include <data/Tools.h>
 
+class toto
+{
+    toto() {}
+};
+
 int main(int argc, char *argv[])
 {
-    //for(uint64_t i = 0;i<= 0x1000;i++)
-    //    cout << "log2(" << i << ") = " << ceil(logtwo(1+Integer(i))/8) << endl;
-    /*byteSet<bool> b;
-    byteSet<uint8_t> i;
-    uint8_t s;
-    
-    s = b.elemValueBitSize();
-    s = i.elemValueBitSize();
+    /*ValueVector<toto, bool> vv0, vvv0;
 
-    b = byteSet<bool>(Integer::zero);
-    b = byteSet<bool>(Integer::zero, 7);
+    vv0.push_back(true);
+    vv0.push_back(false);
+    vv0.push_back(true);
+    vv0.push_back(false);
+    vv0.push_back(true);
+    vv0.push_back(false);
+    vv0.push_back(true);
+    vv0.push_back(false);
+    vv0.push_back(true);    
+    vv0.push_back(false);
+    vv0.push_back(true);
 
-    b = byteSet<bool>(0);
-    b = byteSet<bool>(0, 32);
+    ValueVector<toto, uint8_t> vv1(vv0);
 
-    i = byteSet<uint8_t>(0);
-    i = byteSet<uint8_t>(0, 32);
-
-    i = byteSet(0);
-    i = byteSet(0, 32);*/
+    vvv0 = vv1;*/
 
     ValueVector<byteSet<>> vv;
     byteSet bs;
@@ -130,71 +37,56 @@ int main(int argc, char *argv[])
 
     vv = ValueVector<byteSet<>>(32);
     bs = byteSet(ValueVector<byteSet<>>(32));
-    bsv = byteSetView(ValueVector<byteSet<>>(32));
 
-    byteSetView<Hex, bool>      bsv1  = byteSetView<Hex, bool>("0xFFF");
-    cout << hex << (Integer)bsv1 << endl;
-    byteSetView<Hex, uint8_t>   bsv8  = byteSetView<Hex, uint8_t>("0xFFF");
+    byteSetView<Hex, bool>  bsv1("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
+    cout << hex << (Integer) bsv1 << endl;
+    byteSetView<Hex, uint8_t>   bsv8("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
     cout << hex << (Integer)bsv8 << endl;
-    byteSetView<Hex, uint16_t>  bsv16 = byteSetView<Hex, uint16_t>("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
-    cout << hex << (Integer)bsv16 << endl;
-    byteSetView<Hex, uint32_t>  bsv32 = byteSetView<Hex, uint32_t>("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
-    cout << hex << (Integer)bsv32 << endl;
-    byteSetView<Hex, uint64_t>  bsv64 = byteSetView<Hex, uint64_t>("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
-    cout << hex << (Integer)bsv64 << endl;
 
-    cout << bsv1 << endl;
-    cout << (ValueVector<byteSet<>>)bsv8 << endl;
-    cout << bsv16 << endl;    
-    cout << bsv32 << endl;
-    cout << bsv64 << endl;
+    cout << bsv1.generateRandom(256) << endl;
+    cout << bsv8.generateRandom(32) << endl;
+
+    cout << bsv1.keccak256() << endl;
+    cout << bsv1.sha256() << endl;
+    cout << bsv8 << endl;
+
+    cout << bsv1.toFormat(Dec) << endl;
+    cout << bsv8.toFormat(Dec) << endl;
+
+    cout << bsv1.toFormat(GWei) << endl;
+    cout << bsv8.toFormat(GWei) << endl;
+    
+    cout << bsv1.toFormat(Bin) << endl;
+    cout << bsv8.toFormat(Bin) << endl;
 
     byteSetView<Dec, bool>      bsv1d  = byteSetView<Dec, bool>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
     cout << hex << (Integer)bsv1d << endl;
     byteSetView<Dec, uint8_t>   bsv8d  = byteSetView<Dec, uint8_t>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
     cout << hex << (Integer)bsv8d << endl;
-    byteSetView<Dec, uint16_t>  bsv16d = byteSetView<Dec, uint16_t>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
-    cout << hex << (Integer)bsv16d << endl;
-    byteSetView<Dec, uint32_t>  bsv32d = byteSetView<Dec, uint32_t>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
-    cout << hex << (Integer)bsv32d << endl;
-    byteSetView<Dec, uint64_t>  bsv64d = byteSetView<Dec, uint64_t>("115792089237316195423570985008687907853269984665640564039457584007908834671663");
-    cout << hex << (Integer)bsv64d << endl;
-
+ 
     cout << bsv1d << endl;
-    cout << (ValueVector<byteSet<>>)bsv8d << endl;
-    cout << bsv16d << endl;    
-    cout << bsv32d << endl;
-    cout << bsv64d << endl;
+    cout << bsv8d << endl;
 
     byteSetView<Bin, bool>      bsv1b  = byteSetView<Bin, bool>("11111111111");
     cout << hex << (Integer)bsv1b << endl;
     byteSetView<Bin, uint8_t>   bsv8b  = byteSetView<Bin, uint8_t>("11111111111");
     cout << hex << (Integer)bsv8b << endl;
-    byteSetView<Bin, uint16_t>  bsv16b = byteSetView<Bin, uint16_t>("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111111110000101111");
-    cout << hex << (Integer)bsv16b << endl;
-    byteSetView<Bin, uint32_t>  bsv32b = byteSetView<Bin, uint32_t>("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111111110000101111");
-    cout << hex << (Integer)bsv32b << endl;
-    byteSetView<Bin, uint64_t>  bsv64b = byteSetView<Bin, uint64_t>("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111111110000101111");
-    cout << hex << (Integer)bsv64b << endl;
-
+ 
     cout << bsv1b << endl;
     cout << bsv8b << endl;
-    cout << bsv16b << endl;    
-    cout << bsv32b << endl;
-    cout << bsv64b << endl;
 
     bsv = byteSetView("0x0F", 17);
     bsv = byteSetView<Dec>("127", 17);
     bsv = byteSetView<Bin>("0b1111111", 17);
     bbsv = byteSetView<Bin, bool>("0b1111111",17);
 
-    int x = 0b00010000;
+    /*int x = 0b00010000;
 
     Integer large_int("115792089237316195423570985008687907853269984665640564039457584007908834671663");
     uint8_t zz[3] = {0x00, 0x01, 0x02};
     
     vv = ValueVector<byteSet<>>(zz, sizeof(zz));     //implicit not possible
-    /*vv = ValueVector(0);                             //implicit possible
+    vv = ValueVector(0);                             //implicit possible
     vv = ValueVector(0, 32);                         //implicit not possible
     vv = ValueVector(0x123456789ABCDEF);             //implicit possible
     vv = ValueVector(0x123456789ABCDEF, 17);         //implicit not possible
@@ -205,7 +97,7 @@ int main(int argc, char *argv[])
     vv = ValueVector("");
     vv = ValueVector("", 17);
     vv = ValueVector("0x123456789ABCDEF");
-    vv = ValueVector("0x123456789ABCDEF", 17);*/
+    vv = ValueVector("0x123456789ABCDEF", 17);
 
     vv = ValueVector(byteSet(0));                             //implicit possible
     vv = ValueVector(byteSet(0, 32));                         //implicit not possible
@@ -220,7 +112,8 @@ int main(int argc, char *argv[])
     vv = ValueVector(byteSetView("0x123456789ABCDEF"));
     vv = ValueVector(byteSetView("0x123456789ABCDEF", 17));
 
-    //bs = byteSet(zz, sizeof(zz));                    //implicit not possible
+    //bs = byteSet(zz, sizeof(zz));                  //implicit not possible
+    //bs = byteSet((zz, sizeof(zz)));                  //implicit not possible
     bs = byteSet(0);                             //implicit possible
     bs = byteSet(0, 32);                         //implicit not possible
     bs = byteSet(0x123456789ABCDEF);             //implicit possible
@@ -229,12 +122,12 @@ int main(int argc, char *argv[])
     bs = byteSet(Integer::zero, 17);         //implicit not possible
     bs = byteSet(large_int);             //implicit possible
     bs = byteSet(large_int, 17);         //implicit not possible
-    /*bs = byteSet("");
-    bs = byteSet("", 17);
-    bs = byteSet("0x123456789ABCDEF");
-    bs = byteSet("0x123456789ABCDEF", 17);*/
+    //bs = byteSet("");
+    //bs = byteSet("", 17);
+    //bs = byteSet("0x123456789ABCDEF");
+    //bs = byteSet("0x123456789ABCDEF", 17);*/
 
-    bs = byteSet(ValueVector<byteSet<>>(zz, sizeof(zz)));                    //implicit not possible
+    /*bs = byteSet(ValueVector<byteSet<>>(zz, sizeof(zz)));                    //implicit not possible
     bs = byteSet(byteSetView(""));
     bs = byteSet(byteSetView("", 17));
     bs = byteSet(byteSetView("0x123456789ABCDEF"));
@@ -245,16 +138,16 @@ int main(int argc, char *argv[])
     bsv = byteSetView(0, 32);                      //implicit not possible
     bsv = byteSetView(0x123456789ABCDEF);          //implicit possible
     bsv = byteSetView(0x123456789ABCDEF, 17);      //implicit not possible
-    /*bsv = byteSetView(Integer::zero);          //implicit possible
+    bsv = byteSetView(Integer::zero);          //implicit possible
     bsv = byteSetView(Integer::zero, 17);      //implicit not possible
     bsv = byteSetView(large_int);          //implicit possible
-    bsv = byteSetView(large_int, 17);      //implicit not possible*/
+    bsv = byteSetView(large_int, 17);      //implicit not possible
     bsv = byteSetView("");
     bsv = byteSetView("", 17);
     bsv = byteSetView("0x123456789ABCDEF");
     bsv = byteSetView("0x123456789ABCDEF", 17);
 
-    bsv = byteSetView(ValueVector<byteSet<>>(zz, sizeof(zz)));
+    bsv = byteSetView(ValueVector<byteSetView<>>(zz, sizeof(zz)));
     bsv = byteSetView(byteSet(Integer::zero));          //implicit possible
     bsv = byteSetView(byteSet(Integer::zero, 17));      //implicit not possible
     bsv = byteSetView(byteSet(large_int));          //implicit possible
@@ -265,7 +158,7 @@ int main(int argc, char *argv[])
     bs = vv;
     bs = bsv;
     bsv = vv;
-    bsv = bs;
+    bsv = bs;*/
 
     /*BinStrBitSet i("0b111111111");
     i.push_back("0b1");
