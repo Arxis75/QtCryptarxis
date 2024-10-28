@@ -1,3 +1,3 @@
-file(GLOB SOURCES "*.h" "*.cpp")
+file(GLOB SOURCES "*.h" "Integrals.cpp")
 
 target_sources(QtCryptarxis_test PUBLIC ${SOURCES})
