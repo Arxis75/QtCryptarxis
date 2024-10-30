@@ -3,22 +3,27 @@
 #include <data/System.h>
 #include <crypto/System.h>
 
-template <class Derived, typename T = uint8_t> 
+template <template <typename> class Derived, typename T = uint8_t>
 class ValueVector
 {
-        explicit ValueVector(uint64_t val, uint64_t nb_elem) = delete;
-        explicit ValueVector(Integer val, uint64_t nb_elem = 0) = delete;
-        explicit ValueVector(const string& val, uint64_t aligned_size = 0) = delete;
+        template<typename U, std::enable_if_t<std::is_integral<U>::value, bool> = true>
+            explicit ValueVector(const U& val, uint64_t nb_elem = 0) = delete;
+        template<typename U, std::enable_if_t<std::is_same<U, Integer>::value ,bool> = true>
+            explicit ValueVector(const U& val, uint64_t nb_elem = 0) = delete;
+
+        ValueVector(const string& p, uint64_t aligned_size) = delete;
+        ValueVector(const char* p, uint64_t aligned_size) = delete;
     public:
         //Default Constructors
         ValueVector() { vvalue.reserve(isAligned() ? 32 : 256); }
-        explicit ValueVector(uint64_t nb_elem) { vvalue.resize(nb_elem); }
         //Copy Constructor
-        template<class D, typename U>
+        template<template <typename> class D, typename U>
             ValueVector(const ValueVector<D, U>& v);
         //Array-Copy Constructors
-        ValueVector(uint8_t* p, uint64_t aligned_size);
-        explicit ValueVector(const char* str) : ValueVector(reinterpret_cast<const uint8_t*>(str), strlen(str)) {}
+        template <typename U> 
+            ValueVector(const U *p, uint64_t aligned_size);   // const U* = const uint8_t*, const unsigned char*
+        template <typename U> 
+            explicit ValueVector(const U *str);               // const U = const char*
 
         //Const Operators
         inline bool operator==(const ValueVector &v) const { return vvalue == v.vvalue; }
@@ -34,19 +39,27 @@ class ValueVector
         //Const accessors
         inline bool getBit(uint64_t bit_offset) const { return (1 << (bit_offset % elementBitSize())) & vvalue[(containerBitSize() - 1 - bit_offset) / elementBitSize()]; }
         inline T getElem(uint64_t elem_offset) const { return vvalue[elem_offset]; }
-        Derived left(uint64_t nb_element) const;
-        Derived right(uint64_t nb_element) const;
+        Derived<T> get(uint64_t elem_offset, const uint64_t nb_element) const;
+        inline Derived<T> left(uint64_t nb_element) const { return get(0, nb_element); }
+        inline Derived<T> right(uint64_t nb_element) const { return get(nbElements() - nb_element, nb_element); }
 
         //Container manipulation interface
+        inline void resize(uint64_t nb_elem) { vvalue.resize(nb_elem); }
+        inline void setBit(uint64_t bit_offset, const bool& bit_value) { bit_value == 0 ? setBit0(bit_offset) : setBit1(bit_offset); }
+        inline void setBit0(uint64_t bit_offset) { vvalue[(containerBitSize() - 1 - bit_offset) / elementBitSize()] &= ~(1 << (bit_offset % elementBitSize())); }
+        inline void setBit1(uint64_t bit_offset) { vvalue[(containerBitSize() - 1 - bit_offset) / elementBitSize()] |= (1 << (bit_offset % elementBitSize())); }
+        inline void setElem(uint64_t elem_offset, const T& elem) { vvalue[elem_offset] = elem; }
+        inline void clear() { vvalue.clear(); }
+
         inline void push_front(T elem) { vvalue.insert(vvalue.begin(), elem); }
         inline void push_back(T elem) { vvalue.push_back(elem); }
         inline T pop_front();
         inline T pop_back();
 
-        inline void push_front(const Derived& subset) { vvalue.insert(vvalue.begin(), subset.vvalue.begin(), subset.vvalue.end()); }
-        inline void push_back(const Derived& subset) { vvalue.insert(vvalue.end(), subset.vvalue.begin(), subset.vvalue.end()); }
-        Derived pop_front(uint64_t nb_element);
-        Derived pop_back(uint64_t nb_element);
+        inline void push_front(const Derived<T>& subset) { vvalue.insert(vvalue.begin(), subset.vvalue.begin(), subset.vvalue.end()); }
+        inline void push_back(const Derived<T>& subset) { vvalue.insert(vvalue.end(), subset.vvalue.begin(), subset.vvalue.end()); }
+        Derived<T> pop_front(uint64_t nb_element);
+        Derived<T> pop_back(uint64_t nb_element);
 
         //Property accessors
         inline bool isAligned() const { return typeid(T) == typeid(uint8_t); }
@@ -54,39 +67,37 @@ class ValueVector
         inline uint64_t bytesToNbElements(uint64_t bytes) const { return ((bytes << 3) / elementBitSize()); }
         inline uint8_t elementBitSize() const { return isAligned() ? 8 : 1; }
         inline uint64_t containerBitSize() const { return nbElements()*elementBitSize(); }
-        inline uint64_t containerByteSize() const { return (containerBitSize() >> 3) + bool(containerBitSize()%8); }
-
+        inline uint64_t containerByteSize() const { return (containerBitSize() >> 3) + (containerBitSize()%8 ? 1 : 0); }
+        
         //Hash accessors
-        inline ValueVector<Derived, uint8_t> sha256() const;
-        inline ValueVector<Derived, uint8_t> keccak256() const;
-
-        static Derived generateRandom(uint64_t nb_element);
+        inline Derived<uint8_t> sha256() const;
+        inline Derived<uint8_t> keccak256() const;
 
         friend inline ostream& operator<<(ostream& out, const ValueVector& v) { return out << string(v); }
-
-    protected:
-        inline void resize(uint64_t nb_elem) { vvalue.resize(nb_elem); }
-        inline void setBit(uint64_t bit_offset, const bool& bit_value) { vvalue[(containerBitSize() - 1 - bit_offset) / elementBitSize()] |= (bit_value << (bit_offset % elementBitSize())); }
-        inline void setElem(uint64_t elem_offset, const T& elem) { vvalue[elem_offset] = elem; }
-        inline void clear() { vvalue.clear(); }
 
     private:
         vector<uint8_t> vvalue;
 };
 
 template <typename T = uint8_t> 
-class byteSet : public ValueVector<byteSet<T>, T>
+class byteSet : public ValueVector<byteSet, T>
 {
-        //byteSet(uint8_t* p, uint64_t aligned_size) = delete;
+        explicit byteSet(uint8_t* val, uint64_t nb_elem) = delete;
+        explicit byteSet(const unsigned char* val, uint64_t nb_elem) = delete;
+
         explicit byteSet(const string& val, uint64_t nb_elem = 0) = delete;
+        explicit byteSet(const char* val, uint64_t nb_elem = 0) = delete;
     public:
-        byteSet() : ValueVector<byteSet<T>, T>() {}
-        //Copy Constructor
+        //Default constructor
+        byteSet() : ValueVector<byteSet, T>() {}
+        //Copy Constructors
         template<typename U>
-            byteSet(const byteSet<U>& b) : ValueVector<byteSet<T>, T>(b) {}
-        explicit byteSet(const Integer &val, uint64_t nb_elem = 0);
-        explicit byteSet(const uint64_t val, uint64_t nb_elem = 0) : byteSet((Integer)val, nb_elem) {}
-        byteSet(const ValueVector<byteSet<T>, T> &val) : ValueVector<byteSet<T>, T>(val) {}
+            byteSet(const byteSet<U>& b) : ValueVector<byteSet, T>(b) {}
+        template<typename U>
+            byteSet(const ValueVector<byteSet, U> &val) : ValueVector<byteSet, T>(val) {}
+        //Constructor from integral and bool values
+        template<typename U>
+            explicit byteSet(const U &val, uint64_t nb_elem = 0);   // U = integral and bool values
 
         inline operator uint64_t() const { return toInteger(64); }
         inline operator Integer() const { return toInteger(this->containerBitSize()); }
@@ -96,8 +107,7 @@ class byteSet : public ValueVector<byteSet<T>, T>
         inline uint64_t getValueNbElem(Integer val) const { return ceil(logtwo(1+val)/this->elementBitSize()); }
         inline T getValueElem(const Integer &val, uint64_t elem_offset) const { return T((Givaro::pow(2,this->elementBitSize())-1) & (val >> (getValueNbElem(val) - 1 - elem_offset) * (this->elementBitSize()))); }
 
-        inline byteSet<uint8_t> keccak256() const { return byteSet<T>(ValueVector<byteSet<T>, T>(ValueVector<byteSet<T>, T>::keccak256())); }
-        inline byteSet<uint8_t> sha256() const { return byteSet<T>(ValueVector<byteSet<T>, T>(ValueVector<byteSet<T>, T>::sha256())); }
+        static byteSet<T> generateRandom(uint64_t nb_element);
 
     private:
         Integer toInteger(uint64_t nb_right_bits) const;
@@ -114,25 +124,35 @@ static ByteSetViewFormat Bin  { .Header = "0b", .Base = 2,  .BitsPerChar = 1, .R
 template <ByteSetViewFormat const & f = Hex, typename T = uint8_t> 
 class byteSetView : public byteSet<T>
 {
-           //explicit byteSetView(const uint64_t val, uint64_t nb_elem = 0) = delete;
+        explicit byteSetView(uint8_t* val, uint64_t nb_elem) = delete;
+        explicit byteSetView(const unsigned char* val, uint64_t nb_elem) = delete;
+
+        template<typename U, std::enable_if_t<std::is_integral<U>::value, bool> = true>
+            explicit byteSetView(const U& val, uint64_t nb_elem = 0) = delete;
+        template<typename U, std::enable_if_t<std::is_same<U, Integer>::value ,bool> = true>
+            explicit byteSetView(const U& val, uint64_t nb_elem = 0) = delete;
     public:
+        //Default constructor
         byteSetView() : byteSet<T>() {}
-        //Copy Constructor
+        //Copy Constructors
         template<ByteSetViewFormat const & g, typename U>
             byteSetView(const byteSetView<g, U>& b) : byteSet<T>(b) {}
-        explicit byteSetView(const string& val, uint64_t aligned_size = 0);
-        explicit byteSetView(uint64_t val, uint64_t nb_elem = 0) : byteSet<T>(val, nb_elem) {}
         template<typename U>
             byteSetView(const byteSet<U> &val) : byteSet<T>(val) {}
-        byteSetView(const ValueVector<byteSet<T>, T> &val) : byteSetView(byteSet<T>(val)) {}
+        template<typename U>
+            byteSetView(const ValueVector<byteSet, U> &val) : byteSet<T>(val) {}
+        //Constructor from strings
+        template<typename U>
+            explicit byteSetView(const U&, uint64_t aligned_size = 0);     // U = const string&
+        template<typename U>
+            explicit byteSetView(const U*, uint64_t aligned_size = 0);     // U = const char*
 
-        inline string toFormat(const ByteSetViewFormat& format) const { return integerToStr(Integer(*this), format); }
         inline virtual operator string() const { return toFormat(f); }
 
-        inline uint64_t getStringNbElem(string val) const { return val.size() * f.BitsPerChar / this->elemcontainerBitSize(); }
+        inline string toFormat(const ByteSetViewFormat& format) const { return integerToStr(Integer(*this), format); }
 
-        inline byteSetView<f, uint8_t> keccak256() const { return byteSet<T>::keccak256(); }
-        inline byteSetView<f, uint8_t> sha256() const { return byteSet<T>::sha256(); }
+    protected:
+        inline uint64_t getStringNbElem(string val) const { return val.size() * f.BitsPerChar / this->elemcontainerBitSize(); }
 
     private:
         Integer strToInteger(const string& val) const;
@@ -144,8 +164,8 @@ class byteSetView : public byteSet<T>
 
 /*********************************************** CONSTRUCTORS ***************************************************** */
 
-template <class Derived, typename T>
-template<class D, typename U>
+template <template <typename> class Derived, typename T>
+template<template <typename> class D, typename U>
 ValueVector<Derived, T>::ValueVector(const ValueVector<D, U>& v)
 {
     if(isAligned() == v.isAligned())
@@ -160,9 +180,12 @@ ValueVector<Derived, T>::ValueVector(const ValueVector<D, U>& v)
     }
 }
 
-template <class Derived, typename T>
-ValueVector<Derived, T>::ValueVector(uint8_t* p, uint64_t aligned_size)
+template <template <typename> class Derived, typename T>
+template <typename U>
+ValueVector<Derived, T>::ValueVector(const U* p, uint64_t aligned_size)
 {
+    static_assert(std::is_same<std::decay_t<U>, uint8_t>::value || std::is_same<std::decay_t<U>, unsigned char>::value, "Constructor accepts only const uint8_t*, const unsigned char*");
+
     ValueVector<Derived, uint8_t> aligned_me;
     for(uint64_t i=0;i<aligned_size;i++) 
         aligned_me.push_back(p[i]);
@@ -170,35 +193,64 @@ ValueVector<Derived, T>::ValueVector(uint8_t* p, uint64_t aligned_size)
     *this = aligned_me;
 }
 
-template<typename T>
-byteSet<T>::byteSet(const Integer &val, uint64_t nb_elem)
-    : ValueVector<byteSet<T>, T>()
+template <template <typename> class Derived, typename T>
+template <typename U>
+ValueVector<Derived, T>::ValueVector(const U* str)
+    : ValueVector(reinterpret_cast<const uint8_t*>(str), strlen(str))
 {
-    byteSet<uint8_t> aligned_me;
-    uint64_t nb_elem_for_val = aligned_me.getValueNbElem(val);
+    static_assert(std::is_same<std::decay_t<U>, char>::value, "Constructor accepts only const char*");
+}
+
+template<typename T>
+template<typename U>
+byteSet<T>::byteSet(const U &val, uint64_t nb_elem)
+    : ValueVector<byteSet, T>()
+{
+    static_assert(std::is_integral<U>::value || std::is_integral<bool>::value, "Constructor accepts only integral values");
+
+    uint64_t nb_elem_for_val = this->getValueNbElem(val);
     uint64_t nb_extra_elem = (nb_elem > nb_elem_for_val ? nb_elem - nb_elem_for_val : 0);
     for(uint64_t i=0;i<nb_extra_elem;i++)
-        aligned_me.push_back(uint8_t(0x00));
+        this->push_back(T(0x00));
     for(uint64_t i=0;i<nb_elem_for_val;i++) 
-        aligned_me.push_back(aligned_me.getValueElem(val, i));
-    *this = ValueVector<byteSet<T>, T>(aligned_me);
+        this->push_back(T(this->getValueElem(val, i)));
 }
 
 template<ByteSetViewFormat const & f, typename T>
-byteSetView<f, T>::byteSetView(const string& val, uint64_t nb_elem)
+template<typename U>
+byteSetView<f, T>::byteSetView(const U& val, uint64_t nb_elem)
     : byteSet<T>()
 {
+    static_assert(std::is_same<std::decay_t<U>, string>::value, "Constructor accepts only const string&");
+
     if( regex_match(val, f.Regex) ) {
         Integer i = strToInteger(val);
-        this->push_back(byteSet<T>(i, nb_elem));
+        this->push_back(byteSetView(byteSet<T>(i, nb_elem)));
     }
+}
+
+template<ByteSetViewFormat const & f, typename T>
+template<typename U>
+byteSetView<f, T>::byteSetView(const U* val, uint64_t nb_elem)
+    : byteSetView((string)val, nb_elem)
+{
+    static_assert(std::is_same<std::decay_t<U>, char>::value, "Constructor accepts only const char*");
 }
 
 /*********************************************** METHODS ***************************************************** */
 
-template<class Derived, typename T>
-Derived ValueVector<Derived, T>::pop_front(uint64_t nb_element) {
-    Derived ret_value;
+template <template <typename> class Derived, typename T>
+Derived<T> ValueVector<Derived, T>::get(uint64_t elem_offset, const uint64_t nb_element) const
+{
+    assert(nbElements() >= elem_offset + nb_element);
+    Derived<T> ret_value;
+    ret_value.pop_back(nbElements() - (elem_offset + nb_element));
+    return ret_value;
+}
+
+template <template <typename> class Derived, typename T>
+Derived<T> ValueVector<Derived, T>::pop_front(uint64_t nb_element) {
+    Derived<T> ret_value;
     assert(nbElements()>=nb_element);
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
@@ -206,9 +258,9 @@ Derived ValueVector<Derived, T>::pop_front(uint64_t nb_element) {
     return ret_value;
 }
 
-template<class Derived, typename T>
-Derived ValueVector<Derived, T>::pop_back(uint64_t nb_element) {
-    Derived ret_value;
+template <template <typename> class Derived, typename T>
+Derived<T> ValueVector<Derived, T>::pop_back(uint64_t nb_element) {
+    Derived<T> ret_value;
     assert(nbElements()>=nb_element);
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
@@ -216,7 +268,7 @@ Derived ValueVector<Derived, T>::pop_back(uint64_t nb_element) {
     return ret_value;
 }
 
-template<class Derived, typename T>
+template <template <typename> class Derived, typename T>
 T ValueVector<Derived, T>::pop_front()
 {
     assert(nbElements());
@@ -225,7 +277,7 @@ T ValueVector<Derived, T>::pop_front()
     return ret_value;
 }
 
-template<class Derived, typename T>
+template <template <typename> class Derived, typename T>
 T ValueVector<Derived, T>::pop_back()
 {
     assert(nbElements());
@@ -234,7 +286,7 @@ T ValueVector<Derived, T>::pop_back()
     return ret_val;
 }
 
-template<class Derived, typename T>
+template <template <typename> class Derived, typename T>
 ValueVector<Derived, T>::operator string() const
 {
     stringstream ss;
@@ -243,55 +295,22 @@ ValueVector<Derived, T>::operator string() const
     return ss.str();
 }
 
-template<class Derived, typename T>
-Derived ValueVector<Derived, T>::left(uint64_t nb_element) const
-{
-    Derived ret_value(*this);
-    assert(nbElements()>=nb_element);
-    if(nb_element <= nbElements())
-        ret_value.pop_back(nb_element);
-    return ret_value;
-}
-
-template<class Derived, typename T>
-Derived ValueVector<Derived, T>::right(uint64_t nb_element) const
-{
-    Derived ret_value(*this);
-    assert(nbElements()>=nb_element);
-    if(nb_element <= nbElements())
-        ret_value.pop_front(nb_element);
-    return ret_value;
-}
-
-template<class Derived, typename T>
-ValueVector<Derived, uint8_t> ValueVector<Derived, T>::sha256() const
+template <template <typename> class Derived, typename T>
+Derived<uint8_t> ValueVector<Derived, T>::sha256() const
 {
     ValueVector<Derived, uint8_t> aligned_me(*this);
-    ValueVector<Derived, uint8_t> digest(32);
-    SHA256(aligned_me, containerByteSize(), digest);
-    return digest;
+    ValueVector<Derived, uint8_t> digest; digest.resize(32);
+    SHA256(aligned_me, aligned_me.containerByteSize(), digest);
+    return Derived<uint8_t>(digest);
 }
 
-template<class Derived, typename T>
-ValueVector<Derived, uint8_t> ValueVector<Derived, T>::keccak256() const
+template <template <typename> class Derived, typename T>
+Derived<uint8_t> ValueVector<Derived, T>::keccak256() const
 {
+    ValueVector<Derived, uint8_t> aligned_me(*this);
     hash256 h;
-    ValueVector<Derived, uint8_t> aligned_me(*this);
-    h = ethash::keccak256(aligned_me, containerByteSize());
-    return ValueVector<Derived, uint8_t>((uint8_t*)(&h.bytes[0]), 32);
-}
-
-template<class Derived, typename T>
-Derived ValueVector<Derived, T>::generateRandom(uint64_t nb_element)
-{
-    int retval = -1;
-    ValueVector<Derived, uint8_t> aligned_random_buffer(nb_element / (typeid(T) == typeid(bool) ? 8 : 1));
-    ValueVector<Derived, T> random_buffer;
-    retval = RAND_bytes(aligned_random_buffer, nb_element);
-
-    if( retval > 0 )
-        random_buffer = aligned_random_buffer;
-    return random_buffer;
+    h = ethash::keccak256(aligned_me, aligned_me.containerByteSize());
+    return Derived<uint8_t>(ValueVector<Derived, uint8_t>(&h.bytes[0], 32));
 }
 
 template<typename T>
@@ -302,6 +321,21 @@ Integer byteSet<T>::toInteger(uint64_t nb_right_bits) const
     for(uint64_t i=0;i<i_end;i++)
         ret_value += (Integer(this->getElem(this->nbElements()-1-i)) << (i*this->elementBitSize()));
     return ret_value;     
+}
+
+template<typename T>
+byteSet<T> byteSet<T>::generateRandom(uint64_t nb_element)
+{
+    int retval = -1;
+    ValueVector<byteSet, uint8_t> aligned_random_buffer;
+    uint64_t nb_bytes = nb_element / (typeid(T) == typeid(bool) ? 8 : 1);
+    aligned_random_buffer.resize(nb_bytes);
+    retval = RAND_bytes(aligned_random_buffer, aligned_random_buffer.containerByteSize());
+
+    byteSet<T> random_buffer;
+    if( retval > 0 )
+        random_buffer = aligned_random_buffer;
+    return random_buffer;
 }
 
 template<ByteSetViewFormat const & f, typename T>
@@ -327,7 +361,7 @@ string byteSetView<f, T>::integerToStr(const Integer& val, const ByteSetViewForm
         ss << dec << val;
     else if(format.Base == 2) {
         string str_val;
-        byteSet<T> bs_val(*this);
+        byteSet<T> bs_val = ValueVector<byteSet, T>(*this);
         Integer val = Integer(bs_val);
         Integer char_mask = Givaro::pow(Integer(2), format.BitsPerChar) - 1;
         div_t d = div(bs_val.containerBitSize(), format.BitsPerChar);

@@ -5,14 +5,16 @@
 #include <data/byteSet.h>
 #include <data/Tools.h>
 
+template<typename T = uint8_t>
 class toto
 {
+public:
     toto() {}
 };
 
 int main(int argc, char *argv[])
 {
-    /*ValueVector<toto, bool> vv0, vvv0;
+    ValueVector<toto, bool> vv0, vvv0;
 
     vv0.push_back(true);
     vv0.push_back(false);
@@ -28,23 +30,25 @@ int main(int argc, char *argv[])
 
     ValueVector<toto, uint8_t> vv1(vv0);
 
-    vvv0 = vv1;*/
+    vvv0 = vv1;
 
-    ValueVector<byteSet<>> vv;
+    ValueVector<byteSet> vv;
     byteSet bs;
     byteSetView bsv;
     byteSetView<Bin, bool> bbsv;
 
-    vv = ValueVector<byteSet<>>(32);
-    bs = byteSet(ValueVector<byteSet<>>(32));
+    vv = ValueVector<byteSet>();
+    vv.resize(32);
+    bs = byteSet(ValueVector<byteSet>());
+    bs.resize(32);
 
     byteSetView<Hex, bool>  bsv1("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
     cout << hex << (Integer) bsv1 << endl;
     byteSetView<Hex, uint8_t>   bsv8("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
     cout << hex << (Integer)bsv8 << endl;
 
-    cout << bsv1.generateRandom(256) << endl;
-    cout << bsv8.generateRandom(32) << endl;
+    cout << byteSet<bool>::generateRandom(256) << endl;
+    cout << byteSet<uint8_t>::generateRandom(32) << endl;
 
     cout << bsv1.keccak256() << endl;
     cout << bsv1.sha256() << endl;
