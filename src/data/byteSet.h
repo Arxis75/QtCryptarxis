@@ -99,18 +99,18 @@ class byteSet : public ValueVector<byteSet, T>
         template<typename U>
             explicit byteSet(const U &val, uint64_t nb_elem = 0);   // U = integral and bool values
 
-        inline operator uint64_t() const { return toInteger(64); }
-        inline operator Integer() const { return toInteger(this->containerBitSize()); }
+        inline operator Integer() const { return toInteger(); }
         inline bool operator==(const byteSet &b) const { return this->containerBitSize() == b.containerBitSize() && Integer(*this) == Integer(b); };
         inline bool operator!=(const byteSet &b) const { return !((*this) == b); };
 
+        static byteSet<T> generateRandom(uint64_t nb_element);
+
+    protected:
+       // Integer parsing
         inline uint64_t getValueNbElem(Integer val) const { return ceil(logtwo(1+val)/this->elementBitSize()); }
         inline T getValueElem(const Integer &val, uint64_t elem_offset) const { return T((Givaro::pow(2,this->elementBitSize())-1) & (val >> (getValueNbElem(val) - 1 - elem_offset) * (this->elementBitSize()))); }
 
-        static byteSet<T> generateRandom(uint64_t nb_element);
-
-    private:
-        Integer toInteger(uint64_t nb_right_bits) const;
+        Integer toInteger() const;
 };
 
 struct ByteSetViewFormat { string Header; uint8_t Base; uint8_t BitsPerChar; regex Regex; bool UpperCase; uint8_t EXP; };
@@ -152,9 +152,9 @@ class byteSetView : public byteSet<T>
         inline string toFormat(const ByteSetViewFormat& format) const { return integerToStr(Integer(*this), format); }
 
     protected:
+        //String Parsing
         inline uint64_t getStringNbElem(string val) const { return val.size() * f.BitsPerChar / this->elemcontainerBitSize(); }
 
-    private:
         Integer strToInteger(const string& val) const;
         string integerToStr(const Integer& val, const ByteSetViewFormat& format = f) const;
 
@@ -225,7 +225,7 @@ byteSetView<f, T>::byteSetView(const U& val, uint64_t nb_elem)
 
     if( regex_match(val, f.Regex) ) {
         Integer i = strToInteger(val);
-        this->push_back(byteSetView(byteSet<T>(i, nb_elem)));
+        this->push_back(byteSet<T>(i, nb_elem));
     }
 }
 
@@ -314,11 +314,10 @@ Derived<uint8_t> ValueVector<Derived, T>::keccak256() const
 }
 
 template<typename T>
-Integer byteSet<T>::toInteger(uint64_t nb_right_bits) const
+Integer byteSet<T>::toInteger() const
 {
     Integer ret_value = 0;
-    uint64_t i_end = min(this->nbElements(), nb_right_bits/this->elementBitSize());
-    for(uint64_t i=0;i<i_end;i++)
+    for(uint64_t i=0;i<this->nbElements();i++)
         ret_value += (Integer(this->getElem(this->nbElements()-1-i)) << (i*this->elementBitSize()));
     return ret_value;     
 }

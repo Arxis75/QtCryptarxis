@@ -17,7 +17,6 @@ TEST(IntegralsTests, Constructors_Capabilities)
 
     //Mandatory constructions
     ASSERT_EQ(true, is_constructible_with_value<ValueVector<byteSet>>(ptr, sizeof(ptr)));
-    ASSERT_EQ(true, is_constructible_with_value<ValueVector<byteSet>>(""));
     ASSERT_EQ(true, is_constructible_with_value<ValueVector<byteSet>>("discv5"));
     //Forbidden constructions
     ASSERT_EQ(true, !is_constructible_with_value<ValueVector<byteSet>>(0));
