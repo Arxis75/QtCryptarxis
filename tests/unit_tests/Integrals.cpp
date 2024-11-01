@@ -192,9 +192,9 @@ vector<uint8_t> vec_2x1 =
 Integer int_10x8 = 
                             Integer("35166517413578285870695");
 string str_20x4 = 
-                            string("0x07726177737472696E67");
+                            string("0x07726177737472696e67");
 string str_19x4 =
-                            string("0x7726177737472696E67");
+                            string("0x7726177737472696e67");
 string str_dec = 
                             "35166517413578285870695";
 string str_gwei = 
@@ -205,6 +205,8 @@ string str_83x1 =
                             string("0b00000000111011100100110000101110111011100110111010001110010011010010110111001100111");
 string str_75x1 =
                             string("0b111011100100110000101110111011100110111010001110010011010010110111001100111");
+string str_76x1 =
+                            string("0b0111011100100110000101110111011100110111010001110010011010010110111001100111");
 
 TEST(IntegralsTests, RawByteSet_Constructors)
 {
@@ -436,4 +438,144 @@ TEST(IntegralsTests, StrByteSet_Constructors)
     //larger size specified
     actual_GWeiBitSet = StrByteSet<GWei, bool>(str_gwei, vec_83x1.size());               
     ASSERT_EQ(actual_GWeiBitSet.toV(), vec_83x1);
+}
+
+TEST(IntegralsTests, Major_Operators)
+{
+    RawByteSet actual_RawByteSet;
+    RawByteSet<ByteSet, bool> actual_RawBitSet;
+    ByteSet actual_ByteSet;
+    ByteSet<bool> actual_BitSet;
+    StrByteSet actual_HexByteSet;
+    StrByteSet<Hex, bool> actual_HexBitSet;
+    StrByteSet<Dec> actual_DecByteSet;
+    StrByteSet<Dec, bool> actual_DecBitSet;
+    StrByteSet<GWei> actual_GWeiByteSet;
+    StrByteSet<GWei, bool> actual_GWeiBitSet;
+    StrByteSet<Bin> actual_BinByteSet;
+    StrByteSet<Bin, bool> actual_BinBitSet;
+
+    //RawByteSet::Operator (uint8_t*), only for aligned ByteSet
+    actual_RawByteSet.resize(sizeof(arr_10x8));
+    memcpy(actual_RawByteSet, arr_10x8, sizeof(arr_10x8));
+    ASSERT_EQ(actual_RawByteSet.toV(), vec_10x8);
+    actual_RawBitSet.resize(sizeof(arr_10x8)*8);
+    ASSERT_DEATH({memcpy(actual_RawBitSet, arr_10x8, sizeof(arr_10x8));}, "");
+
+    actual_ByteSet.resize(sizeof(arr_10x8));
+    memcpy(actual_ByteSet, arr_10x8, sizeof(arr_10x8));
+    ASSERT_EQ(actual_ByteSet.toV(), vec_10x8);
+    actual_BitSet.resize(sizeof(arr_10x8)*8);
+    ASSERT_DEATH({memcpy(actual_BitSet, arr_10x8, sizeof(arr_10x8));}, "");
+
+    actual_HexByteSet.resize(sizeof(arr_10x8));
+    memcpy(actual_HexByteSet, arr_10x8, sizeof(arr_10x8));
+    ASSERT_EQ(actual_HexByteSet.toV(), vec_10x8);
+    actual_HexBitSet.resize(sizeof(arr_10x8)*8);
+    ASSERT_DEATH({memcpy(actual_HexBitSet, arr_10x8, sizeof(arr_10x8));}, "");
+
+    actual_DecByteSet.resize(sizeof(arr_10x8));
+    memcpy(actual_DecByteSet, arr_10x8, sizeof(arr_10x8));
+    ASSERT_EQ(actual_DecByteSet.toV(), vec_10x8);
+    actual_DecBitSet.resize(sizeof(arr_10x8)*8);
+    ASSERT_DEATH({memcpy(actual_DecBitSet, arr_10x8, sizeof(arr_10x8));}, "");
+
+    actual_GWeiByteSet.resize(sizeof(arr_10x8));
+    memcpy(actual_GWeiByteSet, arr_10x8, sizeof(arr_10x8));
+    ASSERT_EQ(actual_GWeiByteSet.toV(), vec_10x8);
+    actual_GWeiBitSet.resize(sizeof(arr_10x8)*8);
+    ASSERT_DEATH({memcpy(actual_GWeiBitSet, arr_10x8, sizeof(arr_10x8));}, "");
+
+    actual_BinByteSet.resize(sizeof(arr_10x8));
+    memcpy(actual_BinByteSet, arr_10x8, sizeof(arr_10x8));
+    ASSERT_EQ(actual_BinByteSet.toV(), vec_10x8);
+    actual_BinBitSet.resize(sizeof(arr_10x8)*8);
+    ASSERT_DEATH({memcpy(actual_BinBitSet, arr_10x8, sizeof(arr_10x8));}, "");
+
+    //ByteSet::Operator (uint64_t)
+    actual_ByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((uint64_t)actual_ByteSet, (uint64_t)int_10x8);
+    actual_BitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((uint64_t)actual_BitSet, (uint64_t)int_10x8);
+
+    actual_HexByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((uint64_t)actual_HexByteSet, (uint64_t)int_10x8);
+    actual_HexBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((uint64_t)actual_HexBitSet, (uint64_t)int_10x8);
+
+    actual_DecByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((uint64_t)actual_DecByteSet, (uint64_t)int_10x8);
+    actual_DecBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((uint64_t)actual_DecBitSet, (uint64_t)int_10x8);
+    
+    actual_GWeiByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((uint64_t)actual_GWeiByteSet, (uint64_t)int_10x8);
+    actual_GWeiBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((uint64_t)actual_GWeiBitSet, (uint64_t)int_10x8);
+    
+    actual_BinByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((uint64_t)actual_BinByteSet, (uint64_t)int_10x8);
+    actual_BinBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((uint64_t)actual_BinBitSet, (uint64_t)int_10x8);
+
+    //ByteSet::Operator (Integer)
+    actual_ByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((Integer)actual_ByteSet, int_10x8);
+    actual_BitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((Integer)actual_BitSet, int_10x8);
+
+    actual_HexByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((Integer)actual_HexByteSet, int_10x8);
+    actual_HexBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((Integer)actual_HexBitSet, int_10x8);
+
+    actual_DecByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((Integer)actual_DecByteSet, int_10x8);
+    actual_DecBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((Integer)actual_DecBitSet, int_10x8);
+    
+    actual_GWeiByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((Integer)actual_GWeiByteSet, int_10x8);
+    actual_GWeiBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((Integer)actual_GWeiBitSet, int_10x8);
+    
+    actual_BinByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((Integer)actual_BinByteSet, int_10x8);
+    actual_BinBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((Integer)actual_BinBitSet, int_10x8);
+
+    //StrByteSet::Operator (String)
+    //(string)StrBxxxSet<Hex>
+    actual_HexByteSet = StrByteSet(str_19x4);
+    ASSERT_EQ((string)actual_HexByteSet, str_20x4);         //byte-alignment
+    actual_HexByteSet = StrByteSet<Bin>(str_75x1);
+    ASSERT_EQ((string)actual_HexByteSet, str_20x4);         //byte-alignment
+    actual_HexBitSet = StrByteSet<Hex, bool>(str_19x4);
+    ASSERT_EQ((string)actual_HexBitSet, str_19x4);
+    actual_HexBitSet = StrByteSet<Bin, bool>(str_75x1);
+    ASSERT_EQ((string)actual_HexBitSet, str_19x4);          //nibble-alignment
+    //(string)StrBxxxSet<Dec>
+    actual_DecByteSet = StrByteSet<Hex>(str_19x4);
+    ASSERT_EQ((string)actual_DecByteSet, str_dec);
+    actual_DecByteSet = StrByteSet<Dec>(str_dec);
+    ASSERT_EQ((string)actual_DecByteSet, str_dec);
+    actual_DecBitSet = StrByteSet<Bin, bool>(str_75x1);
+    ASSERT_EQ((string)actual_DecBitSet, str_dec);
+    //(string)StrBxxxSet<GWei>
+    actual_GWeiByteSet = StrByteSet<Hex>(str_19x4);
+    ASSERT_EQ((string)actual_GWeiByteSet, str_gwei);
+    actual_GWeiByteSet = StrByteSet<GWei>(str_gwei);
+    ASSERT_EQ((string)actual_GWeiByteSet, str_gwei);
+    actual_GWeiBitSet = StrByteSet<Bin, bool>(str_75x1);
+    ASSERT_EQ((string)actual_GWeiBitSet, str_gwei);
+    //(string)StrBxxxSet<Bin>
+    actual_BinByteSet = StrByteSet(str_19x4);
+    ASSERT_EQ((string)actual_BinByteSet, str_80x1);         //byte-alignment     
+    actual_BinByteSet = StrByteSet<Bin>(str_75x1);
+    ASSERT_EQ((string)actual_BinByteSet, str_80x1);         //byte-alignment      
+    actual_BinBitSet = StrByteSet<Hex, bool>(str_19x4);
+    ASSERT_EQ((string)actual_BinBitSet, str_76x1);          //nibble-alignment 
+    actual_BinBitSet = StrByteSet<Bin, bool>(str_75x1);
+    ASSERT_EQ((string)actual_BinBitSet, str_75x1);
+
 }

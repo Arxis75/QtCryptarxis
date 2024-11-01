@@ -29,7 +29,7 @@ class RawByteSet
             RawByteSet(const U *p, uint64_t aligned_size);   // const U* = const uint8_t*, const unsigned char*
         template <typename U> 
             explicit RawByteSet(const U *str);               // const U = const char*
-      
+            
         //Const& and Const* Operators/Accessors
         inline const uint8_t& operator[](uint64_t elem_index) const { return vvalue[elem_index]; };
         /// @brief For convenience only, at(...) is friendlier than (*this)[...]
@@ -190,7 +190,8 @@ class StrByteSet : public ByteSet<T>
         inline uint64_t getStringNbElem(string val) const 
         {
             assert(isFormatAligned());
-            return (val.size() * f.BitsPerChar / this->elementBitSize()) + ((val.size() * f.BitsPerChar)%(this->elementBitSize()) ? 1 : 0); 
+            uint64_t x = (val.size() * f.BitsPerChar / this->elementBitSize()) + ((val.size() * f.BitsPerChar)%(this->elementBitSize()) ? ceil(float(f.BitsPerChar)/this->elementBitSize()) : 0);
+            return x;
         }
 
         Integer strToInteger(const string& val) const;
@@ -341,7 +342,8 @@ template <template <typename> class Derived, typename T>
 Derived<uint8_t> RawByteSet<Derived, T>::sha256() const
 {
     RawByteSet<Derived, uint8_t> aligned_me(*this);
-    RawByteSet<Derived, uint8_t> digest; digest.resize(32);
+    RawByteSet<Derived, uint8_t> digest;
+    digest.resize(32);
     SHA256(aligned_me, aligned_me.byteSize(), digest);
     return Derived<uint8_t>(digest);
 }
