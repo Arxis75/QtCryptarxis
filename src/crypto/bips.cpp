@@ -1,6 +1,6 @@
 #include <crypto/bips.h>
 #include <crypto/bip39_dictionnary.h>
-#include <data/StrByteSet.h>
+#include <data/ByteSet.h>
 #include <data/Tools.h>
 
 using namespace BIP39;
@@ -16,7 +16,7 @@ Pubkey::Pubkey(const Point& p, const EllipticCurve &curve)
     , m_point(p)
 { }
 
-Pubkey::Pubkey(const Point &p, const ByteSet &cc, const EllipticCurve &curve)
+Pubkey::Pubkey(const Point &p, const ByteSet<> &cc, const EllipticCurve &curve)
     : m_ecc(curve)
     , m_point(p)
     , m_chaincode(cc)
@@ -28,10 +28,10 @@ Pubkey::Pubkey(const Pubkey &key)
     , m_chaincode(key.m_chaincode)
 { }
 
-Pubkey::Pubkey(const ByteSet &formated_key, const Pubkey::Format f, const EllipticCurve &curve)
+Pubkey::Pubkey(const ByteSet<> &formated_key, const Pubkey::Format f, const EllipticCurve &curve)
     : m_ecc(curve)
 {
-    IntByteSet tmp(formated_key);
+    ByteSet tmp(formated_key);
     if( f == Format::PREFIXED_X )
     {
         assert(tmp.byteSize() <= 33);
@@ -56,7 +56,7 @@ Pubkey::Pubkey(const ByteSet &formated_key, const Pubkey::Format f, const Ellipt
     }    
 }
 
-const ByteSet Pubkey::getKey(Format f) const
+const ByteSet<> Pubkey::getKey(Format f) const
 {   
     uint32_t point_bitsize = sizeInBytes(m_ecc.getGeneratorOrder())<<3;
     
@@ -66,7 +66,7 @@ const ByteSet Pubkey::getKey(Format f) const
         retval = ((m_point.getY() % 2) ? 0x03 : 0x02);
         retval <<= point_bitsize;
         retval |= m_point.getX();
-        return IntByteSet(retval, 33);
+        return ByteSet(retval, 33);
     }
     else if( f == Format::PREFIXED_XY )
     {
@@ -75,14 +75,14 @@ const ByteSet Pubkey::getKey(Format f) const
         retval |= m_point.getX();
         retval <<= point_bitsize;
         retval |= m_point.getY();
-        return IntByteSet(retval, 65);
+        return ByteSet(retval, 65);
     }
     else //if( f == Format::XY )
     {
         retval = m_point.getX();
         retval <<= point_bitsize;
         retval |= m_point.getY();
-        return IntByteSet(retval, 64);
+        return ByteSet(retval, 64);
     }
 }
 
@@ -99,10 +99,9 @@ uint32_t Pubkey::getFormatByteSize(Format f) const
     }
 }
 
-const ByteSet Pubkey::getAddress() const
+const ByteSet<> Pubkey::getAddress() const
 {
-    hash256 h = ethash::keccak256(ArrayByteSet(getKey(Format::XY)), getFormatByteSize(Format::XY));
-    return ArrayByteSet(&h.bytes[32 - 20], 20);
+    return getKey(Format::XY).keccak256().right(20);
 }
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -124,7 +123,7 @@ void Signature::fixMalleability()
     }
 }
 
-bool Signature::isValid(const ByteSet &h, const ByteSet &from_address, const bool enforce_eip2) const
+bool Signature::isValid(const ByteSet<> &h, const ByteSet<> &from_address, const bool enforce_eip2) const
 {
     Pubkey key;
     return ( from_address.byteSize() == 20 &&
@@ -132,7 +131,7 @@ bool Signature::isValid(const ByteSet &h, const ByteSet &from_address, const boo
              ecrecover(key, h, from_address) && from_address == key.getAddress() );
 }
 
-bool Signature::ecrecover(Pubkey &key, const ByteSet &h, const ByteSet &from_address) const
+bool Signature::ecrecover(Pubkey &key, const ByteSet<> &h, const ByteSet<> &from_address) const
 {
     bool ret = false;
     Point Q_candidate;
@@ -179,20 +178,20 @@ Privkey::Privkey(const Privkey& parent_privkey, const int32_t index, const bool 
 {
     assert(index >= 0);
 
-    IntByteSet parent_data;
-    IntByteSet parent_cc(parent_privkey.getChainCode());
+    ByteSet parent_data;
+    ByteSet parent_cc(parent_privkey.getChainCode());
     uint32_t suffix = index;
     if(!hardened)
-        parent_data = IntByteSet(parent_privkey.getPubKey().getKey(Pubkey::Format::PREFIXED_X));
+        parent_data = ByteSet(parent_privkey.getPubKey().getKey(Pubkey::Format::PREFIXED_X));
     else
     {
-        parent_data = IntByteSet(parent_privkey.getSecret(), 33);   // 0x00 prefix + 32bytes
+        parent_data = ByteSet(parent_privkey.getSecret(), 33);   // 0x00 prefix + 32bytes
         suffix += 0x80000000;
     }      
     //cout << parent_data << endl;
-    parent_data.push_back(suffix, 4);
+    parent_data.push_back(suffix);
    
-    IntByteSet digest(0, 64);
+    ByteSet digest(0, 64);
     uint32_t dilen;
     unsigned char *res = HMAC( EVP_sha512(),
                                parent_cc, 32,
@@ -203,11 +202,11 @@ Privkey::Privkey(const Privkey& parent_privkey, const int32_t index, const bool 
         //cout << "BIP32 " << dec << index << (hardened ? "'" : "") << " raw (hex): " << digest << dec << endl;
     
         EllipticCurve curve = parent_privkey.getCurve();
-        m_secret = (IntByteSet)ArrayByteSet(&digest[0], 32);               // first 32 bytes/64 = secret
+        m_secret = ByteSet(RawByteSet<ByteSet>(&digest[0], 32));               // first 32 bytes/64 = secret
         m_secret += parent_privkey.getSecret();
         m_secret %= curve.getGeneratorOrder();
 
-        ArrayByteSet cc(&digest[32], 32);
+        RawByteSet<ByteSet> cc(&digest[32], 32);
         m_pubkey = Pubkey(curve.p_scalar(curve.getGenerator(), m_secret), cc, curve);
 
         //cout << "BIP32 " << index << (hardened ? "'" : "") << " chain code (hex):  " << hex << m_pubkey.getChainCode() << dec << endl;
@@ -216,41 +215,42 @@ Privkey::Privkey(const Privkey& parent_privkey, const int32_t index, const bool 
     }
 }
 
-Privkey::Privkey(const ByteSet &k, const EllipticCurve& curve)
-    : m_secret((IntByteSet)k)
-    , m_pubkey(Pubkey(curve.p_scalar(curve.getGenerator(), (IntByteSet)k), curve))
+Privkey::Privkey(const ByteSet<> &k, const EllipticCurve& curve)
+    : m_secret(k)
+    , m_pubkey(Pubkey(curve.p_scalar(curve.getGenerator(), k), curve))
 {
     //cout << hex << k << endl;
     //cout << hex << curve.getGeneratorOrder() << endl;
-    assert(Integer((IntByteSet)k) > 0 && Integer((IntByteSet)k) < curve.getGeneratorOrder());
+    assert(Integer(k) > 0 && Integer(k) < curve.getGeneratorOrder());
 }
 
 Privkey::Privkey(const BIP39::Mnemonic& mnc, const char *path, const int32_t account_i, const EllipticCurve& curve)
     : Privkey(mnc.get_seed(), path, account_i, curve)
 { }
 
-Privkey::Privkey(const ByteSet &seed, const char *path, const int32_t account_i, const EllipticCurve& curve)
+Privkey::Privkey(const ByteSet<> &seed, const char *path, const int32_t account_i, const EllipticCurve& curve)
 {
     assert(seed.byteSize() >= 16 && seed.byteSize() <= 64);
 
     // Cf https://www.openssl.org/docs/manmaster/man3/HMAC.html
     // Cf https://www.openssl.org/docs/manmaster/man3/EVP_sha512.html
 
-    ArrayByteSet digest(64);
+    RawByteSet<ByteSet> digest;
+    digest.resize(64);
     uint32_t dilen;
 
     unsigned char *res = HMAC( EVP_sha512(),
                             "Bitcoin seed", 12,
-                            ArrayByteSet(seed), (seed.byteSize()),
+                            RawByteSet(seed), (seed.byteSize()),
                             digest, &dilen);
     if (res && dilen == 64)
     {
         //cout << "BIP32 Root raw (hex): " << digest << dec << endl;
 
-        m_secret = (IntByteSet)ArrayByteSet(&digest[0], 32); // first 32bytes/64 = secret
+        m_secret = ByteSet(RawByteSet<ByteSet>(&digest[0], 32)); // first 32bytes/64 = secret
         m_secret %= curve.getGeneratorOrder();
 
-        ArrayByteSet cc(&digest[32], 32);
+        RawByteSet<ByteSet> cc(&digest[32], 32);
         m_pubkey = Pubkey(curve.p_scalar(curve.getGenerator(), m_secret), cc, curve);
 
         DerivationPath dp(path);
@@ -264,14 +264,14 @@ Privkey::Privkey(const ByteSet &seed, const char *path, const int32_t account_i,
 
 const Signature Privkey::signWithPrefix(const char* msg, const bool enforce_eip2) const
 {
-    RawStrByteSet t_raw("\u0019Ethereum Signed Message:\n");
-    t_raw.push_back(to_string(strlen(msg)));
-    t_raw.push_back(msg);
+    RawByteSet<ByteSet> t_raw("\u0019Ethereum Signed Message:\n");
+    t_raw.push_back(RawByteSet<ByteSet>(to_string(strlen(msg)).c_str()));
+    t_raw.push_back(RawByteSet<ByteSet>(msg));
 
     return sign(t_raw.keccak256(), enforce_eip2);
 }
 
-const Signature Privkey::sign(const ByteSet &h, const bool enforce_eip2) const
+const Signature Privkey::sign(const ByteSet<> &h, const bool enforce_eip2) const
 {
     EllipticCurve ecc = m_pubkey.getCurve();
     Integer n = ecc.getGeneratorOrder();
@@ -299,7 +299,7 @@ const Signature Privkey::sign(const ByteSet &h, const bool enforce_eip2) const
         // => It is mandatory to iterate the nonce generation to find another k satisfying r = Rx.
         nonce_to_skip++;
     }
-    Integer s = (k_1 * ((Integer)IntByteSet(h) + (r*m_secret))) % n;
+    Integer s = (k_1 * ((Integer)ByteSet(h) + (r*m_secret))) % n;
     //cout << hex << "s = k^(-1) . (h + r.x) = 0x" << s << endl;
 
     Signature sig(r, s, imparity, ecc);
@@ -312,7 +312,7 @@ const Signature Privkey::sign(const ByteSet &h, const bool enforce_eip2) const
 const Privkey Privkey::generateRandom(const EllipticCurve &curve)
 {
     int retval = -1;
-    IntByteSet random_buffer(0, sizeInBytes(curve.getGeneratorOrder()));
+    ByteSet random_buffer(0, sizeInBytes(curve.getGeneratorOrder()));
     while( random_buffer == 0 || (Integer)random_buffer >= curve.getGeneratorOrder() || retval <= 0 )
         retval = RAND_bytes(random_buffer, random_buffer.byteSize());
     Privkey random_key(random_buffer);
@@ -352,7 +352,7 @@ bool Mnemonic::add_entropy(const string& entropy, const uint32_t bitsize, const 
     bool ret = false;
     if( m_entropy.bitSize() + bitsize <= m_ent)
     {
-        m_entropy.push_back(entropy, bitsize);
+        m_entropy= StrByteSet<Hex, bool>(entropy);
         ret = true;
     }
     return ret;
@@ -372,11 +372,11 @@ bool Mnemonic::add_word(const string &word)
         if (is_last_word)
             controlled_went -= m_cs;
         uint32_t index = distance(m_dic->begin(), dic_it);
-        IntByteSet e(m_entropy);
-        e.push_back(index >> (m_went - controlled_went), controlled_went);
-        if (!is_last_word || (IntByteSet)e.sha256().at(0,m_cs) == (index & (0xFF >> (8 - m_cs))))
+        ByteSet<bool> e(m_entropy);
+        e.push_back(ByteSet<bool>(index >> (m_went - controlled_went), controlled_went));
+        if (!is_last_word || e.sha256().get(0, m_cs) == (index & (0xFF >> (8 - m_cs))))
         {
-            m_entropy = BinStrBitSet((string)e);
+            m_entropy = ByteSet<bool>(e);
             res = true;
         }
     }
@@ -427,7 +427,7 @@ const string Mnemonic::get_word_list() const
     {
         if(ret.size() > 0)
             ret += " ";
-        ret += m_dic->at((IntByteSet)m_entropy.at(i*m_went,m_went));
+        ret += m_dic->at((ByteSet<bool>)m_entropy.get(i*m_went,m_went));
     }
     if (d.rem && is_valid())
         ret += " " + get_last_word();
@@ -442,9 +442,9 @@ bool Mnemonic::list_possible_last_word(vector<string> &list) const
         list.clear();
         for (int i = 0; i < (1 << (m_went - m_cs)); i++)
         {
-            IntByteSet tmp(m_entropy);
-            tmp.push_back(i, m_went - m_cs);
-            list.push_back(m_dic->at((i << m_cs) + (IntByteSet)tmp.sha256().at(0,m_cs)));
+            ByteSet tmp(m_entropy);
+            tmp.push_back(ByteSet<bool>(i, m_went - m_cs));
+            list.push_back(m_dic->at((i << m_cs) + (ByteSet<bool>)tmp.sha256().get(0,m_cs)));
         }
         res = true;
     }
@@ -456,7 +456,8 @@ const string Mnemonic::get_last_word() const
     string ret("");
     if (is_valid())
     {
-        Integer index = (m_entropy.at((m_ms - 1)*m_went, m_went-m_cs) << m_cs) + (IntByteSet)m_entropy.sha256().at(0, m_cs);
+        //Integer index = (m_entropy.at((m_ms - 1)*m_went, m_went-m_cs) << m_cs) + (IntByteSet)m_entropy.sha256().at(0, m_cs);
+        Integer index = (m_entropy.get((m_ms - 1)*m_went, m_went-m_cs) << m_cs) + m_entropy.sha256().get(0, m_cs);
         ret = m_dic->at(index);
     }
     return ret;
@@ -470,14 +471,14 @@ void Mnemonic::print(bool as_index_list) const
         cout << get_word_list() << endl;
 }
 
-const ByteSet Mnemonic::get_seed() const
+const ByteSet<> Mnemonic::get_seed() const
 {
     return get_seed(m_pwd);
 }
 
-const ByteSet Mnemonic::get_seed(const string& pwd) const
+const ByteSet<> Mnemonic::get_seed(const string& pwd) const
 {
-    IntByteSet the_seed(0, 64);
+    ByteSet the_seed(0, 64);
     if (is_valid())
     {
         const string pass = get_word_list();

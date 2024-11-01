@@ -5,7 +5,7 @@
 #include <QRadioButton>
 #include <QLineEdit>
 
-#include <data/RLPByteSet.h>
+//#include <data/RLPByteSet.h>
 
 //https://doc.qt.io/qt-5/qtwidgets-widgets-groupbox-example.html
 class MyLineEditValueInput : public QWidget
@@ -20,7 +20,7 @@ public:
 
     //Value accessors
     //inline ByteSet toByteSet(uint64_t size = 0) const { return ByteSet(m_le_input->text().toStdString(), size, m_rb_dec->isChecked() ? 10 : 16); }
-    inline const string toStdString() const { return m_le_input->text().toStdString(); }
+    //inline const string toStdString() const { return m_le_input->text().toStdString(); }
 
 signals:
     void textChanged(const QString &value);

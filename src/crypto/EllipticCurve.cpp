@@ -1,5 +1,5 @@
 #include <crypto/EllipticCurve.h>
-#include <data/StrByteSet.h>
+#include <data/ByteSet.h>
 #include <data/Tools.h>
 
 Point::Point(const Point& p)
@@ -298,29 +298,29 @@ void EllipticCurve::print_cyclic_subgroups() const
 	}
 }
 
-Integer EllipticCurve::generate_RFC6979_nonce(const Integer& x, const ByteSet &h, const uint8_t nonce_to_skip) const
+Integer EllipticCurve::generate_RFC6979_nonce(const Integer& x, const ByteSet<> &h, const uint8_t nonce_to_skip) const
 {
 	assert(m_GOrder > 0);
 	assert(x > 0 && x < getGeneratorOrder()  && h.byteSize() == 32);
 
 	unsigned char *res;
 	uint32_t dilen;
-	HexStrByteSet V("0x0101010101010101010101010101010101010101010101010101010101010101");
-	HexStrByteSet K("0x0000000000000000000000000000000000000000000000000000000000000000");
-	IntByteSet V_;
+	StrByteSet V("0x0101010101010101010101010101010101010101010101010101010101010101");
+	StrByteSet K("0x0000000000000000000000000000000000000000000000000000000000000000");
+	ByteSet<> V_;
 
-	V_ = IntByteSet(V);
-	V_.push_back(0x00, 1);
-	V_.push_back(x, 32);
+	V_ = ByteSet(V);
+	V_.push_back(ByteSet(0x00, 1));
+	V_.push_back(ByteSet(x, 32));
 	V_.ByteSet::push_back(h);
 	// K = HMAC(K, V || 0x00 || int2octets(x) || bits2octets(h))
 	res = HMAC( EVP_sha256(), K, 32, V_, V_.byteSize(), K, &dilen );
 	// V = HMAC(K, V)
 	res = HMAC( EVP_sha256(), K, 32, V, V.byteSize(), V, &dilen );
 
-	V_ = IntByteSet(V);
-	V_.push_back(0x01, 1);
-	V_.push_back(x, 32);
+	V_ = ByteSet(V);
+	V_.push_back(ByteSet(0x01, 1));
+	V_.push_back(ByteSet(x, 32));
 	V_.ByteSet::push_back(h);
 	// K = HMAC(K, V || 0x01 || int2octets(x) || bits2octets(h))
 	res = HMAC( EVP_sha256(), K, 32, V_, V_.byteSize(), K, &dilen );
@@ -340,8 +340,8 @@ Integer EllipticCurve::generate_RFC6979_nonce(const Integer& x, const ByteSet &h
 		if( counter >= nonce_to_skip && k > 0 && k < getGeneratorOrder() )
 			break;
 		
-		V_ = IntByteSet(V);
-		V_.push_back(0x00, 1);
+		V_ = ByteSet(V);
+		V_.push_back(ByteSet(0x00, 1));
 		// K = HMAC(K, V || 0x00)
 		res = HMAC( EVP_sha256(), K, 32, V_, V_.byteSize(), K, &dilen );
 		// V = HMAC(K, V)
@@ -372,7 +372,7 @@ const Point EllipticCurve::getPointFromX(const Element x, const bool y_imparity)
 }
 
 bool EllipticCurve::recover( Point& Q_candidate,
-                			 const ByteSet &msg_hash, const Integer& r, const Integer& s, const bool y_imparity,
+                			 const ByteSet<> &msg_hash, const Integer& r, const Integer& s, const bool y_imparity,
 							 const bool recover_alternate ) const
 {
 	assert(getGeneratorOrder() > 0);
@@ -397,7 +397,7 @@ bool EllipticCurve::recover( Point& Q_candidate,
 				//cout << hex << "Rx = (0x" << R.getX() << ", 0x" << R.getY() << ")" << endl;
 				Point sR = p_scalar(R, s);
 				//cout << hex << "sR = (0x" << sR.getX() << ", 0x" << sR.getY() << ")" << endl;
-				Point hG =  p_scalar(getGenerator(), IntByteSet(msg_hash));
+				Point hG =  p_scalar(getGenerator(), ByteSet(msg_hash));
 				//cout << hex << "hG = (0x" << hG.getX() << ", 0x" << hG.getY() << ")" << endl;
 				Point invhG = p_inv(hG);
 				//cout << hex << "_hG = (0x" << invhG.getX() << ", 0x" << invhG.getY() << ")" << endl;

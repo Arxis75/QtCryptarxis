@@ -40,7 +40,7 @@ class EllipticCurve
 
         Point p_scalar(const Point &P, const Integer& k) const;
 
-        Integer generate_RFC6979_nonce(const Integer& x, const ByteSet &h, const uint8_t nonce_to_skip = 0) const;
+        Integer generate_RFC6979_nonce(const Integer& x, const ByteSet<> &h, const uint8_t nonce_to_skip = 0) const;
 
         const Point getPointFromX(const Element x, const bool y_imparity) const;
         void print() const;
@@ -84,7 +84,7 @@ class EllipticCurve
         /// @param recover_alternate: bool forcing the recovery of {rx+n, ry}, {rx+n, -ry}, for testing purpose
         /// @return 
         bool recover( Point& pubkeyPoint,
-              	      const ByteSet &msg_hash, const Integer& r, const Integer& s, const bool y_imparity,
+              	      const ByteSet<> &msg_hash, const Integer& r, const Integer& s, const bool y_imparity,
                       const bool recover_alternate = false ) const;
     private:
         ZP m_FField;
