@@ -12,10 +12,10 @@ TEST(RLPTests, TestRLP_nonEncodingConstructors)
     actual = RLPByteSet(expected_rlp);
     ASSERT_EQ(actual, expected_rlp);
 
-    uint8_t array[3] = {0x01, 0x02, 0x03};
+    /*uint8_t array[3] = {0x01, 0x02, 0x03};
     expected = RawByteSet<ByteSet>(array, sizeof(array));
     actual = RLPByteSet(array, sizeof(array));
-    ASSERT_EQ(actual, expected);
+    ASSERT_EQ(actual, expected);*/
 
     const char* str = "0xf873010184583702008506bcfcef3a8252089429eca176157ba854c2dd7a14a2"
                       "7b4a253c8a01c9884639df38ec69f3bc80c001a0da23340cb8a3e75917bfc2a3"
@@ -136,19 +136,19 @@ TEST(RLPTests, TestRLP_EncodingConstructors)
 
     // Encoding 65536 bytes (3 bytes-sized) RLP with as_list = false
     expected= StrByteSet("0x00", 65535);
-    expected.push_front(StrByteSet("0x01"));
+    expected.push_front("0x01");
     actual = RLPByteSet(expected, false);
-    expected.push_front(StrByteSet("0xBA010000")); //element header + 3-bytes added-prefix for the 65536 bytes element
+    expected.push_front("0xBA010000"); //element header + 3-bytes added-prefix for the 65536 bytes element
     ASSERT_EQ(actual, expected);
 
     // Encoding 65536 bytes (3 bytes-sized) RLP with as_list = true
     // NOTA: the input here is an invalid RLP element
     // NOTA: It is up to the program to build valid RLP input
     // NOTA: before inclusion in a list
-    expected= StrByteSet("0x00", 65535);
-    expected.push_front(StrByteSet("0x01"));
+    expected = StrByteSet("0x00", 65535);
+    expected.push_front("0x01");
     actual = RLPByteSet(expected, true);
-    expected.push_front(StrByteSet("0xFA010000")); //list header + 3-bytes added-prefix for the 65536 bytes element
+    expected.push_front("0xFA010000"); //list header + 3-bytes added-prefix for the 65536 bytes element
     ASSERT_EQ(actual, expected);
 }
 

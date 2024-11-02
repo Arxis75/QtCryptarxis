@@ -2,7 +2,7 @@
 #include <data/Tools.h>
 
 RLPByteSet::RLPByteSet(const ByteSet &to_rlp_encode, const bool as_list)
-    : ByteSet()
+    : StrByteSet()
 {
     //MAIN RLP ENCODING METHOD
     if( to_rlp_encode.byteSize() )
@@ -24,7 +24,7 @@ RLPByteSet::RLPByteSet(const ByteSet &to_rlp_encode, const bool as_list)
             ByteSet::push_back(0xB7 + extra_prefix + size_size, 1);
             ByteSet::push_back(to_rlp_encode.byteSize() , size_size);
         }
-        ByteSet::push_back(to_rlp_encode);
+        RawByteSet::push_back(to_rlp_encode);
     }
     else
         ByteSet::push_back((as_list ? 0xC0 : 0x80), 1);
@@ -39,7 +39,7 @@ void RLPByteSet::push_back(const RLPByteSet &rlp, const bool at_top_level)
         uint64_t list_size = byteSize();
         uint8_t list_size_size = 0;
         
-        uint8_t front_header = vvalue[0];
+        uint8_t front_header = at(0);
 
         if( !at_top_level && front_header >= 0xC0 )
         {
@@ -60,7 +60,7 @@ void RLPByteSet::push_back(const RLPByteSet &rlp, const bool at_top_level)
         }
         ByteSet::push_front((list_size <= 55 ? 0xC0 + list_size : 0xF7 + list_size_size), 1);
     }
-    ByteSet::push_back(rlp);
+    RawByteSet::push_back(rlp);
 }
 
 void RLPByteSet::push_front(const RLPByteSet &rlp, const bool at_top_level)
@@ -72,7 +72,7 @@ void RLPByteSet::push_front(const RLPByteSet &rlp, const bool at_top_level)
         uint64_t list_size = byteSize();
         uint8_t list_size_size = 0;
         
-        uint8_t front_header = vvalue[0];
+        uint8_t front_header = at(0);
 
         if( !at_top_level && front_header >= 0xC0 )
         {
@@ -85,7 +85,7 @@ void RLPByteSet::push_front(const RLPByteSet &rlp, const bool at_top_level)
             }
         }
 
-        ByteSet::push_front(rlp);
+        RawByteSet::push_front(rlp);
 
         // Creates a new list header
         list_size = byteSize();
@@ -97,7 +97,7 @@ void RLPByteSet::push_front(const RLPByteSet &rlp, const bool at_top_level)
         ByteSet::push_front((list_size <= 55 ? 0xC0 + list_size : 0xF7 + list_size_size), 1);
     }
     else
-        ByteSet::push_front(rlp);
+        RawByteSet::push_front(rlp);
 }
 
 RLPByteSet RLPByteSet::pop_front(bool &is_list)
@@ -106,24 +106,24 @@ RLPByteSet RLPByteSet::pop_front(bool &is_list)
     RLPByteSet retval;
     if( byteSize() )
     {   
-        uint8_t front_header = vvalue[0], front_elem_size_size = 0;
+        uint8_t front_header = at(0), front_elem_size_size = 0;
         uint64_t front_header_size = 0, front_elem_size = 0;
         bool rebuild_header = false;
         
         if( front_header >= 0xC0 )
         {
             //Drops the previous list header
-            ByteSet::pop_front(1);
+            RawByteSet::pop_front(1);
             if( front_header >= 0xF7 )
             {
                 uint8_t list_size_size = front_header - 0xF7;
-                ByteSet::pop_front(list_size_size);
+                RawByteSet::pop_front(list_size_size);
             }
             rebuild_header = true;
         }
         if( byteSize() )
         {
-            front_header = vvalue[0];
+            front_header = at(0);
 
             if( front_header < 0x80 )       //[0x00, 0x7f] 
             {
@@ -141,7 +141,7 @@ RLPByteSet RLPByteSet::pop_front(bool &is_list)
             {
                 front_elem_size_size = front_header - 0xB7;
                 if( front_elem_size_size < byteSize() )
-                    front_elem_size = ByteSet(&vvalue[1], front_elem_size_size).as_uint64();
+                    front_elem_size = (uint64_t)get(1, front_elem_size_size); //ByteSet(&at(1), front_elem_size_size).as_uint64();
                 else
                 {
                     cerr << "Warning! ByteSet::pop_front() found a wrong RLP encoding! Doing our best..." << endl;
@@ -162,7 +162,7 @@ RLPByteSet RLPByteSet::pop_front(bool &is_list)
                 front_elem_size_size = front_header - 0xF7;//Do not remove the header of the sub-list when poping it
                 if( front_elem_size_size < byteSize() )
                     //Do not remove the header of the sub-list when poping it:
-                    front_elem_size = 1 + front_elem_size_size + ByteSet(&vvalue[1], front_elem_size_size).as_uint64();
+                    front_elem_size = 1 + front_elem_size_size + (uint64_t)get(1, front_elem_size_size);
                 else
                 {
                     cerr << "Warning! ByteSet::pop_front() found a wrong RLP encoding! Doing our best..." << endl;
@@ -173,16 +173,16 @@ RLPByteSet RLPByteSet::pop_front(bool &is_list)
             }
 
             //Drops the first RLP element header (only if not list)
-            ByteSet::pop_front(front_header_size);
+            RawByteSet::pop_front(front_header_size);
             // Pops the first element (with header if list): the low-level vector copy
             // prevents the ByteSet to get re-RLP-encoded
-            *static_cast<ByteSet*>(&retval) = ByteSet::pop_front(front_elem_size);
+            retval.RawByteSet::push_back(ByteSet::pop_front(front_elem_size));
 
             if( byteSize() && rebuild_header )
             {
                 //Rebuilds the list header if necessary
                 RLPByteSet b((*this), true);
-                vvalue = b.vvalue;
+                *this = RawByteSet(b);  //vvalue = b.vvalue;
             }
         }
     }

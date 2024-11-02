@@ -123,6 +123,8 @@ vector<uint8_t> vec_8x8 =
                             {'a', 'w', 's', 't', 'r', 'i', 'n', 'g'};
 vector<uint8_t> vec_2x8 =  
                             {'n', 'g'};
+vector<uint8_t> vec_1x8 =  
+                            {'g'};
 vector<uint8_t> vec_75x1 = 
                             {                                 0x01, 0x01, 0x01,
                                 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00,
@@ -189,6 +191,8 @@ vector<uint8_t> vec_64x1 =
                                 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x01, 0x01 };
 vector<uint8_t> vec_2x1 =  
                             {   0x01, 0x01 };
+vector<uint8_t> vec_1x1 =  
+                            {   0x01 };
 Integer int_10x8 = 
                             Integer("35166517413578285870695");
 string str_20x4 = 
@@ -265,9 +269,9 @@ TEST(IntegralsTests, ByteSet_Constructors)
     ASSERT_EQ(actual_ByteSet.toV(), vec_10x8);
     //smaller size specified
     actual_ByteSet = ByteSet((uint64_t)int_10x8, 1);      
-    ASSERT_EQ(actual_ByteSet.toV(), vector<uint8_t>({'g'}));
+    ASSERT_EQ(actual_ByteSet.toV(), vec_1x8);
     actual_ByteSet = ByteSet(int_10x8, 2);                
-    ASSERT_EQ(actual_ByteSet.toV(), vector<uint8_t>({'n', 'g'}));
+    ASSERT_EQ(actual_ByteSet.toV(), vec_2x8);
     //exact size specified
     actual_ByteSet = ByteSet((uint64_t)int_10x8, vec_8x8.size());      
     ASSERT_EQ(actual_ByteSet.toV(), vec_8x8);
@@ -286,9 +290,9 @@ TEST(IntegralsTests, ByteSet_Constructors)
     ASSERT_EQ(actual_BitSet.toV(), vec_75x1);
     //smaller size specified
     actual_BitSet = ByteSet<bool>((uint64_t)int_10x8, 1);      
-    ASSERT_EQ(actual_BitSet.toV(), vector<uint8_t>({0b1}));
+    ASSERT_EQ(actual_BitSet.toV(), vec_1x1);
     actual_BitSet = ByteSet<bool>(int_10x8, 2);                
-    ASSERT_EQ(actual_BitSet.toV(), vector<uint8_t>({0b1, 0b1}));
+    ASSERT_EQ(actual_BitSet.toV(), vec_2x1);
     //exact size specified
     actual_BitSet = ByteSet<bool>((uint64_t)int_10x8, vec_63x1.size());      
     ASSERT_EQ(actual_BitSet.toV(), vec_63x1);

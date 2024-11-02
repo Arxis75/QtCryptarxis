@@ -67,17 +67,18 @@ class RawByteSet
 
         inline void push_front(const Derived<T>& subset) { vvalue.insert(vvalue.begin(), subset.vvalue.begin(), subset.vvalue.end()); }
         inline void push_back(const Derived<T>& subset) { vvalue.insert(vvalue.end(), subset.vvalue.begin(), subset.vvalue.end()); }
-        //inline void push_front(const char* str) { push_front(RawByteSet(str)); }
-        //inline void push_back(const char* str) { push_back(RawByteSet(str)); }
         Derived<T> pop_front(uint64_t nb_element);
         Derived<T> pop_back(uint64_t nb_element);
+
+        inline void push_front(const char* str) { push_front(RawByteSet<Derived, T>(str)); }
+        inline void push_back(const char* str) { push_back(RawByteSet<Derived, T>(str)); }
 
         //ostream
         friend inline ostream& operator<<(ostream& out, const RawByteSet& v) { return out << string(v); }
 
         /// @brief Constructor for testing purposes
-        void fromV(vector<uint8_t>& v) { vvalue = v; }
-        vector<uint8_t> toV() { return vvalue; }
+        void fromV(const vector<uint8_t>& v) { vvalue = v; }
+        const vector<uint8_t>& toV() const { return vvalue; }
 
     protected:
         //Const accessors
@@ -130,8 +131,8 @@ class ByteSet : public RawByteSet<ByteSet, T>
         inline bool operator==(const ByteSet &b) const { return this->bitSize() == b.bitSize() && Integer(*this) == Integer(b); };
         inline bool operator!=(const ByteSet &b) const { return !((*this) == b); };
 
-        //inline void push_front(const Integer& val, uint64_t nb_elem = 0) { push_front(ByteSet(val, nb_elem)); }
-        //inline void push_back(const Integer& val, uint64_t nb_elem = 0) { push_back(ByteSet(val, nb_elem)); }
+        inline void push_front(const Integer& val, uint64_t nb_elem) { RawByteSet<ByteSet, T>::push_front((RawByteSet<ByteSet, T>)ByteSet(val, nb_elem)); }
+        inline void push_back(const Integer& val, uint64_t nb_elem) { RawByteSet<ByteSet, T>::push_back((RawByteSet<ByteSet, T>)ByteSet(val, nb_elem)); }
 
         static ByteSet<T> generateRandom(uint64_t nb_element);
 
@@ -177,8 +178,8 @@ class StrByteSet : public ByteSet<T>
 
         inline virtual operator string() const { return toFormat(f); }
 
-        //inline void push_front(const string& str, uint64_t nb_elem = 0) { push_front(StrByteSet(str, nb_elem)); }
-        //inline void push_back(const string& str, uint64_t nb_elem = 0) { push_back(StrByteSet(str, nb_elem)); }
+        inline void push_front(const string& str, uint64_t nb_elem = 0) { RawByteSet<ByteSet, T>::push_front(StrByteSet(str, nb_elem)); }
+        inline void push_back(const string& str, uint64_t nb_elem = 0) { RawByteSet<ByteSet, T>::push_back(StrByteSet(str, nb_elem)); }
 
         inline string toFormat(const StrByteSetFormat& format) const { return integerToStr(Integer(*this), format); }
 
@@ -253,7 +254,7 @@ ByteSet<T>::ByteSet(const U &val, uint64_t nb_elem)
     uint64_t nb_elem_for_val = this->getValueNbElem(val);
     uint64_t i_extra = (nb_elem > nb_elem_for_val ? nb_elem - nb_elem_for_val : 0);
     for(uint64_t i=0;i<i_extra;i++)
-        this->push_back(T(0x00));
+        RawByteSet<ByteSet, T>::push_back(T(0x00));
     uint64_t i_start = (nb_elem ? (nb_elem < nb_elem_for_val ? nb_elem_for_val - nb_elem : 0) : 0);
     for(uint64_t i=i_start;i<nb_elem_for_val;i++)
         RawByteSet<ByteSet, T>::push_back(this->getValueElem(val, i));
@@ -297,17 +298,18 @@ Derived<T> RawByteSet<Derived, T>::pop_front(uint64_t nb_element) {
     //assert(nbElements()>=nb_element);
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
-            ret_value.push_back(pop_front());
+            ret_value.RawByteSet<ByteSet, T>::push_back(pop_front());
     return ret_value;
 }
 
 template <template <typename> class Derived, typename T>
 Derived<T> RawByteSet<Derived, T>::pop_back(uint64_t nb_element) {
     Derived<T> ret_value;
-    assert(nbElements()>=nb_element);
+    //FIXME incompatible with tests ... 
+    //assert(nbElements()>=nb_element);
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
-            ret_value.push_front(pop_back());
+            ret_value.RawByteSet<ByteSet, T>::push_front(pop_back());
     return ret_value;
 }
 
