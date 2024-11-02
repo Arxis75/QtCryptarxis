@@ -29,7 +29,7 @@ class RawByteSet
             RawByteSet(const U *p, uint64_t aligned_size);   // const U* = const uint8_t*, const unsigned char*
         template <typename U> 
             explicit RawByteSet(const U *str);               // const U = const char*
-            
+
         //Const& and Const* Operators/Accessors
         inline const uint8_t& operator[](uint64_t elem_index) const { return vvalue[elem_index]; };
         /// @brief For convenience only, at(...) is friendlier than (*this)[...]
@@ -70,6 +70,8 @@ class RawByteSet
         Derived<T> pop_front(uint64_t nb_element);
         Derived<T> pop_back(uint64_t nb_element);
 
+        inline void push_front(const uint8_t *p, uint64_t aligned_size) { push_front(RawByteSet<Derived, T>(p, aligned_size)); }
+        inline void push_back(const uint8_t *p, uint64_t aligned_size) { push_back(RawByteSet<Derived, T>(p, aligned_size)); }
         inline void push_front(const char* str) { push_front(RawByteSet<Derived, T>(str)); }
         inline void push_back(const char* str) { push_back(RawByteSet<Derived, T>(str)); }
 
@@ -131,8 +133,8 @@ class ByteSet : public RawByteSet<ByteSet, T>
         inline bool operator==(const ByteSet &b) const { return this->bitSize() == b.bitSize() && Integer(*this) == Integer(b); };
         inline bool operator!=(const ByteSet &b) const { return !((*this) == b); };
 
-        inline void push_front(const Integer& val, uint64_t nb_elem) { RawByteSet<ByteSet, T>::push_front((RawByteSet<ByteSet, T>)ByteSet(val, nb_elem)); }
-        inline void push_back(const Integer& val, uint64_t nb_elem) { RawByteSet<ByteSet, T>::push_back((RawByteSet<ByteSet, T>)ByteSet(val, nb_elem)); }
+        inline void push_front(const Integer& val, uint64_t nb_elem = 0) { RawByteSet<ByteSet, T>::push_front((RawByteSet<ByteSet, T>)ByteSet(val, nb_elem)); }
+        inline void push_back(const Integer& val, uint64_t nb_elem = 0) { RawByteSet<ByteSet, T>::push_back((RawByteSet<ByteSet, T>)ByteSet(val, nb_elem)); }
 
         static ByteSet<T> generateRandom(uint64_t nb_element);
 

@@ -113,8 +113,24 @@ TEST(IntegralsTests, Constructors_Capabilities)
 vector<uint8_t> vec_expected;
 const unsigned char arr_10x8[10] = 
                             { 0x07, 'r', 'a', 'w', 's', 't', 'r', 'i', 'n', 'g'};
+const unsigned char arr_9x8[9] = 
+                            { 'r', 'a', 'w', 's', 't', 'r', 'i', 'n', 'g'};
+const unsigned char arr_3x8_high[3] = 
+                            { 'r', 'a', 'w'};
+const unsigned char arr_3x8_middle[3] = 
+                            { 's', 't', 'r'};
+const unsigned char arr_3x8_low[3] = 
+                            { 'i', 'n', 'g'};
 const char* str_10x8 = 
                             "\x07rawstring";
+const char* str_9x8 = 
+                            "rawstring";
+const char* str_3x8_high = 
+                            "raw";
+const char* str_3x8_middle = 
+                            "str";
+const char* str_3x8_low = 
+                            "ing";
 vector<uint8_t> vec_10x8 =   
                             { 0x07, 'r', 'a', 'w', 's', 't', 'r', 'i', 'n', 'g'};
 vector<uint8_t> vec_11x8 =  
@@ -199,6 +215,22 @@ string str_20x4 =
                             string("0x07726177737472696e67");
 string str_19x4 =
                             string("0x7726177737472696e67");
+Integer int_9x8 = 
+                            Integer("2109952033490769374823");
+Integer int_3x8_high = 
+                            Integer("7496055");
+Integer int_3x8_middle = 
+                            Integer("7566450");
+Integer int_3x8_low = 
+                            Integer("6909543");
+string str_18x4 =
+                            string("0x726177737472696e67");
+string str_6x4_high =
+                            string("0x726177");
+string str_6x4_middle =
+                            string("0x737472");
+string str_6x4_low =
+                            string("0x696e67");
 string str_dec = 
                             "35166517413578285870695";
 string str_gwei = 
@@ -581,5 +613,90 @@ TEST(IntegralsTests, Major_Operators)
     ASSERT_EQ((string)actual_BinBitSet, str_76x1);          //nibble-alignment 
     actual_BinBitSet = StrByteSet<Bin, bool>(str_75x1);
     ASSERT_EQ((string)actual_BinBitSet, str_75x1);
+}
 
+TEST(IntegralsTests, Push_As_Constructors)
+{
+    RawByteSet actual_RawByteSet;
+    RawByteSet<ByteSet, bool> actual_RawBitSet;
+    ByteSet actual_ByteSet;
+    ByteSet<bool> actual_BitSet;
+    StrByteSet actual_HexByteSet;
+    StrByteSet<Hex, bool> actual_HexBitSet;
+    StrByteSet<Dec> actual_DecByteSet;
+    StrByteSet<Dec, bool> actual_DecBitSet;
+    StrByteSet<GWei> actual_GWeiByteSet;
+    StrByteSet<GWei, bool> actual_GWeiBitSet;
+    StrByteSet<Bin> actual_BinByteSet;
+    StrByteSet<Bin, bool> actual_BinBitSet;
+
+    //From array
+    vec_expected = RawByteSet(&arr_9x8[0],sizeof(arr_9x8)).toV();
+    actual_RawByteSet.clear();
+    actual_RawByteSet.push_back(&arr_3x8_middle[0], sizeof(arr_3x8_middle));
+    actual_RawByteSet.push_back(&arr_3x8_low[0], sizeof(arr_3x8_low)); 
+    actual_RawByteSet.push_front(&arr_3x8_high[0], sizeof(arr_3x8_high));
+    ASSERT_EQ(actual_RawByteSet.toV(), vec_expected);
+    vec_expected = RawByteSet(arr_3x8_high, sizeof(arr_3x8_high)).toV();
+    ASSERT_EQ(actual_RawByteSet.pop_front(sizeof(arr_3x8_high)).toV(), vec_expected);
+    vec_expected = RawByteSet(arr_3x8_low, sizeof(arr_3x8_low)).toV();
+    ASSERT_EQ(actual_RawByteSet.pop_back(sizeof(arr_3x8_low)).toV(), vec_expected);
+    vec_expected = RawByteSet(arr_3x8_middle, sizeof(arr_3x8_middle)).toV();
+    ASSERT_EQ(actual_RawByteSet.pop_back(sizeof(arr_3x8_middle)).toV(), vec_expected);
+
+    //From raw string
+    vec_expected = RawByteSet(str_9x8).toV();
+    actual_RawByteSet.clear();
+    actual_RawByteSet.push_back(str_3x8_middle);
+    actual_RawByteSet.push_back(str_3x8_low); 
+    actual_RawByteSet.push_front(str_3x8_high);
+    ASSERT_EQ(actual_RawByteSet.toV(), vec_expected);
+    vec_expected = RawByteSet(str_3x8_high).toV();
+    ASSERT_EQ(actual_RawByteSet.pop_front(3).toV(), vec_expected);
+    vec_expected = RawByteSet(str_3x8_low).toV();
+    ASSERT_EQ(actual_RawByteSet.pop_back(3).toV(), vec_expected);
+    vec_expected = RawByteSet(str_3x8_middle).toV();
+    ASSERT_EQ(actual_RawByteSet.pop_back(3).toV(), vec_expected);
+
+    //From uint64_t
+    vec_expected = ByteSet(int_9x8).toV();
+    actual_ByteSet.clear();
+    actual_ByteSet.push_back((uint64_t)int_3x8_middle);
+    actual_ByteSet.push_back((uint64_t)int_3x8_low); 
+    actual_ByteSet.push_front((uint64_t)int_3x8_high);
+    ASSERT_EQ(actual_ByteSet.toV(), vec_expected);
+    vec_expected = ByteSet((uint64_t)int_3x8_high).toV();
+    ASSERT_EQ(actual_ByteSet.pop_front(3).toV(), vec_expected);
+    vec_expected = ByteSet((uint64_t)int_3x8_low).toV();
+    ASSERT_EQ(actual_ByteSet.pop_back(3).toV(), vec_expected);
+    vec_expected = ByteSet((uint64_t)int_3x8_middle).toV();
+    ASSERT_EQ(actual_ByteSet.pop_back(3).toV(), vec_expected);
+
+    //From Integer
+    vec_expected = ByteSet(int_9x8).toV();
+    actual_ByteSet.clear();
+    actual_ByteSet.push_back(int_3x8_middle);
+    actual_ByteSet.push_back(int_3x8_low); 
+    actual_ByteSet.push_front(int_3x8_high);
+    ASSERT_EQ(actual_ByteSet.toV(), vec_expected);
+    vec_expected = ByteSet(int_3x8_high).toV();
+    ASSERT_EQ(actual_ByteSet.pop_front(3).toV(), vec_expected);
+    vec_expected = ByteSet(int_3x8_low).toV();
+    ASSERT_EQ(actual_ByteSet.pop_back(3).toV(), vec_expected);
+    vec_expected = ByteSet(int_3x8_middle).toV();
+    ASSERT_EQ(actual_ByteSet.pop_back(3).toV(), vec_expected);
+
+    //From String
+    vec_expected = StrByteSet(str_18x4).toV();
+    actual_HexByteSet.clear();
+    actual_HexByteSet.push_back(str_6x4_middle);
+    actual_HexByteSet.push_back(str_6x4_low); 
+    actual_HexByteSet.push_front(str_6x4_high);
+    ASSERT_EQ(actual_HexByteSet.toV(), vec_expected);
+    vec_expected = StrByteSet(str_6x4_high).toV();
+    ASSERT_EQ(actual_HexByteSet.pop_front(3).toV(), vec_expected);
+    vec_expected = StrByteSet(str_6x4_low).toV();
+    ASSERT_EQ(actual_HexByteSet.pop_back(3).toV(), vec_expected);
+    vec_expected = StrByteSet(str_6x4_middle).toV();
+    ASSERT_EQ(actual_HexByteSet.pop_back(3).toV(), vec_expected);
 }
