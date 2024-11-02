@@ -5,7 +5,7 @@ RLPByteSet::RLPByteSet(const ByteSet &to_rlp_encode, const bool as_list)
     : StrByteSet()
 {
     //MAIN RLP ENCODING METHOD
-    if( to_rlp_encode.byteSize() )
+    /*if( to_rlp_encode.byteSize() )
     {
         // The only use-case of as_list = true here is to rebuild the list header
         // from a truncated RLP list.The truncated RLPByteSet is passed
@@ -27,13 +27,13 @@ RLPByteSet::RLPByteSet(const ByteSet &to_rlp_encode, const bool as_list)
         RawByteSet::push_back(to_rlp_encode);
     }
     else
-        ByteSet::push_back((as_list ? 0xC0 : 0x80), 1);
+        ByteSet::push_back((as_list ? 0xC0 : 0x80), 1);*/
 }
 
 void RLPByteSet::push_back(const RLPByteSet &rlp, const bool at_top_level)
 {
     //MAIN RLP LIST ENCODING METHOD
-    if( byteSize() )    
+    /*if( byteSize() )    
     {
         //There is already some RLP data
         uint64_t list_size = byteSize();
@@ -60,13 +60,13 @@ void RLPByteSet::push_back(const RLPByteSet &rlp, const bool at_top_level)
         }
         ByteSet::push_front((list_size <= 55 ? 0xC0 + list_size : 0xF7 + list_size_size), 1);
     }
-    RawByteSet::push_back(rlp);
+    RawByteSet::push_back(rlp);*/
 }
 
 void RLPByteSet::push_front(const RLPByteSet &rlp, const bool at_top_level)
 {
     //MAIN RLP LIST ENCODING METHOD
-    if( byteSize() )    
+    /*if( byteSize() )    
     {
         //There is already some RLP data
         uint64_t list_size = byteSize();
@@ -97,14 +97,14 @@ void RLPByteSet::push_front(const RLPByteSet &rlp, const bool at_top_level)
         ByteSet::push_front((list_size <= 55 ? 0xC0 + list_size : 0xF7 + list_size_size), 1);
     }
     else
-        RawByteSet::push_front(rlp);
+        RawByteSet::push_front(rlp);*/
 }
 
 RLPByteSet RLPByteSet::pop_front(bool &is_list)
 {
     is_list = false;
     RLPByteSet retval;
-    if( byteSize() )
+    /*if( byteSize() )
     {   
         uint8_t front_header = at(0), front_elem_size_size = 0;
         uint64_t front_header_size = 0, front_elem_size = 0;
@@ -185,6 +185,6 @@ RLPByteSet RLPByteSet::pop_front(bool &is_list)
                 *this = RawByteSet(b);  //vvalue = b.vvalue;
             }
         }
-    }
+    }*/
     return retval;
 }

@@ -189,7 +189,7 @@ Privkey::Privkey(const Privkey& parent_privkey, const int32_t index, const bool 
         suffix += 0x80000000;
     }      
     //cout << parent_data << endl;
-    parent_data.RawByteSet::push_back(suffix);
+    parent_data.push_back(suffix);
    
     ByteSet digest(0, 64);
     uint32_t dilen;
@@ -265,8 +265,8 @@ Privkey::Privkey(const ByteSet<> &seed, const char *path, const int32_t account_
 const Signature Privkey::signWithPrefix(const char* msg, const bool enforce_eip2) const
 {
     RawByteSet<ByteSet> t_raw("\u0019Ethereum Signed Message:\n");
-    t_raw.push_back(RawByteSet<ByteSet>(to_string(strlen(msg)).c_str()));
-    t_raw.push_back(RawByteSet<ByteSet>(msg));
+    t_raw.push_back(to_string(strlen(msg)).c_str());
+    t_raw.push_back(msg);
 
     return sign(t_raw.keccak256(), enforce_eip2);
 }

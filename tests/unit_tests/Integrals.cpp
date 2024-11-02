@@ -643,7 +643,6 @@ TEST(IntegralsTests, Push_As_Constructors)
     ASSERT_EQ(actual_RawByteSet.pop_back(sizeof(arr_3x8_low)).toV(), vec_expected);
     vec_expected = RawByteSet(arr_3x8_middle, sizeof(arr_3x8_middle)).toV();
     ASSERT_EQ(actual_RawByteSet.pop_back(sizeof(arr_3x8_middle)).toV(), vec_expected);
-
     //From raw string
     vec_expected = RawByteSet(str_9x8).toV();
     actual_RawByteSet.clear();
@@ -657,6 +656,10 @@ TEST(IntegralsTests, Push_As_Constructors)
     ASSERT_EQ(actual_RawByteSet.pop_back(3).toV(), vec_expected);
     vec_expected = RawByteSet(str_3x8_middle).toV();
     ASSERT_EQ(actual_RawByteSet.pop_back(3).toV(), vec_expected);
+    //From RawByteSet
+    vec_expected = RawByteSet(str_9x8).toV();
+    actual_RawByteSet.push_back(RawByteSet(str_9x8));
+    ASSERT_EQ(actual_RawByteSet.toV(), vec_expected);
 
     //From uint64_t
     vec_expected = ByteSet(int_9x8).toV();
@@ -671,7 +674,6 @@ TEST(IntegralsTests, Push_As_Constructors)
     ASSERT_EQ(actual_ByteSet.pop_back(3).toV(), vec_expected);
     vec_expected = ByteSet((uint64_t)int_3x8_middle).toV();
     ASSERT_EQ(actual_ByteSet.pop_back(3).toV(), vec_expected);
-
     //From Integer
     vec_expected = ByteSet(int_9x8).toV();
     actual_ByteSet.clear();
@@ -685,6 +687,10 @@ TEST(IntegralsTests, Push_As_Constructors)
     ASSERT_EQ(actual_ByteSet.pop_back(3).toV(), vec_expected);
     vec_expected = ByteSet(int_3x8_middle).toV();
     ASSERT_EQ(actual_ByteSet.pop_back(3).toV(), vec_expected);
+    //From ByteSet
+    vec_expected = ByteSet(int_9x8).toV();
+    actual_ByteSet.push_back(ByteSet(int_9x8));
+    ASSERT_EQ(actual_ByteSet.toV(), vec_expected);
 
     //From String
     vec_expected = StrByteSet(str_18x4).toV();
@@ -699,4 +705,8 @@ TEST(IntegralsTests, Push_As_Constructors)
     ASSERT_EQ(actual_HexByteSet.pop_back(3).toV(), vec_expected);
     vec_expected = StrByteSet(str_6x4_middle).toV();
     ASSERT_EQ(actual_HexByteSet.pop_back(3).toV(), vec_expected);
+    //From StrByteSet
+    vec_expected = StrByteSet(str_18x4).toV();
+    actual_HexByteSet.push_back(StrByteSet(str_18x4));
+    ASSERT_EQ(actual_HexByteSet.toV(), vec_expected);
 }

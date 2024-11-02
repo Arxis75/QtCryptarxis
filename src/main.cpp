@@ -5,28 +5,28 @@
 #include <data/ByteSet.h>
 #include <data/Tools.h>
 
-template<typename T = uint8_t>
-class toto
+/*template<typename T = uint8_t>
+class toto : public RawByteSet<toto, T>
 {
 public:
     toto() {}
-};
+};*/
 
 int main(int argc, char *argv[])
 {
-    RawByteSet<toto, bool> vv0, vvv0;
+    /*RawByteSet<toto, bool> vv0, vvv0;
 
-    vv0.push_back(true);
-    vv0.push_back(false);
-    vv0.push_back(true);
-    vv0.push_back(false);
-    vv0.push_back(true);
-    vv0.push_back(false);
-    vv0.push_back(true);
-    vv0.push_back(false);
-    vv0.push_back(true);    
-    vv0.push_back(false);
-    vv0.push_back(true);
+    vv0.push_back_elem(true);
+    vv0.push_back_elem(false);
+    vv0.push_back_elem(true);
+    vv0.push_back_elem(false);
+    vv0.push_back_elem(true);
+    vv0.push_back_elem(false);
+    vv0.push_back_elem(true);
+    vv0.push_back_elem(false);
+    vv0.push_back_elem(true);    
+    vv0.push_back_elem(false);
+    vv0.push_back_elem(true);
 
     RawByteSet<toto, uint8_t> vv1(vv0);
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     bsv = StrByteSet("0x0F", 17);
     bsv = StrByteSet<Dec>("127", 17);
     bsv = StrByteSet<Bin>("0b1111111", 17);
-    bbsv = StrByteSet<Bin, bool>("0b1111111",17);
+    bbsv = StrByteSet<Bin, bool>("0b1111111",17);*/
 
     /*int x = 0b00010000;
 

@@ -60,15 +60,15 @@ class RawByteSet
         inline void resize(uint64_t nb_elem) { vvalue.resize(nb_elem); }
         inline void clear() { vvalue.clear(); }
 
-        inline void push_front(T elem) { vvalue.insert(vvalue.begin(), elem); }
-        inline void push_back(T elem) { vvalue.push_back(elem); }
-        inline T pop_front();
-        inline T pop_back();
+        virtual inline void push_front_elem(T elem) { vvalue.insert(vvalue.begin(), elem); }
+        virtual inline void push_back_elem(T elem) { vvalue.push_back(elem); }
+        virtual inline T pop_front();
+        virtual inline T pop_back();
 
         inline void push_front(const Derived<T>& subset) { vvalue.insert(vvalue.begin(), subset.vvalue.begin(), subset.vvalue.end()); }
         inline void push_back(const Derived<T>& subset) { vvalue.insert(vvalue.end(), subset.vvalue.begin(), subset.vvalue.end()); }
-        Derived<T> pop_front(uint64_t nb_element);
-        Derived<T> pop_back(uint64_t nb_element);
+        virtual Derived<T> pop_front(uint64_t nb_element);
+        virtual Derived<T> pop_back(uint64_t nb_element);
 
         inline void push_front(const uint8_t *p, uint64_t aligned_size) { push_front(RawByteSet<Derived, T>(p, aligned_size)); }
         inline void push_back(const uint8_t *p, uint64_t aligned_size) { push_back(RawByteSet<Derived, T>(p, aligned_size)); }
@@ -97,7 +97,7 @@ class RawByteSet
         inline uint64_t nbElements() const { return vvalue.size(); }
         inline uint64_t bytesToNbElements(uint64_t bytes) const { return ((bytes << 3) / elementBitSize()); }
         inline uint8_t elementBitSize() const { return isAligned() ? 8 : 1; }
-        
+
     private:
         vector<uint8_t> vvalue;
 };
@@ -114,6 +114,7 @@ class ByteSet : public RawByteSet<ByteSet, T>
 
         explicit ByteSet(const string& val, uint64_t nb_elem = 0) = delete;
         explicit ByteSet(const char* val, uint64_t nb_elem = 0) = delete;
+
     public:
         //Default constructor
         ByteSet() : RawByteSet<ByteSet, T>() {}
@@ -133,8 +134,10 @@ class ByteSet : public RawByteSet<ByteSet, T>
         inline bool operator==(const ByteSet &b) const { return this->bitSize() == b.bitSize() && Integer(*this) == Integer(b); };
         inline bool operator!=(const ByteSet &b) const { return !((*this) == b); };
 
-        inline void push_front(const Integer& val, uint64_t nb_elem = 0) { RawByteSet<ByteSet, T>::push_front((RawByteSet<ByteSet, T>)ByteSet(val, nb_elem)); }
-        inline void push_back(const Integer& val, uint64_t nb_elem = 0) { RawByteSet<ByteSet, T>::push_back((RawByteSet<ByteSet, T>)ByteSet(val, nb_elem)); }
+        inline void push_front(const ByteSet<T>& subset) { RawByteSet<ByteSet, T>::push_front(subset); }
+        inline void push_back(const ByteSet<T>& subset) { RawByteSet<ByteSet, T>::push_back(subset); }
+        inline void push_front(const Integer& val, uint64_t nb_elem = 0) { push_front(ByteSet(val, nb_elem)); }
+        inline void push_back(const Integer& val, uint64_t nb_elem = 0) { push_back(ByteSet(val, nb_elem)); }
 
         static ByteSet<T> generateRandom(uint64_t nb_element);
 
@@ -180,9 +183,12 @@ class StrByteSet : public ByteSet<T>
 
         inline virtual operator string() const { return toFormat(f); }
 
-        inline void push_front(const string& str, uint64_t nb_elem = 0) { RawByteSet<ByteSet, T>::push_front(StrByteSet(str, nb_elem)); }
-        inline void push_back(const string& str, uint64_t nb_elem = 0) { RawByteSet<ByteSet, T>::push_back(StrByteSet(str, nb_elem)); }
+        inline void push_front(const StrByteSet<f, T>& subset) { RawByteSet<ByteSet, T>::push_front(subset); }
+        inline void push_back(const StrByteSet<f, T>& subset) { RawByteSet<ByteSet, T>::push_back(subset); }
+        inline void push_front(const string& str, uint64_t nb_elem = 0) { RawByteSet<>::push_front(StrByteSet(str, nb_elem)); }
+        inline void push_back(const string& str, uint64_t nb_elem = 0) { RawByteSet<>::push_back(StrByteSet(str, nb_elem)); }
 
+        //To improve? (vector=>string instead of vector=>Integer && Integer=>string)
         inline string toFormat(const StrByteSetFormat& format) const { return integerToStr(Integer(*this), format); }
 
     protected:
@@ -229,11 +235,11 @@ template <template <typename> class Derived, typename T>
 template <typename U>
 RawByteSet<Derived, T>::RawByteSet(const U* p, uint64_t aligned_size)
 {
-    static_assert( std::is_same<std::decay_t<U>, uint8_t>::value || std::is_same<std::decay_t<U>, unsigned char>::value, "Constructor accepts only <T=uint8_t>, const uint8_t*, const unsigned char*");
+    static_assert( std::is_same<std::decay_t<U>, uint8_t>::value || std::is_same<std::decay_t<U>, unsigned char>::value, "Constructor only accepts <T=uint8_t>, const uint8_t*, const unsigned char*");
 
     RawByteSet<Derived, uint8_t> aligned_me;
     for(uint64_t i=0;i<aligned_size;i++) 
-        aligned_me.push_back(p[i]);
+        aligned_me.push_back_elem(p[i]);
     resize(aligned_me.bitSize() / elementBitSize());
     *this = aligned_me;
 }
@@ -243,7 +249,7 @@ template <typename U>
 RawByteSet<Derived, T>::RawByteSet(const U* str)
     : RawByteSet(reinterpret_cast<const uint8_t*>(str), strlen(str))
 {
-    static_assert( std::is_same<std::decay_t<U>, char>::value, "Constructor accepts only <T=uint8_t>, const char*");
+    static_assert( std::is_same<std::decay_t<U>, char>::value, "Constructor only accepts <T=uint8_t>, const char*");
 }
 
 template<typename T>
@@ -251,15 +257,15 @@ template<typename U>
 ByteSet<T>::ByteSet(const U &val, uint64_t nb_elem)
     : RawByteSet<ByteSet, T>()
 {
-    static_assert(std::is_integral<U>::value || std::is_integral<bool>::value, "Constructor accepts only integral values");
+    static_assert(std::is_integral<U>::value || std::is_integral<bool>::value, "Constructor only accepts integral values");
 
     uint64_t nb_elem_for_val = this->getValueNbElem(val);
     uint64_t i_extra = (nb_elem > nb_elem_for_val ? nb_elem - nb_elem_for_val : 0);
     for(uint64_t i=0;i<i_extra;i++)
-        RawByteSet<ByteSet, T>::push_back(T(0x00));
+        this->push_back_elem(T(0x00));
     uint64_t i_start = (nb_elem ? (nb_elem < nb_elem_for_val ? nb_elem_for_val - nb_elem : 0) : 0);
     for(uint64_t i=i_start;i<nb_elem_for_val;i++)
-        RawByteSet<ByteSet, T>::push_back(this->getValueElem(val, i));
+        this->push_back_elem(this->getValueElem(val, i));
 }
 
 template<StrByteSetFormat const & f, typename T>
@@ -267,7 +273,7 @@ template<typename U>
 StrByteSet<f, T>::StrByteSet(const U& val, uint64_t nb_elem)
     : ByteSet<T>()
 {
-    static_assert(std::is_same<std::decay_t<U>, string>::value, "Constructor accepts only const string&");
+    static_assert(std::is_same<std::decay_t<U>, string>::value, "Constructor only accepts const string&");
 
     if( regex_match(val, f.Regex) ) {
         string str = toInternalFormat(val);
@@ -280,7 +286,7 @@ template<typename U>
 StrByteSet<f, T>::StrByteSet(const U* val, uint64_t nb_elem)
     : StrByteSet((string)val, nb_elem)
 {
-    static_assert(std::is_same<std::decay_t<U>, char>::value, "Constructor accepts only const char*");
+    static_assert(std::is_same<std::decay_t<U>, char>::value, "Constructor only accepts const char*");
 }
 
 /*********************************************** METHODS ***************************************************** */
@@ -300,7 +306,7 @@ Derived<T> RawByteSet<Derived, T>::pop_front(uint64_t nb_element) {
     //assert(nbElements()>=nb_element);
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
-            ret_value.RawByteSet<ByteSet, T>::push_back(pop_front());
+            ret_value.push_back_elem(pop_front());
     return ret_value;
 }
 
@@ -311,7 +317,7 @@ Derived<T> RawByteSet<Derived, T>::pop_back(uint64_t nb_element) {
     //assert(nbElements()>=nb_element);
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
-            ret_value.RawByteSet<ByteSet, T>::push_front(pop_back());
+            ret_value.push_front_elem(pop_back());
     return ret_value;
 }
 
