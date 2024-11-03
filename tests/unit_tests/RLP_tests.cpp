@@ -425,36 +425,36 @@ TEST(RLPTests, TestRLP_PopFront)
     expected = StrByteSet( "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
                               "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 55);
     rlp = RLPByteSet( "0xF872"
-                      "B838FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
-                      "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
                       "B7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
-                      "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" );
+                      "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+                      "B838FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+                      "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" );
     actual = rlp.pop_front(is_list);
     ASSERT_EQ(actual, expected);
     ASSERT_EQ(is_list, false);
 
-    //Pop_front 55-bytes element over 56-bytes list
+    //Pop_front 56-bytes over 55-bytes list
     //NOTA: the validity of the sub-elements of the 55-bytes list is not tested
-    expected = StrByteSet( "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
-                              "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 55);
+    expected = StrByteSet( "F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+                           "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 56);
     rlp = RLPByteSet( "0xF872"
-                      "B838FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
-                      "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
                       "F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
-                      "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" );
+                      "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+                      "B838FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+                      "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" );
     actual = rlp.pop_front(is_list);
     ASSERT_EQ(actual, expected);
-    ASSERT_EQ(is_list, false);
+    ASSERT_EQ(is_list, true);
 
     //Pop_front 1-byte list over 1-byte element
-    expected = StrByteSet("0xC101", 1);
+    expected = StrByteSet("0xC101");
     rlp = RLPByteSet("0xC4C10181FF");
     actual = rlp.pop_front(is_list);
     ASSERT_EQ(actual, expected);
     ASSERT_EQ(is_list, true);
 
     //Pop_front 1-byte list over 1-byte list
-    expected = StrByteSet("0xC101", 1);
+    expected = StrByteSet("0xC101");
     rlp = RLPByteSet("0xC3C101C281FF");
     actual = rlp.pop_front(is_list);
     ASSERT_EQ(actual, expected);
@@ -484,7 +484,7 @@ TEST(RLPTests, TestRLP_BadRLPs)
 
     //First element F9 is invalid because it should be followed by at least 2 bytes of size
     bad_rlp = RLPByteSet("0xF801F9");
-    expected = RLPByteSet("0xF9");
+    expected = RLPByteSet("");
     actual = bad_rlp.pop_front(is_list);
     ASSERT_EQ(actual, expected);
     ASSERT_EQ(is_list, true);

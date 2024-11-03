@@ -11,6 +11,7 @@
 #include <iostream>
 #include <regex>
 #include <iomanip>
+#include <stdexcept>
 
 using Givaro::Integer;
 

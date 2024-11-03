@@ -373,7 +373,7 @@ bool Mnemonic::add_word(const string &word)
             controlled_went -= m_cs;
         uint32_t index = distance(m_dic->begin(), dic_it);
         ByteSet<bool> e(m_entropy);
-        e.RawByteSet::push_back(ByteSet<bool>(index >> (m_went - controlled_went), controlled_went));
+        e.push_back(ByteSet<bool>(index >> (m_went - controlled_went), controlled_went));
         if (!is_last_word || e.sha256().get(0, m_cs) == (index & (0xFF >> (8 - m_cs))))
         {
             m_entropy = ByteSet<bool>(e);
@@ -443,7 +443,7 @@ bool Mnemonic::list_possible_last_word(vector<string> &list) const
         for (int i = 0; i < (1 << (m_went - m_cs)); i++)
         {
             ByteSet tmp(m_entropy);
-            tmp.RawByteSet::push_back(ByteSet<bool>(i, m_went - m_cs));
+            tmp.push_back(ByteSet<bool>(i, m_went - m_cs));
             list.push_back(m_dic->at((i << m_cs) + (ByteSet<bool>)tmp.sha256().get(0,m_cs)));
         }
         res = true;

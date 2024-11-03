@@ -294,8 +294,8 @@ StrByteSet<f, T>::StrByteSet(const U* val, uint64_t nb_elem)
 template <template <typename> class Derived, typename T>
 Derived<T> RawByteSet<Derived, T>::get(uint64_t elem_offset, const uint64_t nb_element) const
 {
-    assert(nbElements() >= elem_offset + nb_element);
-    Derived<T> ret_value;
+    Derived<T> ret_value = *this;
+    ret_value.pop_front(elem_offset);
     ret_value.pop_back(nbElements() - (elem_offset + nb_element));
     return ret_value;
 }
@@ -303,7 +303,6 @@ Derived<T> RawByteSet<Derived, T>::get(uint64_t elem_offset, const uint64_t nb_e
 template <template <typename> class Derived, typename T>
 Derived<T> RawByteSet<Derived, T>::pop_front(uint64_t nb_element) {
     Derived<T> ret_value;
-    //assert(nbElements()>=nb_element);
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
             ret_value.push_back_elem(pop_front());
@@ -313,8 +312,6 @@ Derived<T> RawByteSet<Derived, T>::pop_front(uint64_t nb_element) {
 template <template <typename> class Derived, typename T>
 Derived<T> RawByteSet<Derived, T>::pop_back(uint64_t nb_element) {
     Derived<T> ret_value;
-    //FIXME incompatible with tests ... 
-    //assert(nbElements()>=nb_element);
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
             ret_value.push_front_elem(pop_back());
