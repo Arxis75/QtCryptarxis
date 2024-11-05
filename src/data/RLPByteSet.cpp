@@ -4,23 +4,19 @@
 RLPByteSet::RLPByteSet(const ByteSet &to_rlp_encode, const bool as_list)
     : ByteSet()
 {
-    //MAIN RLP ENCODING METHOD
-    uint64_t val_size = to_rlp_encode.byteSize();
-    if( val_size )
-    {
+     uint64_t val_size = to_rlp_encode.byteSize();
+    if( val_size ) {
         // The only use-case of as_list = true here is to rebuild the list header
         // from a header-truncated RLP list.The header-truncated RLP list is passed
         // as a simple ByteSet
         uint8_t extra_prefix = (as_list ? 0x40 : 0);
-        if(val_size == 1 && to_rlp_encode[0] < 0x80)
-        {
+        if(val_size == 1 && to_rlp_encode[0] < 0x80) {
             if( as_list )
                 ByteSet::push_back(0xC1);
         }
         else if( val_size <= 55 )
             ByteSet::push_back(0x80 + extra_prefix + val_size);
-        else
-        {
+        else {
             uint64_t val_size_size = sizeInBytes64(val_size);
             ByteSet::push_back(0xB7 + extra_prefix + val_size_size);
             ByteSet::push_back(val_size , val_size_size);
@@ -33,14 +29,13 @@ RLPByteSet::RLPByteSet(const ByteSet &to_rlp_encode, const bool as_list)
 
 void RLPByteSet::push_back(const RLPByteSet &rlp, const bool at_top_level)
 {
-    //MAIN RLP LIST ENCODING METHOD
     if( byteSize() ) {
-        //Shall it be put under an existing top-list?
+        // Shall it be put under an existing top-list?
         if(!at_top_level)
-            //Yes => drop the previous header, it will be recalculated below
+            // Yes => drop the previous header, it will be recalculated below
             dropListHeader();
-        // Creates a new list header
         ByteSet::push_back(rlp);
+        // Adds an updated list header
         addListHeader();
     }
     else
@@ -49,13 +44,13 @@ void RLPByteSet::push_back(const RLPByteSet &rlp, const bool at_top_level)
 
 void RLPByteSet::push_front(const RLPByteSet &rlp, const bool at_top_level)
 {
-    //MAIN RLP LIST ENCODING METHOD
     if( byteSize() ) {
-        //Shall it be put under an existing top-list?
+        // Shall it be put under an existing top-list?
         if(!at_top_level)
-            //Yes => drop the previous header, it will be recalculated below
+            // Yes => drop the previous header, it will be recalculated below
             dropListHeader();
         ByteSet::push_front(rlp);
+        // Adds an updated list header
         addListHeader();
     }
     else
@@ -68,7 +63,7 @@ bool RLPByteSet::dropListHeader()
     uint8_t front_header = at(0);
     if( front_header >= 0xC0 ) {
         //Drops the previous list header
-        ByteSet::pop_front();
+        ByteSet::pop_front_elem();
         if( front_header > 0xF7 ) {
             uint8_t list_size_size = front_header - 0xF7;
             ByteSet::pop_front(list_size_size);
@@ -95,16 +90,13 @@ RLPByteSet RLPByteSet::pop_front(bool &is_list)
 {
     is_list = false;
     RLPByteSet retval;
-    try
-    {
-        if( byteSize() )
-        {          
+    try {
+        if( byteSize() ) {          
             //Drops the previous list header if necessary
             // and flags it for reconstruction.
             bool rebuild_header = dropListHeader();
 
-            if( byteSize() )
-            {
+            if( byteSize() ) {
                 uint8_t front_header = 0, front_elem_size_size = 0;
                 uint64_t front_header_size = 0, front_elem_size = 0;
 
@@ -125,7 +117,7 @@ RLPByteSet RLPByteSet::pop_front(bool &is_list)
                 else if( front_header < 0xC0 )   //[0xb8, 0xbf]
                 {
                     front_elem_size_size = front_header - 0xB7;
-                    front_elem_size = (uint64_t)get(1, front_elem_size_size);
+                    front_elem_size = get(1, front_elem_size_size);
                     front_header_size = 1 + front_elem_size_size;
                     is_list = false;
                 }
@@ -140,22 +132,25 @@ RLPByteSet RLPByteSet::pop_front(bool &is_list)
                 {
                     front_elem_size_size = front_header - 0xF7;
                     //Do not remove the header of the sub-list when poping it:
-                    front_elem_size = 1 + front_elem_size_size + (uint64_t)get(1, front_elem_size_size);
+                    front_elem_size = 1 + front_elem_size_size + get(1, front_elem_size_size);
                     front_header_size = 0;
                     is_list = true;
                 }
 
-                //Drops the first RLP element header (only if not list)
-                ByteSet::pop_front(front_header_size);
-                // Pops the first element (with header if list): the low-level vector copy
-                // prevents the ByteSet to get re-RLP-encoded
-                *static_cast<ByteSet*>(&retval) = ByteSet::pop_front(front_elem_size);
+                if(!is_list) {
+                    //Drops the first RLP element header (only if this element is not a list)
+                    ByteSet::pop_front(front_header_size);
+                }
 
-                if( byteSize() && rebuild_header )
-                {
-                    //Rebuilds the list header if necessary
-                    RLPByteSet b((*this), true);
-                    *this = RawByteSet(b);
+                // Pop the first element (with RLP header if list): the low-level copy (RawByteSet)
+                // prevents the ByteSet to get re-RLP-encoded
+                retval = (RawByteSet)ByteSet::pop_front(front_elem_size);
+
+                // Check if there are still remaining RLP element(s),
+                // and if so, if the header needed to be rebuilt
+                if( byteSize() && rebuild_header ) {
+                    // Re-encode a new top header
+                    addListHeader();
                 }
             }
         }

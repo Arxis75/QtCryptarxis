@@ -62,8 +62,8 @@ class RawByteSet
 
         virtual inline void push_front_elem(T elem) { vvalue.insert(vvalue.begin(), elem); }
         virtual inline void push_back_elem(T elem) { vvalue.push_back(elem); }
-        virtual inline T pop_front();
-        virtual inline T pop_back();
+        virtual inline T pop_front_elem();
+        virtual inline T pop_back_elem();
 
         inline void push_front(const Derived<T>& subset) { vvalue.insert(vvalue.begin(), subset.vvalue.begin(), subset.vvalue.end()); }
         inline void push_back(const Derived<T>& subset) { vvalue.insert(vvalue.end(), subset.vvalue.begin(), subset.vvalue.end()); }
@@ -305,7 +305,7 @@ Derived<T> RawByteSet<Derived, T>::pop_front(uint64_t nb_element) {
     Derived<T> ret_value;
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
-            ret_value.push_back_elem(pop_front());
+            ret_value.push_back_elem(pop_front_elem());
     return ret_value;
 }
 
@@ -314,12 +314,12 @@ Derived<T> RawByteSet<Derived, T>::pop_back(uint64_t nb_element) {
     Derived<T> ret_value;
     if(nb_element <= nbElements())
         for(uint64_t i=0;i<nb_element;i++)
-            ret_value.push_front_elem(pop_back());
+            ret_value.push_front_elem(pop_back_elem());
     return ret_value;
 }
 
 template <template <typename> class Derived, typename T>
-T RawByteSet<Derived, T>::pop_front()
+T RawByteSet<Derived, T>::pop_front_elem()
 {
     assert(nbElements());
     uint8_t ret_value = vvalue[0];
@@ -328,7 +328,7 @@ T RawByteSet<Derived, T>::pop_front()
 }
 
 template <template <typename> class Derived, typename T>
-T RawByteSet<Derived, T>::pop_back()
+T RawByteSet<Derived, T>::pop_back_elem()
 {
     assert(nbElements());
     uint8_t ret_val = vvalue[nbElements()-1];

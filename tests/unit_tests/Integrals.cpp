@@ -110,6 +110,14 @@ TEST(IntegralsTests, Constructors_Capabilities)
     ASSERT_EQ(0x01, is_constructible_with_value<StrByteSet<>>(ByteSet(large_integer, 17)));
 }
 
+///Nota: all the global variables below represent the same value, which is:
+/// const char*: 10 chars       :   "\x07rawstring"
+/// int:         75 bits        :   0b111011100100110000101110111011100110111010001110010011010010110111001100111
+/// Hex string:  19 Hex nibbles :   "0x7726177737472696e67"
+/// It has been chosen randomly so that it spreads among multiple bytes, and is non-aligned, to help find hedge-cases.
+/// Some variables though represent this value truncated, sliced, or expanded with a front 0-padding
+/// The names of the variables indicate what happened to the value by documenting its specfic type/size.
+
 vector<uint8_t> vec_expected;
 const unsigned char arr_10x8[10] = 
                             { 0x07, 'r', 'a', 'w', 's', 't', 'r', 'i', 'n', 'g'};

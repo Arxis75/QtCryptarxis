@@ -14,6 +14,12 @@ public:
 
 int main(int argc, char *argv[])
 {
+    /*int x;
+
+    cin >> x;
+    
+    cout << char(60) << endl;*/
+
     /*RawByteSet<toto, bool> vv0, vvv0;
 
     vv0.push_back_elem(true);
