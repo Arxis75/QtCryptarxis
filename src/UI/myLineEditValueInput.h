@@ -28,6 +28,7 @@ signals:
 
 protected slots:
     void handleRadioClicked();
+    void handleTextChanged(const QString &value);  // Slot interne pour gérer le changement d'index
 
 private:    
     QLabel *m_label;
