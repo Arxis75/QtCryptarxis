@@ -4,8 +4,9 @@
 #include <QLabel>
 #include <QRadioButton>
 #include <QLineEdit>
+#include <QValidator>
 
-//#include <data/RLPByteSet.h>
+#include <data/ByteSet.h>
 
 //https://doc.qt.io/qt-5/qtwidgets-widgets-groupbox-example.html
 class MyLineEditValueInput : public QWidget
@@ -26,14 +27,16 @@ signals:
     void textChanged(const QString &value);
 
 protected slots:
-    void handleHexClicked();
-    void handleDecClicked();
+    void handleRadioClicked();
 
-private:
-    QValidator *m_hex_validator;
-    QValidator *m_dec_validator;
+private:    
     QLabel *m_label;
     QRadioButton *m_rb_hex;
     QRadioButton *m_rb_dec;
+    QRadioButton *m_rb_gwei;
+    QRadioButton *m_rb_bin;
     QLineEdit *m_le_input;
+    QRegularExpressionValidator *m_validator;
+
+    IStrByteSet<bool> *m_ptr_value;  //non-aligned bitset allowed
 };

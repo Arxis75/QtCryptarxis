@@ -537,6 +537,11 @@ TEST(IntegralsTests, Major_Operators)
     ASSERT_DEATH({memcpy(actual_BinBitSet, arr_10x8, sizeof(arr_10x8));}, "");
 
     //ByteSet::Operator (uint64_t)
+    actual_ByteSet = ByteSet();
+    ASSERT_EQ((uint64_t)actual_ByteSet, 0);
+    actual_BitSet = ByteSet<bool>();
+    ASSERT_EQ((uint64_t)actual_BitSet, 0);
+
     actual_ByteSet = ByteSet(int_10x8);
     ASSERT_EQ((uint64_t)actual_ByteSet, (uint64_t)int_10x8);
     actual_BitSet = ByteSet<bool>(int_10x8);
@@ -563,6 +568,11 @@ TEST(IntegralsTests, Major_Operators)
     ASSERT_EQ((uint64_t)actual_BinBitSet, (uint64_t)int_10x8);
 
     //ByteSet::Operator (Integer)
+    actual_ByteSet = ByteSet();
+    ASSERT_EQ((Integer)actual_ByteSet, 0);
+    actual_BitSet = ByteSet<bool>();
+    ASSERT_EQ((Integer)actual_BitSet, 0);
+
     actual_ByteSet = ByteSet(int_10x8);
     ASSERT_EQ((Integer)actual_ByteSet, int_10x8);
     actual_BitSet = ByteSet<bool>(int_10x8);

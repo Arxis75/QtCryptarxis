@@ -7,8 +7,7 @@ class RLPByteSet: public ByteSet<uint8_t>
     public:
         // Non-encoding constructors:
         RLPByteSet() : ByteSet() { }
-        RLPByteSet(const RawByteSet &val) : ByteSet(val) { }
-        //RLPByteSet(const uint8_t *p, uint64_t size) : StrByteSet(RawByteSet(p, size)) { }
+        RLPByteSet(const RawByteSet &val) : ByteSet(val) { }                //for raw RLP init from RawByteSet
         explicit RLPByteSet(const char *str) : ByteSet(StrByteSet(str)) { } //for raw RLP init from hex string only
         
         // Encoding constructor:

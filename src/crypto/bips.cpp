@@ -434,7 +434,7 @@ const string Mnemonic::get_last_word() const
     string ret("");
     if (is_valid())
     {
-        Integer index = (m_entropy.get((m_ms - 1)*m_went, m_went-m_cs) << m_cs) + ByteSet<bool>(m_entropy.sha256()).get(0, m_cs);
+        Integer index = (m_entropy.get((m_ms - 1)*m_went, m_went-m_cs) << m_cs) + (int64_t)(ByteSet<bool>(m_entropy.sha256()).get(0, m_cs));
         ret = m_dic->at(index);
     }
     return ret;
