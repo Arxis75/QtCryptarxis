@@ -3,8 +3,16 @@
 
 int main(int argc, char *argv[])
 {
-    Integer x = -1;
-    x += 1;
+    /*int x;
+
+    for(int i = 0;i<101;i++)
+    {
+       cout << i << endl; 
+    }
+    cout << "Entrez un chiffre:" << endl;
+    cin >> x;
+    cout << "357 * x = " << 357 * x << endl;*/
+
     QApplication a(argc, argv);
     Dialog d;
     d.show();

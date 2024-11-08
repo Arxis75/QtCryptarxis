@@ -349,8 +349,8 @@ TEST(IntegralsTests, StrByteSet_Constructors)
     StrByteSet<Bin, bool> actual_BinBitSet;
     StrByteSet<Dec> actual_DecByteSet;
     StrByteSet<Dec, bool> actual_DecBitSet;
-    StrByteSet<GWei> actual_GWeiByteSet;
-    StrByteSet<GWei, bool> actual_GWeiBitSet;
+    StrByteSet<Gwei> actual_GweiByteSet;
+    StrByteSet<Gwei, bool> actual_GweiBitSet;
 
     //Empty Constructors
     vec_expected.clear();
@@ -457,31 +457,31 @@ TEST(IntegralsTests, StrByteSet_Constructors)
 
     //Constructors (aligned) from Gwei String
     //no size specified
-    actual_GWeiByteSet = StrByteSet<GWei>(str_gwei);          
-    ASSERT_EQ(actual_GWeiByteSet.toV(), vec_10x8);
+    actual_GweiByteSet = StrByteSet<Gwei>(str_gwei);          
+    ASSERT_EQ(actual_GweiByteSet.toV(), vec_10x8);
     //smaller size specified
-    actual_GWeiByteSet = StrByteSet<GWei>(str_gwei, 2);                
-    ASSERT_EQ(actual_GWeiByteSet.toV(), vec_2x8);
+    actual_GweiByteSet = StrByteSet<Gwei>(str_gwei, 2);                
+    ASSERT_EQ(actual_GweiByteSet.toV(), vec_2x8);
     //exact size specified
-    actual_GWeiByteSet = StrByteSet<GWei>(str_gwei, vec_10x8.size());               
-    ASSERT_EQ(actual_GWeiByteSet.toV(), vec_10x8);
+    actual_GweiByteSet = StrByteSet<Gwei>(str_gwei, vec_10x8.size());               
+    ASSERT_EQ(actual_GweiByteSet.toV(), vec_10x8);
     //larger size specified
-    actual_GWeiByteSet = StrByteSet<GWei>(str_gwei, vec_11x8.size());               
-    ASSERT_EQ(actual_GWeiByteSet.toV(), vec_11x8);
+    actual_GweiByteSet = StrByteSet<Gwei>(str_gwei, vec_11x8.size());               
+    ASSERT_EQ(actual_GweiByteSet.toV(), vec_11x8);
 
     //Constructors (unaligned) from Gwei String
     //no size specified
-    actual_GWeiBitSet = StrByteSet<GWei, bool>(str_gwei);          
-    ASSERT_EQ(actual_GWeiBitSet.toV(), vec_75x1);
+    actual_GweiBitSet = StrByteSet<Gwei, bool>(str_gwei);          
+    ASSERT_EQ(actual_GweiBitSet.toV(), vec_75x1);
     //smaller size specified
-    actual_GWeiBitSet = StrByteSet<GWei, bool>(str_gwei, 63);                
-    ASSERT_EQ(actual_GWeiBitSet.toV(), vec_63x1);
+    actual_GweiBitSet = StrByteSet<Gwei, bool>(str_gwei, 63);                
+    ASSERT_EQ(actual_GweiBitSet.toV(), vec_63x1);
     //exact size specified
-    actual_GWeiBitSet = StrByteSet<GWei, bool>(str_gwei, vec_80x1.size());               
-    ASSERT_EQ(actual_GWeiBitSet.toV(), vec_80x1);
+    actual_GweiBitSet = StrByteSet<Gwei, bool>(str_gwei, vec_80x1.size());               
+    ASSERT_EQ(actual_GweiBitSet.toV(), vec_80x1);
     //larger size specified
-    actual_GWeiBitSet = StrByteSet<GWei, bool>(str_gwei, vec_83x1.size());               
-    ASSERT_EQ(actual_GWeiBitSet.toV(), vec_83x1);
+    actual_GweiBitSet = StrByteSet<Gwei, bool>(str_gwei, vec_83x1.size());               
+    ASSERT_EQ(actual_GweiBitSet.toV(), vec_83x1);
 }
 
 TEST(IntegralsTests, Major_Operators)
@@ -494,8 +494,8 @@ TEST(IntegralsTests, Major_Operators)
     StrByteSet<Hex, bool> actual_HexBitSet;
     StrByteSet<Dec> actual_DecByteSet;
     StrByteSet<Dec, bool> actual_DecBitSet;
-    StrByteSet<GWei> actual_GWeiByteSet;
-    StrByteSet<GWei, bool> actual_GWeiBitSet;
+    StrByteSet<Gwei> actual_GweiByteSet;
+    StrByteSet<Gwei, bool> actual_GweiBitSet;
     StrByteSet<Bin> actual_BinByteSet;
     StrByteSet<Bin, bool> actual_BinBitSet;
 
@@ -524,11 +524,11 @@ TEST(IntegralsTests, Major_Operators)
     actual_DecBitSet.resize(sizeof(arr_10x8)*8);
     ASSERT_DEATH({memcpy(actual_DecBitSet, arr_10x8, sizeof(arr_10x8));}, "");
 
-    actual_GWeiByteSet.resize(sizeof(arr_10x8));
-    memcpy(actual_GWeiByteSet, arr_10x8, sizeof(arr_10x8));
-    ASSERT_EQ(actual_GWeiByteSet.toV(), vec_10x8);
-    actual_GWeiBitSet.resize(sizeof(arr_10x8)*8);
-    ASSERT_DEATH({memcpy(actual_GWeiBitSet, arr_10x8, sizeof(arr_10x8));}, "");
+    actual_GweiByteSet.resize(sizeof(arr_10x8));
+    memcpy(actual_GweiByteSet, arr_10x8, sizeof(arr_10x8));
+    ASSERT_EQ(actual_GweiByteSet.toV(), vec_10x8);
+    actual_GweiBitSet.resize(sizeof(arr_10x8)*8);
+    ASSERT_DEATH({memcpy(actual_GweiBitSet, arr_10x8, sizeof(arr_10x8));}, "");
 
     actual_BinByteSet.resize(sizeof(arr_10x8));
     memcpy(actual_BinByteSet, arr_10x8, sizeof(arr_10x8));
@@ -536,42 +536,42 @@ TEST(IntegralsTests, Major_Operators)
     actual_BinBitSet.resize(sizeof(arr_10x8)*8);
     ASSERT_DEATH({memcpy(actual_BinBitSet, arr_10x8, sizeof(arr_10x8));}, "");
 
-    //ByteSet::Operator (uint64_t)
+    //ByteSet::Operator (int64_t)
     actual_ByteSet = ByteSet();
-    ASSERT_EQ((uint64_t)actual_ByteSet, 0);
+    ASSERT_EQ((int64_t)actual_ByteSet, -1);
     actual_BitSet = ByteSet<bool>();
-    ASSERT_EQ((uint64_t)actual_BitSet, 0);
+    ASSERT_EQ((int64_t)actual_BitSet, -1);
 
     actual_ByteSet = ByteSet(int_10x8);
-    ASSERT_EQ((uint64_t)actual_ByteSet, (uint64_t)int_10x8);
+    ASSERT_EQ((int64_t)actual_ByteSet, (int64_t)int_10x8);
     actual_BitSet = ByteSet<bool>(int_10x8);
-    ASSERT_EQ((uint64_t)actual_BitSet, (uint64_t)int_10x8);
+    ASSERT_EQ((int64_t)actual_BitSet, (int64_t)int_10x8);
 
     actual_HexByteSet = ByteSet(int_10x8);
-    ASSERT_EQ((uint64_t)actual_HexByteSet, (uint64_t)int_10x8);
+    ASSERT_EQ((int64_t)actual_HexByteSet, (int64_t)int_10x8);
     actual_HexBitSet = ByteSet<bool>(int_10x8);
-    ASSERT_EQ((uint64_t)actual_HexBitSet, (uint64_t)int_10x8);
+    ASSERT_EQ((int64_t)actual_HexBitSet, (int64_t)int_10x8);
 
     actual_DecByteSet = ByteSet(int_10x8);
-    ASSERT_EQ((uint64_t)actual_DecByteSet, (uint64_t)int_10x8);
+    ASSERT_EQ((int64_t)actual_DecByteSet, (int64_t)int_10x8);
     actual_DecBitSet = ByteSet<bool>(int_10x8);
-    ASSERT_EQ((uint64_t)actual_DecBitSet, (uint64_t)int_10x8);
+    ASSERT_EQ((int64_t)actual_DecBitSet, (int64_t)int_10x8);
     
-    actual_GWeiByteSet = ByteSet(int_10x8);
-    ASSERT_EQ((uint64_t)actual_GWeiByteSet, (uint64_t)int_10x8);
-    actual_GWeiBitSet = ByteSet<bool>(int_10x8);
-    ASSERT_EQ((uint64_t)actual_GWeiBitSet, (uint64_t)int_10x8);
+    actual_GweiByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((int64_t)actual_GweiByteSet, (int64_t)int_10x8);
+    actual_GweiBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((int64_t)actual_GweiBitSet, (int64_t)int_10x8);
     
     actual_BinByteSet = ByteSet(int_10x8);
-    ASSERT_EQ((uint64_t)actual_BinByteSet, (uint64_t)int_10x8);
+    ASSERT_EQ((int64_t)actual_BinByteSet, (int64_t)int_10x8);
     actual_BinBitSet = ByteSet<bool>(int_10x8);
-    ASSERT_EQ((uint64_t)actual_BinBitSet, (uint64_t)int_10x8);
+    ASSERT_EQ((int64_t)actual_BinBitSet, (int64_t)int_10x8);
 
     //ByteSet::Operator (Integer)
     actual_ByteSet = ByteSet();
-    ASSERT_EQ((Integer)actual_ByteSet, 0);
+    ASSERT_EQ((Integer)actual_ByteSet, -1);
     actual_BitSet = ByteSet<bool>();
-    ASSERT_EQ((Integer)actual_BitSet, 0);
+    ASSERT_EQ((Integer)actual_BitSet, -1);
 
     actual_ByteSet = ByteSet(int_10x8);
     ASSERT_EQ((Integer)actual_ByteSet, int_10x8);
@@ -588,10 +588,10 @@ TEST(IntegralsTests, Major_Operators)
     actual_DecBitSet = ByteSet<bool>(int_10x8);
     ASSERT_EQ((Integer)actual_DecBitSet, int_10x8);
     
-    actual_GWeiByteSet = ByteSet(int_10x8);
-    ASSERT_EQ((Integer)actual_GWeiByteSet, int_10x8);
-    actual_GWeiBitSet = ByteSet<bool>(int_10x8);
-    ASSERT_EQ((Integer)actual_GWeiBitSet, int_10x8);
+    actual_GweiByteSet = ByteSet(int_10x8);
+    ASSERT_EQ((Integer)actual_GweiByteSet, int_10x8);
+    actual_GweiBitSet = ByteSet<bool>(int_10x8);
+    ASSERT_EQ((Integer)actual_GweiBitSet, int_10x8);
     
     actual_BinByteSet = ByteSet(int_10x8);
     ASSERT_EQ((Integer)actual_BinByteSet, int_10x8);
@@ -615,13 +615,13 @@ TEST(IntegralsTests, Major_Operators)
     ASSERT_EQ((string)actual_DecByteSet, str_dec);
     actual_DecBitSet = StrByteSet<Bin, bool>(str_75x1);
     ASSERT_EQ((string)actual_DecBitSet, str_dec);
-    //(string)StrBxxxSet<GWei>
-    actual_GWeiByteSet = StrByteSet<Hex>(str_19x4);
-    ASSERT_EQ((string)actual_GWeiByteSet, str_gwei);
-    actual_GWeiByteSet = StrByteSet<GWei>(str_gwei);
-    ASSERT_EQ((string)actual_GWeiByteSet, str_gwei);
-    actual_GWeiBitSet = StrByteSet<Bin, bool>(str_75x1);
-    ASSERT_EQ((string)actual_GWeiBitSet, str_gwei);
+    //(string)StrBxxxSet<Gwei>
+    actual_GweiByteSet = StrByteSet<Hex>(str_19x4);
+    ASSERT_EQ((string)actual_GweiByteSet, str_gwei);
+    actual_GweiByteSet = StrByteSet<Gwei>(str_gwei);
+    ASSERT_EQ((string)actual_GweiByteSet, str_gwei);
+    actual_GweiBitSet = StrByteSet<Bin, bool>(str_75x1);
+    ASSERT_EQ((string)actual_GweiBitSet, str_gwei);
     //(string)StrBxxxSet<Bin>
     actual_BinByteSet = StrByteSet(str_19x4);
     ASSERT_EQ((string)actual_BinByteSet, str_80x1);         //byte-alignment     
@@ -643,8 +643,8 @@ TEST(IntegralsTests, Push_As_Constructors)
     StrByteSet<Hex, bool> actual_HexBitSet;
     StrByteSet<Dec> actual_DecByteSet;
     StrByteSet<Dec, bool> actual_DecBitSet;
-    StrByteSet<GWei> actual_GWeiByteSet;
-    StrByteSet<GWei, bool> actual_GWeiBitSet;
+    StrByteSet<Gwei> actual_GweiByteSet;
+    StrByteSet<Gwei, bool> actual_GweiBitSet;
     StrByteSet<Bin> actual_BinByteSet;
     StrByteSet<Bin, bool> actual_BinBitSet;
 

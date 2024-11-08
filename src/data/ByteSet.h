@@ -1,6 +1,7 @@
 #pragma once
 
-#include <data/System.h>
+#include <data/StrByteSetFormat.h>
+#include <data/Tools.h>
 #include <crypto/System.h>
 
 template <typename T> class ByteSet;
@@ -102,9 +103,7 @@ class RawByteSet
         vector<uint8_t> vvalue;
 };
 
-struct StrByteSetFormat { string Header; uint8_t Base; uint8_t BitsPerChar; string Regex; bool UpperCase; uint8_t EXP; };
-
-template <StrByteSetFormat const & f, typename T> class StrByteSet;
+template <StrByteSetFormat const & f, typename T> class StrByteSet;   //FIXME: should not be necessary
 
 template <typename T = uint8_t> 
 class ByteSet : public RawByteSet<ByteSet, T>
@@ -129,7 +128,7 @@ class ByteSet : public RawByteSet<ByteSet, T>
         template<typename U>
             explicit ByteSet(const U &val, uint64_t nb_elem = 0);   // U = integral and bool values
 
-        inline operator uint64_t() const { return (uint64_t)toInteger(); }
+        inline operator int64_t() const { return (int64_t)toInteger(); }
         inline operator Integer() const { return toInteger(); }
         inline bool operator==(const ByteSet &b) const { return this->bitSize() == b.bitSize() && Integer(*this) == Integer(b); };
         inline bool operator!=(const ByteSet &b) const { return !((*this) == b); };
@@ -149,22 +148,8 @@ class ByteSet : public RawByteSet<ByteSet, T>
         Integer toInteger() const;
 };
 
-static StrByteSetFormat Hex  { .Header = "0x", .Base = 16, .BitsPerChar = 4, .Regex = "^(0x)?[0-9a-fA-F]+", .UpperCase = false, .EXP = 0};
-static StrByteSetFormat Dec  { .Header = "",   .Base = 10, .BitsPerChar = 0, .Regex = "^[0-9]+",            .UpperCase = false, .EXP = 0};
-static StrByteSetFormat Wei = Dec;
-static StrByteSetFormat GWei { .Header = "",   .Base = 10, .BitsPerChar = 0, .Regex = "^[0-9]+.[0-9]{9}",   .UpperCase = false, .EXP = 9};
-static StrByteSetFormat Bin  { .Header = "0b", .Base = 2,  .BitsPerChar = 1, .Regex = "^(0b)?[0-1]+",       .UpperCase = false, .EXP = 0};
-
-template <typename T = uint8_t> 
-class IStrByteSet
-{
-    public:
-        virtual ~IStrByteSet() {}
-        virtual const StrByteSetFormat& getFormat() const = 0;
-};
-
 template <StrByteSetFormat const & f = Hex, typename T = uint8_t> 
-class StrByteSet : public ByteSet<T>, public IStrByteSet<T>
+class StrByteSet : public ByteSet<T>
 {
         explicit StrByteSet(uint8_t* val, uint64_t nb_elem) = delete;
         explicit StrByteSet(const unsigned char* val, uint64_t nb_elem) = delete;
@@ -188,35 +173,27 @@ class StrByteSet : public ByteSet<T>, public IStrByteSet<T>
             explicit StrByteSet(const U&, uint64_t aligned_size = 0);     // U = const string&
         template<typename U>
             explicit StrByteSet(const U*, uint64_t aligned_size = 0);     // U = const char*
-        virtual ~StrByteSet() {}
 
-        inline virtual operator string() const { return toFormat(f); }
+        inline virtual operator string() const { return toUserString(f); }
 
         inline void push_front(const StrByteSet<f, T>& subset) { RawByteSet<ByteSet, T>::push_front(subset); }
         inline void push_back(const StrByteSet<f, T>& subset) { RawByteSet<ByteSet, T>::push_back(subset); }
         inline void push_front(const string& str, uint64_t nb_elem = 0) { RawByteSet<>::push_front(StrByteSet(str, nb_elem)); }
         inline void push_back(const string& str, uint64_t nb_elem = 0) { RawByteSet<>::push_back(StrByteSet(str, nb_elem)); }
-
+        
         //To improve? (vector=>string instead of vector=>Integer && Integer=>string)
-        inline string toFormat(const StrByteSetFormat& format) const { return integerToStr(Integer(*this), format); }
+        inline string toUserString(const StrByteSetFormat& format) const { return format.toUserString(intToStr(Integer(*this), format)); }
 
-        virtual const StrByteSetFormat& getFormat() const { return f; };
+        //const StrByteSetFormat& getFormat() const { return f; };
 
     protected:
-        inline bool isFormatAligned() const { return f.Base == 16 || f.Base == 2; }
-
         //String Parsing
-        inline uint64_t getStringNbElem(string val) const { assert(isFormatAligned()); return (val.size() * f.BitsPerChar / this->elementBitSize()) + ((val.size() * f.BitsPerChar)%(this->elementBitSize()) ? ceil(float(f.BitsPerChar)/this->elementBitSize()) : 0); }
-
-        Integer strToInteger(const string& val) const;
-        string integerToStr(const Integer& val, const StrByteSetFormat& format = f) const;
-
-    public:
-        static string removeCharsFromString(const string &val, const char* charsToRemove);
-        static string toInternalFormat(const string& val);
+        inline uint64_t getNbElem(string val) const { assert(f.isAligned()); return (val.size() * f.getBitsPerChar() / this->elementBitSize()) + ((val.size() * f.getBitsPerChar())%(this->elementBitSize()) ? ceil(float(f.getBitsPerChar())/this->elementBitSize()) : 0); }
+        Integer strToInt(const string& str) const;
+        string intToStr(const Integer& val, const StrByteSetFormat& format) const;
 
         static uint8_t charToDigit(const char &c);
-        static char digitToChar(const uint8_t &n, bool upper_case = f.UpperCase);
+        static char digitToChar(const uint8_t &d, bool upper_case = false);
 };
 
 /*********************************************** CONSTRUCTORS ***************************************************** */
@@ -265,13 +242,16 @@ ByteSet<T>::ByteSet(const U &val, uint64_t nb_elem)
 {
     static_assert(std::is_integral<U>::value || std::is_integral<bool>::value, "Constructor only accepts integral values");
 
-    uint64_t nb_elem_for_val = this->getValueNbElem(val);
-    uint64_t i_extra = (nb_elem > nb_elem_for_val ? nb_elem - nb_elem_for_val : 0);
-    for(uint64_t i=0;i<i_extra;i++)
-        this->push_back_elem(T(0x00));
-    uint64_t i_start = (nb_elem ? (nb_elem < nb_elem_for_val ? nb_elem_for_val - nb_elem : 0) : 0);
-    for(uint64_t i=i_start;i<nb_elem_for_val;i++)
-        this->push_back_elem(this->getValueElem(val, i));
+    if(val != -1)   //-1 is the conventional value for an empty ByteSet
+    {
+        uint64_t nb_elem_for_val = this->getValueNbElem(val);
+        uint64_t i_extra = (nb_elem > nb_elem_for_val ? nb_elem - nb_elem_for_val : 0);
+        for(uint64_t i=0;i<i_extra;i++)
+            this->push_back_elem(T(0x00));
+        uint64_t i_start = (nb_elem ? (nb_elem < nb_elem_for_val ? nb_elem_for_val - nb_elem : 0) : 0);
+        for(uint64_t i=i_start;i<nb_elem_for_val;i++)
+            this->push_back_elem(this->getValueElem(val, i));
+    }
 }
 
 template<StrByteSetFormat const & f, typename T>
@@ -281,10 +261,8 @@ StrByteSet<f, T>::StrByteSet(const U& val, uint64_t nb_elem)
 {
     static_assert(std::is_same<std::decay_t<U>, string>::value, "Constructor only accepts const string&");
 
-    if( regex_match(val, regex(f.Regex)) ) {
-        string str = toInternalFormat(val);
-        *this = ByteSet<T>(strToInteger(str), (nb_elem ? nb_elem : (isFormatAligned() ? getStringNbElem(str) : 0)));
-    }
+    if(string str = f.toCanonicalString(val); str.size())
+        *this = ByteSet<T>(strToInt(str), (nb_elem ? nb_elem : (f.isAligned() ? getNbElem(str) : 0)));
 }
 
 template<StrByteSetFormat const & f, typename T>
@@ -373,7 +351,7 @@ Derived<uint8_t> RawByteSet<Derived, T>::keccak256() const
 template<typename T>
 Integer ByteSet<T>::toInteger() const
 {
-    Integer ret_value = 0;     //This is the conventional value for an empty ByteSet.
+    Integer ret_value = (this->nbElements() ? 0 : -1);     //-1 is the conventional value for an empty ByteSet
     for(uint64_t i=0;i<this->nbElements();i++)
         ret_value += (Integer(this->getElem(this->nbElements()-1-i)) << (i*this->elementBitSize()));
     return ret_value;     
@@ -395,68 +373,41 @@ ByteSet<T> ByteSet<T>::generateRandom(uint64_t nb_element)
 }
 
 template<StrByteSetFormat const & f, typename T>
-string StrByteSet<f, T>::removeCharsFromString(const string &val, const char* charsToRemove)
-{
-    string str_out = val;
-    for (uint8_t i = 0; i < strlen(charsToRemove); ++i ) {
-        str_out.erase( remove(str_out.begin(), str_out.end(), charsToRemove[i]), str_out.end() );
-    }
-    return str_out;
-}
-
-template<StrByteSetFormat const & f, typename T>
-string StrByteSet<f, T>::toInternalFormat(const string& val)
-{
-    string ret_val = val;
-    //Removes the Header
-    if(val.size() >= f.Header.size() && val.substr(0, f.Header.size()) == f.Header)
-        ret_val = val.substr(f.Header.size(), val.size() - f.Header.size());
-    //Removes the Exponentiation
-    ret_val = removeCharsFromString(ret_val.c_str(), ".");
-    return ret_val;
-}
-
-template<StrByteSetFormat const & f, typename T>
-Integer StrByteSet<f, T>::strToInteger(const string& val) const
+Integer StrByteSet<f, T>::strToInt(const string& val) const
 {
     uint64_t i_start = 0;
     Integer retval = 0;
     for(uint64_t i=0;i<val.size();i++)
-        retval += this->charToDigit(val[i]) * Givaro::pow(f.Base, (val.size()-1-i));
+        retval += charToDigit(val[i]) * Givaro::pow(f.getBase(), (val.size()-1-i));
     return retval;
 }
 
 template<StrByteSetFormat const & f, typename T>
-string StrByteSet<f, T>::integerToStr(const Integer& val, const StrByteSetFormat& format) const
+string StrByteSet<f, T>::intToStr(const Integer& val, const StrByteSetFormat& format) const
 {
     stringstream ss;
-    string str_out;
-    if(format.Base == 16)
-        ss << setfill('0') << setw(this->bitSize()/format.BitsPerChar) << hex << val;
-    else if(format.Base == 10)
-        ss << dec << val;
-    else if(format.Base == 2) {
-        string str_val;
-        ByteSet<T> bs_val = RawByteSet<ByteSet, T>(*this);
-        Integer val = Integer(bs_val);
-        Integer char_mask = Givaro::pow(Integer(2), format.BitsPerChar) - 1;
-        div_t d = div(bs_val.bitSize(), format.BitsPerChar);
-        for(uint64_t i=0;i<d.quot;i++) {
-            str_val = digitToChar(val & char_mask) + str_val;
-            val >>= format.BitsPerChar;
+    if(val != -1)   //-1 is the conventional value for an empty ByteSet
+    {
+        if(format.getBase() == 16)
+            ss << setfill('0') << setw(this->bitSize()/format.getBitsPerChar()) << hex << val;
+        else if(format.getBase() == 10)
+            ss << dec << val;
+        else if(format.getBase() == 2) {
+            string str_val;
+            ByteSet<T> bs_val = RawByteSet<ByteSet, T>(*this);
+            Integer val = Integer(bs_val);
+            Integer char_mask = Givaro::pow(Integer(2), format.getBitsPerChar()) - 1;
+            div_t d = div(bs_val.bitSize(), format.getBitsPerChar());
+            for(uint64_t i=0;i<d.quot;i++) {
+                str_val = digitToChar(val & char_mask) + str_val;
+                val >>= format.getBitsPerChar();
+            }
+            if(d.rem)
+                str_val = digitToChar(val & char_mask) + str_val;
+            ss << str_val;
         }
-        if(d.rem)
-            str_val = digitToChar(val & char_mask) + str_val;
-        ss << str_val;
     }
-    if( format.EXP ) {
-        string str_wei = ss.str();
-        while(str_wei.size() <= format.EXP)
-            str_wei = "0" + str_wei;
-        ss.str(string());
-        ss << str_wei.substr(0, str_wei.size() - format.EXP) + "." + str_wei.substr(str_wei.size() - format.EXP, format.EXP);
-    }
-    return format.Header + ss.str();
+    return ss.str();
 }
 
 template<StrByteSetFormat const & f, typename T>
