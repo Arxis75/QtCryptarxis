@@ -4,7 +4,6 @@
 #include <QLabel>
 #include <QRadioButton>
 #include <QLineEdit>
-#include <QValidator>
 
 #include <data/ByteSet.h>
 
@@ -13,11 +12,30 @@ class MyLineEditValueInput : public QWidget
 {
     Q_OBJECT
 
+    typedef std::function<void(const string &)>        FUpdateValueFromString;
+    typedef std::function<void(const ByteSet<bool> &)> FUpdateValueFromByteSet;
+    typedef std::function<void()>                      FUpdateString;
+    typedef std::function<void()>                      FUpdateRegex;
+
+    typedef struct {
+        QRadioButton* rb;
+        FUpdateValueFromString f_update_val_from_str;
+        FUpdateValueFromByteSet f_update_val_from_bs;
+        FUpdateString f_update_str;
+        FUpdateRegex f_update_regex;
+    } RadioButtonFunctions;
+
 public:
-    explicit MyLineEditValueInput(QWidget *parent = nullptr, const StrByteSetFormat &default_format = Hex, uint64_t bit_size = 0);
+    explicit MyLineEditValueInput(QWidget *parent = nullptr, const StrByteSetFormat &default_format = Hex);
     ~MyLineEditValueInput();
 
     void setTitle(const QString &title) const { m_label->setText(title); }
+    
+    inline QLabel const* getLabel() const { return m_label; }
+    const vector<QRadioButton const*> getRadioButtons() const;
+    inline QLineEdit const* getLineEdit() const { return m_le_input; }
+
+    ByteSet<bool> getValue() const;
 
 signals:
     void textChanged(const QString &value);
@@ -27,23 +45,24 @@ protected slots:
     void handleTextChanged(const QString &value);  // Slot interne pour gérer le changement d'index
 
 protected:
-    void updateValue(const StrByteSetFormat &dest_format, const string &str);
-    void updateValue(const StrByteSetFormat &dest_format, const ByteSet<bool> &val);
-    ByteSet<bool> getByteSet() const;
-    bool showFormat(StrByteSetFormat const & dest_format) const;
+    void newRadioButtons(const StrByteSetFormat &default_format);
 
-private:    
-    QLabel *m_label;
-    QRadioButton *m_rb_hex;
-    QRadioButton *m_rb_dec;
-    QRadioButton *m_rb_gwei;
-    QRadioButton *m_rb_wei;
-    QRadioButton *m_rb_eth;
-    QRadioButton *m_rb_bin;
-    QLineEdit *m_le_input;
+    template<StrByteSetFormat const & f>
+        void updateValueFromString(const string &str);
+    template<StrByteSetFormat const & f>
+        void updateValueFromByteSet(const ByteSet<bool> &val);
+    template<StrByteSetFormat const & f>
+        void updateString();
+    template<StrByteSetFormat const & f>
+        void updateRegex();
 
-    ByteSet<bool> *m_ptr_value;  //non-aligned bitset allowed
-
+private:
     const StrByteSetFormat m_default_format;
-    const uint64_t m_aligned_size;
+    QLabel *m_label;
+    QLineEdit *m_le_input;
+    /// Map containing the radioButtons and their specialized template methods for updating the widget
+    /// This is done because MyLineEditValueInput cannot be made template, due to the QWidget inheritance limitation
+    /// The first int represents the order of appearance (0 = first on the left) of each rb
+    map<int, RadioButtonFunctions> m_rb;
+    ByteSet<bool> *m_ptr_value;             //non-aligned bitset allowed
 };

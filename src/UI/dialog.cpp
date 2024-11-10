@@ -17,19 +17,19 @@ Dialog::Dialog(QWidget *parent)
 
     QVBoxLayout *layout = new QVBoxLayout(ui->tab_4);
 
-    MyLineEditValueInput *m_forge_chain_id = new MyLineEditValueInput(ui->tab_4, Dec);
+    MyLineEditValueInput *m_forge_chain_id = new MyLineEditValueInput(ui->tab_4, Bin);
     MyLineEditValueInput *m_forge_nonce = new MyLineEditValueInput(ui->tab_4, Dec);
     MyLineEditValueInput *m_forge_max_priority_fee = new MyLineEditValueInput(ui->tab_4, Gwei);
     MyLineEditValueInput *m_forge_max_fee = new MyLineEditValueInput(ui->tab_4, Gwei);
     MyLineEditValueInput *m_forge_gas_price = new MyLineEditValueInput(ui->tab_4, Gwei);
     MyLineEditValueInput *m_forge_gas_limit = new MyLineEditValueInput(ui->tab_4, Gwei);
-    MyLineEditValueInput *m_forge_to = new MyLineEditValueInput(ui->tab_4, Hex, 160);
+    MyLineEditValueInput *m_forge_to = new MyLineEditValueInput(ui->tab_4, Hex20);
     MyLineEditValueInput *m_forge_eth = new MyLineEditValueInput(ui->tab_4, Eth);
     MyLineEditValueInput *m_forge_data = new MyLineEditValueInput(ui->tab_4);
     MyLineEditValueInput *m_forge_access_list = new MyLineEditValueInput(ui->tab_4);
     MyLineEditValueInput *m_forge_v = new MyLineEditValueInput(ui->tab_4, Dec);
-    MyLineEditValueInput *m_forge_r = new MyLineEditValueInput(ui->tab_4, Hex, 256);
-    MyLineEditValueInput *m_forge_s = new MyLineEditValueInput(ui->tab_4, Hex, 256);
+    MyLineEditValueInput *m_forge_r = new MyLineEditValueInput(ui->tab_4, Hex32);
+    MyLineEditValueInput *m_forge_s = new MyLineEditValueInput(ui->tab_4, Hex32);
 
     m_forge_chain_id->setTitle(tr("Chain Id:"));
     m_forge_nonce->setTitle(tr("Nonce:"));
@@ -58,6 +58,7 @@ Dialog::Dialog(QWidget *parent)
     layout->addWidget(m_forge_v);
     layout->addWidget(m_forge_r);
     layout->addWidget(m_forge_s);
+    layout->addStretch();
 
     connect(m_forge_chain_id, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
     connect(m_forge_nonce, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));

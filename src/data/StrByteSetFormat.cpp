@@ -6,12 +6,14 @@ StrByteSetFormat::StrByteSetFormat(
         uint8_t Base,
         uint8_t BitsPerChar,
         const string &Regex,
+        uint8_t aligned_byte_size,
         uint8_t Exp)
     : m_ui_name(UIName)
     , m_header(Header)
     , m_base(Base)
     , m_bits_per_char(BitsPerChar)
     , m_regex(Regex)
+    , m_aligned_byte_size(aligned_byte_size)
     , m_exp(Exp)
 { }
 
