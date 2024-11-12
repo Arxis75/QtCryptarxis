@@ -15,21 +15,25 @@ Dialog::Dialog(QWidget *parent)
     updateReadTx();
     updateForgeTx();
 
-    QVBoxLayout *layout = new QVBoxLayout(ui->tab_4);
+    QHBoxLayout *tab4_layout = new QHBoxLayout();
 
-    MyLineEditValueInput *m_forge_chain_id = new MyLineEditValueInput(ui->tab_4, Bin);
-    MyLineEditValueInput *m_forge_nonce = new MyLineEditValueInput(ui->tab_4, Dec);
-    MyLineEditValueInput *m_forge_max_priority_fee = new MyLineEditValueInput(ui->tab_4, Gwei);
-    MyLineEditValueInput *m_forge_max_fee = new MyLineEditValueInput(ui->tab_4, Gwei);
-    MyLineEditValueInput *m_forge_gas_price = new MyLineEditValueInput(ui->tab_4, Gwei);
-    MyLineEditValueInput *m_forge_gas_limit = new MyLineEditValueInput(ui->tab_4, Gwei);
-    MyLineEditValueInput *m_forge_to = new MyLineEditValueInput(ui->tab_4, Hex20);
-    MyLineEditValueInput *m_forge_eth = new MyLineEditValueInput(ui->tab_4, Eth);
-    MyLineEditValueInput *m_forge_data = new MyLineEditValueInput(ui->tab_4);
-    MyLineEditValueInput *m_forge_access_list = new MyLineEditValueInput(ui->tab_4);
-    MyLineEditValueInput *m_forge_v = new MyLineEditValueInput(ui->tab_4, Dec);
-    MyLineEditValueInput *m_forge_r = new MyLineEditValueInput(ui->tab_4, Hex32);
-    MyLineEditValueInput *m_forge_s = new MyLineEditValueInput(ui->tab_4, Hex32);
+    QVBoxLayout *tab4_layout_lbl = new QVBoxLayout();
+    QVBoxLayout *tab4_layout_rb = new QVBoxLayout();
+    QVBoxLayout *tab4_layout_le = new QVBoxLayout();
+
+    MyLineEditValueInput *m_forge_chain_id = new MyLineEditValueInput(nullptr, Bin);
+    MyLineEditValueInput *m_forge_nonce = new MyLineEditValueInput(nullptr, Dec);
+    MyLineEditValueInput *m_forge_max_priority_fee = new MyLineEditValueInput(nullptr, Gwei);
+    MyLineEditValueInput *m_forge_max_fee = new MyLineEditValueInput(nullptr, Gwei);
+    MyLineEditValueInput *m_forge_gas_price = new MyLineEditValueInput(nullptr, Gwei);
+    MyLineEditValueInput *m_forge_gas_limit = new MyLineEditValueInput(nullptr, Gwei);
+    MyLineEditValueInput *m_forge_to = new MyLineEditValueInput(nullptr, Hex20);
+    MyLineEditValueInput *m_forge_eth = new MyLineEditValueInput(nullptr, Eth);
+    MyLineEditValueInput *m_forge_data = new MyLineEditValueInput(nullptr);
+    MyLineEditValueInput *m_forge_access_list = new MyLineEditValueInput(nullptr);
+    MyLineEditValueInput *m_forge_v = new MyLineEditValueInput(nullptr, Dec);
+    MyLineEditValueInput *m_forge_r = new MyLineEditValueInput(nullptr, Hex32);
+    MyLineEditValueInput *m_forge_s = new MyLineEditValueInput(nullptr, Hex32);
 
     m_forge_chain_id->setTitle(tr("Chain Id:"));
     m_forge_nonce->setTitle(tr("Nonce:"));
@@ -45,7 +49,77 @@ Dialog::Dialog(QWidget *parent)
     m_forge_r->setTitle(tr("r:"));
     m_forge_s->setTitle(tr("s:"));
 
-    layout->addWidget(m_forge_chain_id);
+    tab4_layout_lbl->addSpacing(30);
+    tab4_layout_lbl->addLayout(m_forge_chain_id->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_nonce->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_max_priority_fee->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_max_fee->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_gas_price->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_gas_limit->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_to->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_eth->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_data->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_access_list->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_v->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_r->getLabelLayout());
+    tab4_layout_lbl->addLayout(m_forge_s->getLabelLayout());
+    tab4_layout_lbl->addStretch();
+
+    tab4_layout_rb->addSpacing(30);
+    tab4_layout_rb->addLayout(m_forge_chain_id->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_nonce->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_max_priority_fee->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_max_fee->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_gas_price->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_gas_limit->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_to->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_eth->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_data->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_access_list->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_v->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_r->getRadioButtonsLayout());
+    tab4_layout_rb->addLayout(m_forge_s->getRadioButtonsLayout());
+    tab4_layout_rb->addStretch();
+
+    tab4_layout_le->addSpacing(30);
+    tab4_layout_le->addLayout(m_forge_chain_id->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_nonce->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_max_priority_fee->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_max_fee->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_gas_price->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_gas_limit->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_to->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_eth->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_data->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_access_list->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_v->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_r->getLineEditLayout());
+    tab4_layout_le->addLayout(m_forge_s->getLineEditLayout());
+    tab4_layout_le->addStretch();
+
+    tab4_layout->addLayout(tab4_layout_lbl);
+    tab4_layout->addLayout(tab4_layout_rb);
+    tab4_layout->addLayout(tab4_layout_le);
+
+    /*tab4_layout->addSpacing(30);
+    tab4_layout->addWidget(m_forge_chain_id);
+    tab4_layout->addWidget(m_forge_nonce);
+    tab4_layout->addWidget(m_forge_max_priority_fee);
+    tab4_layout->addWidget(m_forge_max_fee);
+    tab4_layout->addWidget(m_forge_gas_price);
+    tab4_layout->addWidget(m_forge_gas_limit);
+    tab4_layout->addWidget(m_forge_to);
+    tab4_layout->addWidget(m_forge_eth);
+    tab4_layout->addWidget(m_forge_data);
+    tab4_layout->addWidget(m_forge_access_list);
+    tab4_layout->addWidget(m_forge_v);
+    tab4_layout->addWidget(m_forge_r);
+    tab4_layout->addWidget(m_forge_s);
+    tab4_layout->addStretch();*/
+
+    setLayout(tab4_layout);
+
+    /*layout->addWidget(m_forge_chain_id);
     layout->addWidget(m_forge_nonce);
     layout->addWidget(m_forge_max_priority_fee);
     layout->addWidget(m_forge_max_fee);
@@ -58,9 +132,9 @@ Dialog::Dialog(QWidget *parent)
     layout->addWidget(m_forge_v);
     layout->addWidget(m_forge_r);
     layout->addWidget(m_forge_s);
-    layout->addStretch();
+    layout->addStretch();*/
 
-    connect(m_forge_chain_id, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    /*connect(m_forge_chain_id, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
     connect(m_forge_nonce, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
     connect(m_forge_max_priority_fee, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
     connect(m_forge_max_fee, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
@@ -72,7 +146,7 @@ Dialog::Dialog(QWidget *parent)
     connect(m_forge_access_list, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
     connect(m_forge_v, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
     connect(m_forge_r, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
-    connect(m_forge_s, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));
+    connect(m_forge_s, SIGNAL(textChanged(QString)), this, SLOT(updateForgeTx()));*/
 }
 
 Dialog::~Dialog()

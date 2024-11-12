@@ -12,6 +12,7 @@
 #include <regex>
 #include <iomanip>
 #include <stdexcept>
+#include <algorithm>
 
 using Givaro::Integer;
 

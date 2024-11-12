@@ -1,9 +1,11 @@
 #pragma once
 
 #include <QWidget>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QRadioButton>
 #include <QLineEdit>
+#include <QButtonGroup>
 
 #include <data/ByteSet.h>
 
@@ -31,9 +33,14 @@ public:
 
     void setTitle(const QString &title) const { m_label->setText(title); }
     
-    inline QLabel const* getLabel() const { return m_label; }
-    const vector<QRadioButton const*> getRadioButtons() const;
-    inline QLineEdit const* getLineEdit() const { return m_le_input; }
+    inline QWidget* getLabel() const { return m_label; }
+    const vector<QRadioButton*> getRadioButtons() const;
+    inline QWidget* getLineEdit() const { return m_le_input; }
+
+    //inline QHBoxLayout* getLayout() const { return m_hbox; }
+    inline QHBoxLayout* getLabelLayout() const { return m_hbox_lbl; }
+    inline QHBoxLayout* getRadioButtonsLayout() const { return m_hbox_rb; }
+    inline QHBoxLayout* getLineEditLayout() const { return m_hbox_le; }
 
     ByteSet<bool> getValue() const;
 
@@ -45,7 +52,7 @@ protected slots:
     void handleTextChanged(const QString &value);  // Slot interne pour gérer le changement d'index
 
 protected:
-    void newRadioButtons(const StrByteSetFormat &default_format);
+    void newRadioButtons(QWidget *parent, const StrByteSetFormat &default_format);
 
     template<StrByteSetFormat const & f>
         void updateValueFromString(const string &str);
@@ -58,11 +65,16 @@ protected:
 
 private:
     const StrByteSetFormat m_default_format;
+    QButtonGroup *m_buttonGroup;
+    //QHBoxLayout *m_hbox;
+    QHBoxLayout *m_hbox_lbl;
+    QHBoxLayout *m_hbox_rb;
+    QHBoxLayout *m_hbox_le;
     QLabel *m_label;
     QLineEdit *m_le_input;
     /// Map containing the radioButtons and their specialized template methods for updating the widget
     /// This is done because MyLineEditValueInput cannot be made template, due to the QWidget inheritance limitation
-    /// The first int represents the order of appearance (0 = first on the left) of each rb
+    /// The first int represents the order of appearance (0 = first on the left) of each radio button
     map<int, RadioButtonFunctions> m_rb;
     ByteSet<bool> *m_ptr_value;             //non-aligned bitset allowed
 };

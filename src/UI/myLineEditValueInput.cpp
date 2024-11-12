@@ -1,6 +1,5 @@
 #include "myLineEditValueInput.h"
 
-#include <QHBoxLayout>
 #include <QValidator>
 
 MyLineEditValueInput::MyLineEditValueInput(QWidget *parent, const StrByteSetFormat &default_format)
@@ -8,12 +7,9 @@ MyLineEditValueInput::MyLineEditValueInput(QWidget *parent, const StrByteSetForm
     , m_default_format(default_format)
     , m_ptr_value(nullptr)
 {
-    //Create a horizontal layout of widgets
-    QHBoxLayout *hbox = new QHBoxLayout;
-
     //Create the widgets
     m_label = new QLabel(tr("Nonce:"));
-    newRadioButtons(default_format);
+    newRadioButtons(parent, default_format);
     m_le_input = new QLineEdit(tr(""));     
 
     //Connect the radioButtons to the MyLineEditValueInput::handleRadioClicked() Slot
@@ -22,24 +18,40 @@ MyLineEditValueInput::MyLineEditValueInput(QWidget *parent, const StrByteSetForm
         connect(it1->second.rb, &QRadioButton::clicked, this, &MyLineEditValueInput::handleRadioClicked);
         it1++;
     }
-
     //Propagates a textChanged signal coming from QLineEdit to MyLineEditValueInput
     connect(m_le_input, SIGNAL(textChanged(QString)), this, SIGNAL(textChanged(QString)));
-
     // Connect the textChanged Signal to the handleTextChanged Slot
     connect(this, QOverload<const QString&>::of(&MyLineEditValueInput::textChanged), this, &MyLineEditValueInput::handleTextChanged);
 
-    //Adds the widgets to a horizontal layout.
-    hbox->addWidget(m_label);
-    hbox->addStretch();
+    //Create the Geometry
+    m_label->setFixedHeight(20);
+    m_label->setMinimumWidth(150);
+    auto it0 = m_rb.begin();
+    while(it0 != m_rb.end()) {
+        it0->second.rb->setFixedHeight(20);
+        it0++;
+    }
+    m_le_input->setFixedHeight(20);
+
+    //Create the Layouts
+    //m_hbox = new QHBoxLayout();
+    m_hbox_lbl = new QHBoxLayout();
+    m_hbox_rb = new QHBoxLayout();
+    m_hbox_le = new QHBoxLayout();
+
+    //Populate the layouts
+    m_hbox_lbl->addWidget(getLabel());
     auto it2 = m_rb.begin();
     while(it2 != m_rb.end()) {
-        hbox->addWidget(it2->second.rb);
+        m_hbox_rb->addWidget(it2->second.rb);
         it2++;
     }
-    hbox->addWidget(m_le_input);
+    m_hbox_le->addWidget(m_le_input);
 
-    setLayout(hbox);
+    //m_hbox->addLayout(m_hbox_lbl);
+    //m_hbox->addLayout(m_hbox_rb);
+    //m_hbox->addLayout(m_hbox_le);
+    //setLayout(m_hbox);
 
     //Click the most "detailed" (a.k.a last added) format
     m_rb.rbegin()->second.rb->click();
@@ -49,7 +61,22 @@ MyLineEditValueInput::MyLineEditValueInput(QWidget *parent, const StrByteSetForm
         m_rb.begin()->second.rb->setEnabled(false);
 }
 
-void MyLineEditValueInput::newRadioButtons(const StrByteSetFormat &default_format)
+MyLineEditValueInput::~MyLineEditValueInput() {
+    delete m_label;
+    while(m_rb.size()) {
+        delete m_rb.begin()->second.rb;
+        m_rb.erase(m_rb.begin());
+    }
+    delete m_buttonGroup;
+    delete m_le_input;
+    delete m_ptr_value;
+    delete m_hbox_lbl;
+    delete m_hbox_rb;
+    delete m_hbox_le;
+    //delete m_hbox;
+}
+
+void MyLineEditValueInput::newRadioButtons(QWidget *parent, const StrByteSetFormat &default_format)
 {
     QRadioButton *rb16, *rb10, *rb2;
     FUpdateValueFromString f16_val_str, f10_val_str, f2_val_str;
@@ -57,6 +84,9 @@ void MyLineEditValueInput::newRadioButtons(const StrByteSetFormat &default_forma
     FUpdateString f16_str, f10_str, f2_str;
     FUpdateRegex f16_regex, f10_regex, f2_regex;
     RadioButtonFunctions f16, f10, f2;
+
+    // Create a button group to make them mutually exclusive
+    m_buttonGroup = new QButtonGroup();
 
     if(true)
     {
@@ -91,6 +121,7 @@ void MyLineEditValueInput::newRadioButtons(const StrByteSetFormat &default_forma
             f16_regex = std::bind(&MyLineEditValueInput::updateRegex<Hex>, this);    
         }
         rb16 = new QRadioButton(tr("Hex"));
+        m_buttonGroup->addButton(rb16);
         f16 = {rb16, f16_val_str, f16_val_bs, f16_str, f16_regex};
         m_rb.insert(std::make_pair(0, f16));
     }
@@ -118,6 +149,7 @@ void MyLineEditValueInput::newRadioButtons(const StrByteSetFormat &default_forma
             f10_regex = std::bind(&MyLineEditValueInput::updateRegex<Gwei>, this);
             rb10 = new QRadioButton(tr("Gwei"));
         }
+        m_buttonGroup->addButton(rb10);
         f10 = {rb10, f10_val_str, f10_val_bs, f10_str, f10_regex};
         m_rb.insert(std::make_pair(1, f10));
     }
@@ -129,19 +161,10 @@ void MyLineEditValueInput::newRadioButtons(const StrByteSetFormat &default_forma
         f2_regex = std::bind(&MyLineEditValueInput::updateRegex<Bin>, this);
 
         rb2 = new QRadioButton(tr("Bin"));
+        m_buttonGroup->addButton(rb2);
         f2 = {rb2, f2_val_str, f2_val_bs, f2_str, f2_regex};
         m_rb.insert(std::make_pair(2, f2));
     }
-}
-
-MyLineEditValueInput::~MyLineEditValueInput() {
-    delete m_label;
-    while(m_rb.size()) {
-        delete m_rb.begin()->second.rb;
-        m_rb.erase(m_rb.begin());
-    }
-    delete m_le_input;
-    delete m_ptr_value;
 }
 
 void MyLineEditValueInput::handleTextChanged(const QString &value)
@@ -183,7 +206,7 @@ template<StrByteSetFormat const & f>
 {
     if(m_ptr_value)
         delete m_ptr_value;
-    m_ptr_value = new StrByteSet<f, bool>(str, f.getByteSize()<<3);
+    m_ptr_value = new StrByteSet<f, bool>(str, f.getMaxBitSize());
 }
 
 template<StrByteSetFormat const & f>
@@ -209,9 +232,9 @@ template<StrByteSetFormat const & f>
     m_le_input->setValidator(new QRegularExpressionValidator(_regex, this));
 }
 
-const vector<QRadioButton const*> MyLineEditValueInput::getRadioButtons() const
+const vector<QRadioButton*> MyLineEditValueInput::getRadioButtons() const
 {
-    vector<QRadioButton const*> v;
+    vector<QRadioButton*> v;
 
     auto it = m_rb.begin();
     while(it!=m_rb.end()) {

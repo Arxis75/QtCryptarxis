@@ -310,7 +310,7 @@ Mnemonic::Mnemonic(const size_t entropy_bitsize, const vector<string> *dictionna
     div_t d;
     m_dic = (dictionnary ? dictionnary : &BIP39::Dictionary::WordList_english);
     assert(m_dic->size() > 1); // at least 2 elements
-    // TOD: verify each element of the dictionnary is unique
+    // TODO: verify each element of the dictionnary is unique
 
     m_went = log2(m_dic->size());
     assert(m_went <= 32); // max word entropy = 32 bits

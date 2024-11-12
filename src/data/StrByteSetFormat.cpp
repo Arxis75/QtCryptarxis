@@ -1,4 +1,5 @@
 #include <data/StrByteSetFormat.h>
+#include <data/Tools.h>
 
 StrByteSetFormat::StrByteSetFormat(
         const string &UIName,
@@ -6,14 +7,14 @@ StrByteSetFormat::StrByteSetFormat(
         uint8_t Base,
         uint8_t BitsPerChar,
         const string &Regex,
-        uint8_t aligned_byte_size,
+        uint64_t aligned_bit_size,
         uint8_t Exp)
     : m_ui_name(UIName)
     , m_header(Header)
     , m_base(Base)
     , m_bits_per_char(BitsPerChar)
     , m_regex(Regex)
-    , m_aligned_byte_size(aligned_byte_size)
+    , m_aligned_bit_size(aligned_bit_size)
     , m_exp(Exp)
 { }
 
@@ -21,7 +22,7 @@ string StrByteSetFormat::toCanonicalString(const string& val) const
 {
     string ret_val;
     if( regex_match(val, regex(m_regex)) )
-        ret_val = removeExp(removeHeader(val));
+        ret_val = _toCanonicalString(val);
     return ret_val;
 }
 

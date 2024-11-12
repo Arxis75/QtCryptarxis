@@ -54,8 +54,8 @@ class RawByteSet
         Derived<T> get(uint64_t elem_offset, const uint64_t nb_element) const;
         inline Derived<T> left(uint64_t nb_element) const { return get(0, nb_element); }
         inline Derived<T> right(uint64_t nb_element) const { return get(nbElements() - nb_element, nb_element); }
-        inline Derived<uint8_t> sha256() const;
-        inline Derived<uint8_t> keccak256() const;
+        inline Derived<T> sha256() const;
+        inline Derived<T> keccak256() const;
 
         //Container manipulation interface
         inline void resize(uint64_t nb_elem) { vvalue.resize(nb_elem); }
@@ -261,6 +261,7 @@ StrByteSet<f, T>::StrByteSet(const U& val, uint64_t nb_elem)
 {
     static_assert(std::is_same<std::decay_t<U>, string>::value, "Constructor only accepts const string&");
 
+    //Nota: if an empty string is passed, nb_elem is ignored and it builds the empty container
     if(string str = f.toCanonicalString(val); str.size())
         *this = ByteSet<T>(strToInt(str), (nb_elem ? nb_elem : (f.isAligned() ? getNbElem(str) : 0)));
 }
@@ -330,22 +331,22 @@ RawByteSet<Derived, T>::operator string() const
 }
 
 template <template <typename> class Derived, typename T>
-Derived<uint8_t> RawByteSet<Derived, T>::sha256() const
+Derived<T> RawByteSet<Derived, T>::sha256() const
 {
     RawByteSet<Derived, uint8_t> aligned_me(*this);
     RawByteSet<Derived, uint8_t> digest;
     digest.resize(32);
     SHA256(aligned_me, aligned_me.byteSize(), digest);
-    return Derived<uint8_t>(digest);
+    return Derived<T>(digest);
 }
 
 template <template <typename> class Derived, typename T>
-Derived<uint8_t> RawByteSet<Derived, T>::keccak256() const
+Derived<T> RawByteSet<Derived, T>::keccak256() const
 {
     RawByteSet<Derived, uint8_t> aligned_me(*this);
     hash256 h;
     h = ethash::keccak256(aligned_me, aligned_me.byteSize());
-    return Derived<uint8_t>(RawByteSet<Derived, uint8_t>(&h.bytes[0], 32));
+    return Derived<T>(RawByteSet<Derived, uint8_t>(&h.bytes[0], 32));
 }
 
 template<typename T>
